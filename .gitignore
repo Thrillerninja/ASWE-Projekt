@@ -1,0 +1,71 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+.pyenv/
+.env
+
+# Installers
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Test coverage reports
+.coverage
+*.cover
+.coverage.*
+.cache
+.nox/
+pytest_cache/
+.tox/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre
+.pyre/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Logs and temp files
+*.log
+*.pot
+*.pid
+*.gz
+*.zip
+*.tar.gz
+*.tmp
+*.bak
+
+# System-specific files
+.DS_Store
+Thumbs.db
+
+# SonarCloud Analysis
+.sonar/
+
+# IDE-specific files (optional)
+.vscode/
+.idea/
+
+# Python virtual environment files
+Pipfile.lock
+pip-log.txt
+
+# Python Package build files
+*.manifest
+*.spec

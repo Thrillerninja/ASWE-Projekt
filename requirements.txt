@@ -1,1 +1,4 @@
 PyQt5==5.15.10
+unittest
+typing
+python-dotenv
