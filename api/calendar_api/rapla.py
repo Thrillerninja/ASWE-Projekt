@@ -82,7 +82,14 @@ def create_calendar_from_rapla(url:str):
     year = url.split("year=")[1].split("&")[0] if "year=" in url else str(datetime.datetime.now().year)
     
     cal = Calendar()
-    res = requests.get(url)
+    
+    # Get the website and return None if an error occurs
+    try:
+        res = requests.get(url)
+        res.raise_for_status()  # Raise an HTTPError for bad responses
+    except requests.exceptions.RequestException as e:
+        return None
+    
     soup = BeautifulSoup(res.text, 'html.parser')
     
     # Kurs (<h2 class="title">)

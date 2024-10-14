@@ -1,9 +1,7 @@
 from typing import Dict
 from api.api_client import APIClient
-from api.weather_api.main import WeatherAPI
-# from api.maps import MapsAPI
-# from api.spotify import SpotifyAPI
-# from api.news import NewsAPI
+from api.weather_api import WeatherAPI
+from api.calendar_api import RaplaAPI
 
 class APIFactory:
     """
@@ -28,6 +26,8 @@ class APIFactory:
         """
         if api_type == 'weather':
             return WeatherAPI(self.config['weather_api_key'])
+        elif api_type == 'calendar':
+            return RaplaAPI(self.config['start_year'], self.config['class_letter'], self.config['email'])
         # elif api_type == 'maps':
             # return MapsAPI(self.config['maps_api_key'])
         # elif api_type == 'spotify':

@@ -1,7 +1,8 @@
 import unittest
 from unittest.mock import patch
-from api.api_factory.main import APIFactory
-from api.weather_api.main import WeatherAPI
+from api.api_factory import APIFactory
+from api.calendar_api import RaplaAPI
+from api.weather_api import WeatherAPI
 from config.config import CONFIG
 
 class TestApiFactory(unittest.TestCase):
@@ -51,6 +52,29 @@ class TestWeatherAPI(unittest.TestCase):
         self.assertEqual(response['main']['temp'], 15)
         self.assertEqual(response['main']['humidity'], 70)
         self.assertEqual(response['weather'][0]['description'], 'clear sky')
-
+        
+        
+class TestRaplaAPI(unittest.TestCase):
+        
+    def test_create_rapla_api(self):
+        api = RaplaAPI(22, 'A')
+        self.assertEqual(api.url, 'https://rapla.dhbw.de/rapla/internal_calendar?user=doelker%40verwaltung.ba-stuttgart.de&file=22A&day=30&month=9&year=2024&pages=20')
+        self.assertIsNotNone(api.calendar)
+        
+    def test_create_rapla_api_no_calendar(self):
+        api = RaplaAPI(22, 'Z')
+        self.assertEqual(api.url, 'https://rapla.dhbw.de/rapla/internal_calendar?user=doelker%40verwaltung.ba-stuttgart.de&file=22Z&day=30&month=9&year=2024&pages=20')
+        self.assertIsNone(api.calendar)
+        
+    def test_create_rapla_api_with_invalid_email(self):
+        api = RaplaAPI(22, 'A', 'test@example.com')
+        self.assertEqual(api.url, 'https://rapla.dhbw.de/rapla/internal_calendar?user=test%40example.com&file=22A&day=30&month=9&year=2024&pages=20')
+        self.assertIsNone(api.calendar)
+        
+    def test_create_rapla_api_with_email_no_calendar(self):
+        api = RaplaAPI(22, 'Z', 'test@example.com')
+        self.assertEqual(api.url, 'https://rapla.dhbw.de/rapla/internal_calendar?user=test%40example.com&file=22Z&day=30&month=9&year=2024&pages=20')
+        self.assertIsNone(api.calendar)
+        
 if __name__ == '__main__':
     unittest.main()
