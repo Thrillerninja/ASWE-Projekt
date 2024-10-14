@@ -27,6 +27,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # Step to set environment variables
+      - name: Set environment variables
+        run: |
+          echo "WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }}" >> $GITHUB_ENV
+
       # Step to run tests
       - name: Run tests
         env:
