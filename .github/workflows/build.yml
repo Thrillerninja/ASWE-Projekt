@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-      - main
+      - '*'  # Run on push to any branch
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
