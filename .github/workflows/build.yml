@@ -29,7 +29,7 @@ jobs:
       # Step to run tests
       - name: Run tests
         run: |
-          unittest discover -s tests -p '*_test.py'
+          unittest discover -p "*_test.py"
         continue-on-error: false  # This will fail the job if tests fail
 
       # SonarCloud Scan step
