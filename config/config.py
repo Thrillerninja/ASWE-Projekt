@@ -1,11 +1,10 @@
 import os
 from dotenv import load_dotenv, find_dotenv
 
-# Load environment variables from a .env file
+# Load environment variables from a .env file if it exists
 dotenv_path = find_dotenv()
-if not dotenv_path:
-    raise FileNotFoundError("Could not find a .env file")
-load_dotenv(dotenv_path)
+if dotenv_path:
+    load_dotenv(dotenv_path)
 
 def get_env_variable(var_name):
     value = os.getenv(var_name)

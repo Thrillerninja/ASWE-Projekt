@@ -1,7 +1,3 @@
-import sys
-import os
-sys.path.append(os.path.abspath('../..'))
-
 import unittest
 from unittest.mock import patch
 from api.api_factory.main import APIFactory
