@@ -7,13 +7,21 @@ from config.config import CONFIG
 class TestApiFactory(unittest.TestCase):
 
     def setUp(self):
-        config = {'weather_api_key': 'test_key'}
+        config = {
+            'weather_api_key': 'test_key',
+            'finance_api_key': 'test_key2'
+            }
         self.factory = APIFactory(config)
 
     # test weather api creation
     def test_create_weather_api(self):
         api = self.factory.create_api('weather')
         self.assertEqual(api.api_key, 'test_key')
+        
+    # test finance api creation
+    def test_create_finance_api(self):
+        api = self.factory.create_api('finance')
+        self.assertEqual(api.api_key, 'test_key2')
     
     # test unsupported api type
     def test_create_unsupported_api(self):
