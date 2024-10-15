@@ -5,7 +5,7 @@ from api.finance_api import FinanceAPI, Interval
 class TestFinanceAPI(unittest.TestCase):
 
     def setUp(self):
-        self.api_key = 'EDPFWFKP8PVF5DNN'
+        self.api_key = 'test_api'
         self.finance_api = FinanceAPI(self.api_key)
 
     def test_initialization(self):
