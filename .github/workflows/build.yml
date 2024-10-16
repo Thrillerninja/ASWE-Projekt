@@ -1,10 +1,12 @@
 name: Build
+
 on:
   push:
     branches:
       - '*'  # Run on push to any branch
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
 
   testing:
@@ -19,7 +21,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'  # Specify your required Python version
+          python-version: '3.9'  # Specify your required Python version
 
       # Install dependencies
       - name: Install dependencies
@@ -33,7 +35,7 @@ jobs:
         run: |
           echo "WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }}" >> $GITHUB_ENV
 
-      # Run tests
+      # Run tests without coverage
       - name: Run tests
         env:
           WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
@@ -41,7 +43,7 @@ jobs:
           python -m unittest discover -p "*_test.py"
         continue-on-error: false  # Fail the job if tests fail
 
-      # Run tests with coverage
+      # Run tests with coverage and generate coverage.xml
       - name: Run tests with coverage
         env:
           WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
@@ -50,7 +52,7 @@ jobs:
           coverage run -m unittest discover -p "*_test.py"
           coverage xml -o coverage.xml
 
-      # Upload coverage report as artifact
+      # Upload coverage.xml as an artifact
       - name: Upload coverage report
         uses: actions/upload-artifact@v3
         with:
@@ -70,7 +72,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'  # Specify your required Python version
+          python-version: '3.9'  # Ensure consistency with the testing job
 
       # Install dependencies
       - name: Install dependencies
@@ -79,14 +81,14 @@ jobs:
           pip install -r requirements.txt
           pip install coverage pytest pytest-cov
 
-      # Download coverage report artifact
+      # Download coverage.xml artifact
       - name: Download coverage report
         uses: actions/download-artifact@v3
         with:
           name: coverage-report
-          path: .
+          path: .  # Download to the root directory
 
-      # Verify coverage.xml (optional but recommended)
+      # Verify coverage.xml (Optional but recommended)
       - name: Verify coverage.xml
         run: |
           ls -la
@@ -94,12 +96,11 @@ jobs:
 
       # SonarCloud Scan step
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarcloud-github-action@v1.9.1  # Use a specific stable version
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed for PR analysis
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
             -Dsonar.python.coverage.reportPaths=coverage.xml
-            -Dsonar.python.version=3.x
             -Dsonar.verbose=true
