@@ -79,8 +79,7 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}
         run: |
           coverage run -m unittest discover -p "*_test.py"
-          coverage xml        
-          sed -i 's/\/home\/runner\/work\/python_on_sc\/python_on_sc\///g' coverage.xml
+          coverage xml
 
       # SonarCloud Scan step
       - name: SonarCloud Scan
@@ -88,3 +87,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.coverageReportPaths=coverage.xml
+            -Dsonar.python.version=3.x
