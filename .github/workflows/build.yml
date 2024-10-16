@@ -68,11 +68,18 @@ jobs:
         with:
           fetch-depth: 0  # Disable shallow clones for better analysis
 
-      # Set up Python environment
+      # Set up Java 17
+      - name: Set up Java 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'  # You can use 'temurin' or another distribution if preferred
+          java-version: '17'      # Specify Java 17
+
+      # Set up Python environment (ensure consistency with the testing job)
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'  # Ensure consistency with the testing job
+          python-version: '3.9'  # Ensure this matches the testing job
 
       # Install dependencies
       - name: Install dependencies
