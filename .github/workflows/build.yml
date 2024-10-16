@@ -94,9 +94,9 @@ jobs:
 
       # SonarCloud Scan step
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master  # Use a specific stable version
+        uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed for PR analysis
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
