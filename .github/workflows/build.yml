@@ -102,4 +102,4 @@ jobs:
           args: >
             -Dsonar.python.coverage.reportPaths=coverage.xml
             -Dsonar.python.version=3.x
-            -Dsonar.verbose=true  # Enable verbose logging for debugging
+            -Dsonar.verbose=true
