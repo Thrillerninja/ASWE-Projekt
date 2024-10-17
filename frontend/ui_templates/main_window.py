@@ -59,121 +59,6 @@ class Ui_MainWindow(object):
 "}\n"
 "")
         self.bt_exit.setObjectName("bt_exit")
-        self.rb_diesel = QtWidgets.QRadioButton(self.centralwidget)
-        self.rb_diesel.setEnabled(True)
-        self.rb_diesel.setGeometry(QtCore.QRect(40, 50, 121, 31))
-        self.rb_diesel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.rb_diesel.setStyleSheet("/* General Radio Button Style */\n"
-"QRadioButton {\n"
-"    spacing: 8px;                /* Space between the radio button and its label */\n"
-"    font-size: 14px;             /* Font size for the label */\n"
-"    color: #2c3e50;              /* Label text color */\n"
-"}\n"
-"\n"
-"/* Radio Button Indicator (the circle) */\n"
-"QRadioButton::indicator {\n"
-"    width: 16px;                 /* Size of the indicator */\n"
-"    height: 16px;\n"
-"    border-radius: 8px;          /* Makes the indicator perfectly circular */\n"
-"    border: 2px solid #2980b9;   /* Blue border for the indicator */\n"
-"    background-color: #ecf0f1;   /* Light grey background when unchecked */\n"
-"}\n"
-"\n"
-"/* Checked State */\n"
-"QRadioButton::indicator:checked {\n"
-"    background-color: #3498db;   /* Blue background when checked */\n"
-"    border: 2px solid #2980b9;   /* Darker blue border when checked */\n"
-"}\n"
-"\n"
-"/* Disabled State */\n"
-"QRadioButton::indicator:disabled {\n"
-"    background-color: #ecf0f1;   /* Light grey background when disabled */\n"
-"    border: 2px solid #95a5a6;   /* Grey border when disabled */\n"
-"}\n"
-"\n"
-"/* Checked and Disabled State */\n"
-"QRadioButton::indicator:checked:disabled {\n"
-"    background-color: #95a5a6;   /* Darker grey background when checked and disabled */\n"
-"    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */\n"
-"}")
-        self.rb_diesel.setChecked(True)
-        self.rb_diesel.setObjectName("rb_diesel")
-        self.rb_e10 = QtWidgets.QRadioButton(self.centralwidget)
-        self.rb_e10.setGeometry(QtCore.QRect(40, 110, 121, 31))
-        self.rb_e10.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.rb_e10.setStyleSheet("/* General Radio Button Style */\n"
-"QRadioButton {\n"
-"    spacing: 8px;                /* Space between the radio button and its label */\n"
-"    font-size: 14px;             /* Font size for the label */\n"
-"    color: #2c3e50;              /* Label text color */\n"
-"}\n"
-"\n"
-"/* Radio Button Indicator (the circle) */\n"
-"QRadioButton::indicator {\n"
-"    width: 16px;                 /* Size of the indicator */\n"
-"    height: 16px;\n"
-"    border-radius: 8px;          /* Makes the indicator perfectly circular */\n"
-"    border: 2px solid #2980b9;   /* Blue border for the indicator */\n"
-"    background-color: #ecf0f1;   /* Light grey background when unchecked */\n"
-"}\n"
-"\n"
-"/* Checked State */\n"
-"QRadioButton::indicator:checked {\n"
-"    background-color: #3498db;   /* Blue background when checked */\n"
-"    border: 2px solid #2980b9;   /* Darker blue border when checked */\n"
-"}\n"
-"\n"
-"/* Disabled State */\n"
-"QRadioButton::indicator:disabled {\n"
-"    background-color: #ecf0f1;   /* Light grey background when disabled */\n"
-"    border: 2px solid #95a5a6;   /* Grey border when disabled */\n"
-"}\n"
-"\n"
-"/* Checked and Disabled State */\n"
-"QRadioButton::indicator:checked:disabled {\n"
-"    background-color: #95a5a6;   /* Darker grey background when checked and disabled */\n"
-"    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */\n"
-"}")
-        self.rb_e10.setObjectName("rb_e10")
-        self.rb_benzin = QtWidgets.QRadioButton(self.centralwidget)
-        self.rb_benzin.setEnabled(True)
-        self.rb_benzin.setGeometry(QtCore.QRect(40, 80, 121, 31))
-        self.rb_benzin.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.rb_benzin.setStyleSheet("/* General Radio Button Style */\n"
-"QRadioButton {\n"
-"    spacing: 8px;                /* Space between the radio button and its label */\n"
-"    font-size: 14px;             /* Font size for the label */\n"
-"    color: #2c3e50;              /* Label text color */\n"
-"}\n"
-"\n"
-"/* Radio Button Indicator (the circle) */\n"
-"QRadioButton::indicator {\n"
-"    width: 16px;                 /* Size of the indicator */\n"
-"    height: 16px;\n"
-"    border-radius: 8px;          /* Makes the indicator perfectly circular */\n"
-"    border: 2px solid #2980b9;   /* Blue border for the indicator */\n"
-"    background-color: #ecf0f1;   /* Light grey background when unchecked */\n"
-"}\n"
-"\n"
-"/* Checked State */\n"
-"QRadioButton::indicator:checked {\n"
-"    background-color: #3498db;   /* Blue background when checked */\n"
-"    border: 2px solid #2980b9;   /* Darker blue border when checked */\n"
-"}\n"
-"\n"
-"/* Disabled State */\n"
-"QRadioButton::indicator:disabled {\n"
-"    background-color: #ecf0f1;   /* Light grey background when disabled */\n"
-"    border: 2px solid #95a5a6;   /* Grey border when disabled */\n"
-"}\n"
-"\n"
-"/* Checked and Disabled State */\n"
-"QRadioButton::indicator:checked:disabled {\n"
-"    background-color: #95a5a6;   /* Darker grey background when checked and disabled */\n"
-"    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */\n"
-"}")
-        self.rb_benzin.setChecked(False)
-        self.rb_benzin.setObjectName("rb_benzin")
         self.lb_select_fuel_type = QtWidgets.QLabel(self.centralwidget)
         self.lb_select_fuel_type.setGeometry(QtCore.QRect(20, 20, 161, 31))
         self.lb_select_fuel_type.setStyleSheet("/* General Label Style */\n"
@@ -213,6 +98,201 @@ class Ui_MainWindow(object):
 "}\n"
 "")
         self.lb_select_fuel_type.setObjectName("lb_select_fuel_type")
+        self.lb_ = QtWidgets.QLabel(self.centralwidget)
+        self.lb_.setGeometry(QtCore.QRect(210, 20, 161, 31))
+        self.lb_.setStyleSheet("/* General Label Style */\n"
+"QLabel {\n"
+"    font-size: 18px;             /* Base font size for regular labels */\n"
+"    font-weight: bold;          /* Bold text for emphasis */\n"
+"    color: #3498db; ;              /* Dark grey text color */\n"
+"    padding: 4px;               /* Padding around the text */\n"
+"    border: 1px solid transparent; /* Optional border for spacing */\n"
+"}\n"
+"\n"
+"/* Prominent Headline Style */\n"
+"QLabel.headline {\n"
+"    font-size: 24px;            /* Larger font size for prominent headlines */\n"
+"    font-weight: bold;          /* Bold text for emphasis */\n"
+"    color: #3498db;             /* Distinct blue color for headlines */\n"
+"    padding: 8px;               /* Increased padding for a more spacious look */\n"
+"    border: none;               /* No border for a cleaner look */\n"
+"    background-color: #f0f8ff;  /* Light blue background to make the headline stand out */\n"
+"    border-radius: 4px;         /* Slightly rounded corners for a modern appearance */\n"
+"    margin-bottom: 12px;        /* Space below the headline to separate from other elements */\n"
+"}\n"
+"\n"
+"/* Subheadline Style */\n"
+"QLabel.subheadline {\n"
+"    font-size: 18px;            /* Slightly smaller than headlines */\n"
+"    font-weight: bold;          /* Bold text for emphasis */\n"
+"    color: #2c3e50;             /* Dark grey color for subheadlines */\n"
+"    padding: 6px;               /* Padding around the text */\n"
+"    border: none;               /* No border for a cleaner look */\n"
+"    margin-bottom: 8px;         /* Space below the subheadline */\n"
+"}\n"
+"\n"
+"/* Disabled Label Style */\n"
+"QLabel:disabled {\n"
+"    color: #7f8c8d;             /* Grey text color for disabled state */\n"
+"}\n"
+"")
+        self.lb_.setObjectName("lb_")
+        self.rb_e10_2 = QtWidgets.QRadioButton(self.centralwidget)
+        self.rb_e10_2.setGeometry(QtCore.QRect(230, 110, 121, 31))
+        self.rb_e10_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.rb_e10_2.setStyleSheet("/* General Radio Button Style */\n"
+"QRadioButton {\n"
+"    spacing: 8px;                /* Space between the radio button and its label */\n"
+"    font-size: 14px;             /* Font size for the label */\n"
+"    color: #2c3e50;              /* Label text color */\n"
+"}\n"
+"\n"
+"/* Radio Button Indicator (the circle) */\n"
+"QRadioButton::indicator {\n"
+"    width: 16px;                 /* Size of the indicator */\n"
+"    height: 16px;\n"
+"    border-radius: 8px;          /* Makes the indicator perfectly circular */\n"
+"    border: 2px solid #2980b9;   /* Blue border for the indicator */\n"
+"    background-color: #ecf0f1;   /* Light grey background when unchecked */\n"
+"}\n"
+"\n"
+"/* Checked State */\n"
+"QRadioButton::indicator:checked {\n"
+"    background-color: #3498db;   /* Blue background when checked */\n"
+"    border: 2px solid #2980b9;   /* Darker blue border when checked */\n"
+"}\n"
+"\n"
+"/* Disabled State */\n"
+"QRadioButton::indicator:disabled {\n"
+"    background-color: #ecf0f1;   /* Light grey background when disabled */\n"
+"    border: 2px solid #95a5a6;   /* Grey border when disabled */\n"
+"}\n"
+"\n"
+"/* Checked and Disabled State */\n"
+"QRadioButton::indicator:checked:disabled {\n"
+"    background-color: #95a5a6;   /* Darker grey background when checked and disabled */\n"
+"    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */\n"
+"}")
+        self.rb_e10_2.setObjectName("rb_e10_2")
+        self.rb_diesel_2 = QtWidgets.QRadioButton(self.centralwidget)
+        self.rb_diesel_2.setEnabled(True)
+        self.rb_diesel_2.setGeometry(QtCore.QRect(230, 50, 121, 31))
+        self.rb_diesel_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.rb_diesel_2.setStyleSheet("/* General Radio Button Style */\n"
+"QRadioButton {\n"
+"    spacing: 8px;                /* Space between the radio button and its label */\n"
+"    font-size: 14px;             /* Font size for the label */\n"
+"    color: #2c3e50;              /* Label text color */\n"
+"}\n"
+"\n"
+"/* Radio Button Indicator (the circle) */\n"
+"QRadioButton::indicator {\n"
+"    width: 16px;                 /* Size of the indicator */\n"
+"    height: 16px;\n"
+"    border-radius: 8px;          /* Makes the indicator perfectly circular */\n"
+"    border: 2px solid #2980b9;   /* Blue border for the indicator */\n"
+"    background-color: #ecf0f1;   /* Light grey background when unchecked */\n"
+"}\n"
+"\n"
+"/* Checked State */\n"
+"QRadioButton::indicator:checked {\n"
+"    background-color: #3498db;   /* Blue background when checked */\n"
+"    border: 2px solid #2980b9;   /* Darker blue border when checked */\n"
+"}\n"
+"\n"
+"/* Disabled State */\n"
+"QRadioButton::indicator:disabled {\n"
+"    background-color: #ecf0f1;   /* Light grey background when disabled */\n"
+"    border: 2px solid #95a5a6;   /* Grey border when disabled */\n"
+"}\n"
+"\n"
+"/* Checked and Disabled State */\n"
+"QRadioButton::indicator:checked:disabled {\n"
+"    background-color: #95a5a6;   /* Darker grey background when checked and disabled */\n"
+"    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */\n"
+"}")
+        self.rb_diesel_2.setChecked(True)
+        self.rb_diesel_2.setObjectName("rb_diesel_2")
+        self.rb_benzin_2 = QtWidgets.QRadioButton(self.centralwidget)
+        self.rb_benzin_2.setEnabled(True)
+        self.rb_benzin_2.setGeometry(QtCore.QRect(230, 80, 121, 31))
+        self.rb_benzin_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.rb_benzin_2.setStyleSheet("/* General Radio Button Style */\n"
+"QRadioButton {\n"
+"    spacing: 8px;                /* Space between the radio button and its label */\n"
+"    font-size: 14px;             /* Font size for the label */\n"
+"    color: #2c3e50;              /* Label text color */\n"
+"}\n"
+"\n"
+"/* Radio Button Indicator (the circle) */\n"
+"QRadioButton::indicator {\n"
+"    width: 16px;                 /* Size of the indicator */\n"
+"    height: 16px;\n"
+"    border-radius: 8px;          /* Makes the indicator perfectly circular */\n"
+"    border: 2px solid #2980b9;   /* Blue border for the indicator */\n"
+"    background-color: #ecf0f1;   /* Light grey background when unchecked */\n"
+"}\n"
+"\n"
+"/* Checked State */\n"
+"QRadioButton::indicator:checked {\n"
+"    background-color: #3498db;   /* Blue background when checked */\n"
+"    border: 2px solid #2980b9;   /* Darker blue border when checked */\n"
+"}\n"
+"\n"
+"/* Disabled State */\n"
+"QRadioButton::indicator:disabled {\n"
+"    background-color: #ecf0f1;   /* Light grey background when disabled */\n"
+"    border: 2px solid #95a5a6;   /* Grey border when disabled */\n"
+"}\n"
+"\n"
+"/* Checked and Disabled State */\n"
+"QRadioButton::indicator:checked:disabled {\n"
+"    background-color: #95a5a6;   /* Darker grey background when checked and disabled */\n"
+"    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */\n"
+"}")
+        self.rb_benzin_2.setChecked(False)
+        self.rb_benzin_2.setObjectName("rb_benzin_2")
+        self.cb_fuel_type = QtWidgets.QComboBox(self.centralwidget)
+        self.cb_fuel_type.setGeometry(QtCore.QRect(40, 60, 131, 31))
+        self.cb_fuel_type.setStyleSheet("/* General Combo Box Style */\n"
+"QComboBox {\n"
+"    font-size: 14px;              /* Font size for the text */\n"
+"    color: #2c3e50;               /* Text color */\n"
+"    padding: 4px;                 /* Padding inside the combo box */\n"
+"    border: 2px solid #2980b9;    /* Blue border for the combo box */\n"
+"    border-radius: 4px;           /* Rounded corners for the combo box */\n"
+"    background-color: #ecf0f1;    /* Light grey background */\n"
+"}\n"
+"\n"
+"/* Arrow Indicator (the dropdown arrow) */\n"
+"QComboBox::drop-down {\n"
+"    width: 20px;                  /* Size of the dropdown arrow area */\n"
+"    border-left: 2px solid #2980b9;/* Left border to separate the arrow */\n"
+"    background-color: #3498db;    /* Blue background for the dropdown arrow */\n"
+"}\n"
+"\n"
+"QComboBox::down-arrow {\n"
+"    image: url(/path/to/your/arrow/icon.png);  /* Custom arrow icon, replace with your own */\n"
+"    width: 12px;                /* Size of the arrow */\n"
+"    height: 12px;\n"
+"}\n"
+"\n"
+"/* Combo Box when the dropdown is open */\n"
+"QComboBox QAbstractItemView {\n"
+"    border: 2px solid #2980b9;   /* Blue border around the dropdown list */\n"
+"    background-color: #ecf0f1;   /* Light grey background for the dropdown list */\n"
+"    selection-background-color: #3498db; /* Blue background for selected items */\n"
+"    selection-color: white;      /* White text for selected items */\n"
+"}\n"
+"\n"
+"")
+        self.cb_fuel_type.setObjectName("cb_fuel_type")
+        self.cb_fuel_type.addItem("")
+        self.cb_fuel_type.addItem("")
+        self.cb_fuel_type.addItem("")
+        self.cb_fuel_type.addItem("")
+        self.cb_fuel_type.addItem("")
+        self.cb_fuel_type.addItem("")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
@@ -229,10 +309,17 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.bt_exit.setText(_translate("MainWindow", "Exit"))
-        self.rb_diesel.setText(_translate("MainWindow", "Diesel"))
-        self.rb_e10.setText(_translate("MainWindow", "E10"))
-        self.rb_benzin.setText(_translate("MainWindow", "Benzin"))
         self.lb_select_fuel_type.setText(_translate("MainWindow", "Select Fuel Type"))
+        self.lb_.setText(_translate("MainWindow", "Select Fuel Type"))
+        self.rb_e10_2.setText(_translate("MainWindow", "E10"))
+        self.rb_diesel_2.setText(_translate("MainWindow", "Diesel"))
+        self.rb_benzin_2.setText(_translate("MainWindow", "Benzin"))
+        self.cb_fuel_type.setItemText(0, _translate("MainWindow", "Super E10", "super_e10"))
+        self.cb_fuel_type.setItemText(1, _translate("MainWindow", "Super E5"))
+        self.cb_fuel_type.setItemText(2, _translate("MainWindow", "Super Plus"))
+        self.cb_fuel_type.setItemText(3, _translate("MainWindow", "Diesel"))
+        self.cb_fuel_type.setItemText(4, _translate("MainWindow", "LKW Diesel"))
+        self.cb_fuel_type.setItemText(5, _translate("MainWindow", "LPG"))
 
 
 if __name__ == "__main__":

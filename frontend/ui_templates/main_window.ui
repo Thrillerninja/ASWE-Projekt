@@ -72,171 +72,6 @@ QPushButton:disabled {
      <string>Exit</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="rb_diesel">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>50</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">/* General Radio Button Style */
-QRadioButton {
-    spacing: 8px;                /* Space between the radio button and its label */
-    font-size: 14px;             /* Font size for the label */
-    color: #2c3e50;              /* Label text color */
-}
-
-/* Radio Button Indicator (the circle) */
-QRadioButton::indicator {
-    width: 16px;                 /* Size of the indicator */
-    height: 16px;
-    border-radius: 8px;          /* Makes the indicator perfectly circular */
-    border: 2px solid #2980b9;   /* Blue border for the indicator */
-    background-color: #ecf0f1;   /* Light grey background when unchecked */
-}
-
-/* Checked State */
-QRadioButton::indicator:checked {
-    background-color: #3498db;   /* Blue background when checked */
-    border: 2px solid #2980b9;   /* Darker blue border when checked */
-}
-
-/* Disabled State */
-QRadioButton::indicator:disabled {
-    background-color: #ecf0f1;   /* Light grey background when disabled */
-    border: 2px solid #95a5a6;   /* Grey border when disabled */
-}
-
-/* Checked and Disabled State */
-QRadioButton::indicator:checked:disabled {
-    background-color: #95a5a6;   /* Darker grey background when checked and disabled */
-    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */
-}</string>
-    </property>
-    <property name="text">
-     <string>Diesel</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="rb_e10">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>110</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">/* General Radio Button Style */
-QRadioButton {
-    spacing: 8px;                /* Space between the radio button and its label */
-    font-size: 14px;             /* Font size for the label */
-    color: #2c3e50;              /* Label text color */
-}
-
-/* Radio Button Indicator (the circle) */
-QRadioButton::indicator {
-    width: 16px;                 /* Size of the indicator */
-    height: 16px;
-    border-radius: 8px;          /* Makes the indicator perfectly circular */
-    border: 2px solid #2980b9;   /* Blue border for the indicator */
-    background-color: #ecf0f1;   /* Light grey background when unchecked */
-}
-
-/* Checked State */
-QRadioButton::indicator:checked {
-    background-color: #3498db;   /* Blue background when checked */
-    border: 2px solid #2980b9;   /* Darker blue border when checked */
-}
-
-/* Disabled State */
-QRadioButton::indicator:disabled {
-    background-color: #ecf0f1;   /* Light grey background when disabled */
-    border: 2px solid #95a5a6;   /* Grey border when disabled */
-}
-
-/* Checked and Disabled State */
-QRadioButton::indicator:checked:disabled {
-    background-color: #95a5a6;   /* Darker grey background when checked and disabled */
-    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */
-}</string>
-    </property>
-    <property name="text">
-     <string>E10</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="rb_benzin">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>80</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">/* General Radio Button Style */
-QRadioButton {
-    spacing: 8px;                /* Space between the radio button and its label */
-    font-size: 14px;             /* Font size for the label */
-    color: #2c3e50;              /* Label text color */
-}
-
-/* Radio Button Indicator (the circle) */
-QRadioButton::indicator {
-    width: 16px;                 /* Size of the indicator */
-    height: 16px;
-    border-radius: 8px;          /* Makes the indicator perfectly circular */
-    border: 2px solid #2980b9;   /* Blue border for the indicator */
-    background-color: #ecf0f1;   /* Light grey background when unchecked */
-}
-
-/* Checked State */
-QRadioButton::indicator:checked {
-    background-color: #3498db;   /* Blue background when checked */
-    border: 2px solid #2980b9;   /* Darker blue border when checked */
-}
-
-/* Disabled State */
-QRadioButton::indicator:disabled {
-    background-color: #ecf0f1;   /* Light grey background when disabled */
-    border: 2px solid #95a5a6;   /* Grey border when disabled */
-}
-
-/* Checked and Disabled State */
-QRadioButton::indicator:checked:disabled {
-    background-color: #95a5a6;   /* Darker grey background when checked and disabled */
-    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */
-}</string>
-    </property>
-    <property name="text">
-     <string>Benzin</string>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
-   </widget>
    <widget class="QLabel" name="lb_select_fuel_type">
     <property name="geometry">
      <rect>
@@ -287,6 +122,296 @@ QLabel:disabled {
     <property name="text">
      <string>Select Fuel Type</string>
     </property>
+   </widget>
+   <widget class="QLabel" name="lb_">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>20</y>
+      <width>161</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">/* General Label Style */
+QLabel {
+    font-size: 18px;             /* Base font size for regular labels */
+    font-weight: bold;          /* Bold text for emphasis */
+    color: #3498db; ;              /* Dark grey text color */
+    padding: 4px;               /* Padding around the text */
+    border: 1px solid transparent; /* Optional border for spacing */
+}
+
+/* Prominent Headline Style */
+QLabel.headline {
+    font-size: 24px;            /* Larger font size for prominent headlines */
+    font-weight: bold;          /* Bold text for emphasis */
+    color: #3498db;             /* Distinct blue color for headlines */
+    padding: 8px;               /* Increased padding for a more spacious look */
+    border: none;               /* No border for a cleaner look */
+    background-color: #f0f8ff;  /* Light blue background to make the headline stand out */
+    border-radius: 4px;         /* Slightly rounded corners for a modern appearance */
+    margin-bottom: 12px;        /* Space below the headline to separate from other elements */
+}
+
+/* Subheadline Style */
+QLabel.subheadline {
+    font-size: 18px;            /* Slightly smaller than headlines */
+    font-weight: bold;          /* Bold text for emphasis */
+    color: #2c3e50;             /* Dark grey color for subheadlines */
+    padding: 6px;               /* Padding around the text */
+    border: none;               /* No border for a cleaner look */
+    margin-bottom: 8px;         /* Space below the subheadline */
+}
+
+/* Disabled Label Style */
+QLabel:disabled {
+    color: #7f8c8d;             /* Grey text color for disabled state */
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Select Fuel Type</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="rb_e10_2">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>110</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">/* General Radio Button Style */
+QRadioButton {
+    spacing: 8px;                /* Space between the radio button and its label */
+    font-size: 14px;             /* Font size for the label */
+    color: #2c3e50;              /* Label text color */
+}
+
+/* Radio Button Indicator (the circle) */
+QRadioButton::indicator {
+    width: 16px;                 /* Size of the indicator */
+    height: 16px;
+    border-radius: 8px;          /* Makes the indicator perfectly circular */
+    border: 2px solid #2980b9;   /* Blue border for the indicator */
+    background-color: #ecf0f1;   /* Light grey background when unchecked */
+}
+
+/* Checked State */
+QRadioButton::indicator:checked {
+    background-color: #3498db;   /* Blue background when checked */
+    border: 2px solid #2980b9;   /* Darker blue border when checked */
+}
+
+/* Disabled State */
+QRadioButton::indicator:disabled {
+    background-color: #ecf0f1;   /* Light grey background when disabled */
+    border: 2px solid #95a5a6;   /* Grey border when disabled */
+}
+
+/* Checked and Disabled State */
+QRadioButton::indicator:checked:disabled {
+    background-color: #95a5a6;   /* Darker grey background when checked and disabled */
+    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */
+}</string>
+    </property>
+    <property name="text">
+     <string>E10</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="rb_diesel_2">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>50</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">/* General Radio Button Style */
+QRadioButton {
+    spacing: 8px;                /* Space between the radio button and its label */
+    font-size: 14px;             /* Font size for the label */
+    color: #2c3e50;              /* Label text color */
+}
+
+/* Radio Button Indicator (the circle) */
+QRadioButton::indicator {
+    width: 16px;                 /* Size of the indicator */
+    height: 16px;
+    border-radius: 8px;          /* Makes the indicator perfectly circular */
+    border: 2px solid #2980b9;   /* Blue border for the indicator */
+    background-color: #ecf0f1;   /* Light grey background when unchecked */
+}
+
+/* Checked State */
+QRadioButton::indicator:checked {
+    background-color: #3498db;   /* Blue background when checked */
+    border: 2px solid #2980b9;   /* Darker blue border when checked */
+}
+
+/* Disabled State */
+QRadioButton::indicator:disabled {
+    background-color: #ecf0f1;   /* Light grey background when disabled */
+    border: 2px solid #95a5a6;   /* Grey border when disabled */
+}
+
+/* Checked and Disabled State */
+QRadioButton::indicator:checked:disabled {
+    background-color: #95a5a6;   /* Darker grey background when checked and disabled */
+    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */
+}</string>
+    </property>
+    <property name="text">
+     <string>Diesel</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="rb_benzin_2">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>80</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">/* General Radio Button Style */
+QRadioButton {
+    spacing: 8px;                /* Space between the radio button and its label */
+    font-size: 14px;             /* Font size for the label */
+    color: #2c3e50;              /* Label text color */
+}
+
+/* Radio Button Indicator (the circle) */
+QRadioButton::indicator {
+    width: 16px;                 /* Size of the indicator */
+    height: 16px;
+    border-radius: 8px;          /* Makes the indicator perfectly circular */
+    border: 2px solid #2980b9;   /* Blue border for the indicator */
+    background-color: #ecf0f1;   /* Light grey background when unchecked */
+}
+
+/* Checked State */
+QRadioButton::indicator:checked {
+    background-color: #3498db;   /* Blue background when checked */
+    border: 2px solid #2980b9;   /* Darker blue border when checked */
+}
+
+/* Disabled State */
+QRadioButton::indicator:disabled {
+    background-color: #ecf0f1;   /* Light grey background when disabled */
+    border: 2px solid #95a5a6;   /* Grey border when disabled */
+}
+
+/* Checked and Disabled State */
+QRadioButton::indicator:checked:disabled {
+    background-color: #95a5a6;   /* Darker grey background when checked and disabled */
+    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */
+}</string>
+    </property>
+    <property name="text">
+     <string>Benzin</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="cb_fuel_type">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>60</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">/* General Combo Box Style */
+QComboBox {
+    font-size: 14px;              /* Font size for the text */
+    color: #2c3e50;               /* Text color */
+    padding: 4px;                 /* Padding inside the combo box */
+    border: 2px solid #2980b9;    /* Blue border for the combo box */
+    border-radius: 4px;           /* Rounded corners for the combo box */
+    background-color: #ecf0f1;    /* Light grey background */
+}
+
+/* Arrow Indicator (the dropdown arrow) */
+QComboBox::drop-down {
+    width: 20px;                  /* Size of the dropdown arrow area */
+    border-left: 2px solid #2980b9;/* Left border to separate the arrow */
+    background-color: #3498db;    /* Blue background for the dropdown arrow */
+}
+
+QComboBox::down-arrow {
+    image: url(/path/to/your/arrow/icon.png);  /* Custom arrow icon, replace with your own */
+    width: 12px;                /* Size of the arrow */
+    height: 12px;
+}
+
+/* Combo Box when the dropdown is open */
+QComboBox QAbstractItemView {
+    border: 2px solid #2980b9;   /* Blue border around the dropdown list */
+    background-color: #ecf0f1;   /* Light grey background for the dropdown list */
+    selection-background-color: #3498db; /* Blue background for selected items */
+    selection-color: white;      /* White text for selected items */
+}
+
+</string>
+    </property>
+    <item>
+     <property name="text">
+      <string comment="super_e10">Super E10</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Super E5</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Super Plus</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Diesel</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>LKW Diesel</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>LPG</string>
+     </property>
+    </item>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
