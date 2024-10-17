@@ -12,7 +12,7 @@ class ConfigManager:
 
         self.view = view
         self.ui = self.view.ui
-        self.preferences_file = 'preferences.json'
+        self.preferences_file = '../config/preferences.json'
         self.preferences = self.load_preferences()
 
     def load_preferences(self):
