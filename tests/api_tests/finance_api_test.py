@@ -7,7 +7,7 @@ class TestFinanceAPI(unittest.TestCase):
     def setUp(self):
         self.api_key = 'test_api'
         self.finance_api = FinanceAPI(self.api_key)
-        self.url = 'https://www.alphavantage.co'
+        self.url = 'https://www.alphavantage.co/query'
 
     def test_initialization(self):
         self.assertEqual(self.finance_api.api_key, self.api_key)
@@ -23,7 +23,7 @@ class TestFinanceAPI(unittest.TestCase):
         stock_data = self.finance_api.get_stock_intraday('AAPL', Interval.ONE_MIN)
         self.assertEqual(stock_data, expected_data)
         mock_get.assert_called_once_with(
-            self.url + '/query',
+            self.url,
             headers={},
             params={
                 'function': 'TIME_SERIES_INTRADAY',
@@ -43,7 +43,7 @@ class TestFinanceAPI(unittest.TestCase):
         stock_data = self.finance_api.get_stock_daily('AAPL')
         self.assertEqual(stock_data, expected_data)
         mock_get.assert_called_once_with(
-            self.url + '/query',
+            self.url,
             headers={},
             params={
                 'function': 'TIME_SERIES_DAILY',
@@ -63,7 +63,7 @@ class TestFinanceAPI(unittest.TestCase):
         stock_data = self.finance_api.get_stock_latest('AAPL')
         self.assertEqual(stock_data, expected_data)
         mock_get.assert_called_once_with(
-            self.url + '/query',
+            self.url,
             headers={},
             params={
                 'function': 'GLOBAL_QUOTE',
@@ -82,7 +82,7 @@ class TestFinanceAPI(unittest.TestCase):
         search_results = self.finance_api.search_symbols('Apple')
         self.assertEqual(search_results, expected_data)
         mock_get.assert_called_once_with(
-            self.url + '/query',
+            self.url,
             headers={},
             params={
                 'function': 'SYMBOL_SEARCH',
@@ -101,7 +101,7 @@ class TestFinanceAPI(unittest.TestCase):
         market_status = self.finance_api.get_market_status()
         self.assertEqual(market_status, expected_data)
         mock_get.assert_called_once_with(
-            self.url + '/query',
+            self.url,
             headers={},
             params={
                 'function': 'MARKET_STATUS',
