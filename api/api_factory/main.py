@@ -1,6 +1,7 @@
 from typing import Dict
 from api.api_client import APIClient
 from api.weather_api.main import WeatherAPI
+from api.finance_api import FinanceAPI
 # from api.maps import MapsAPI
 # from api.spotify import SpotifyAPI
 # from api.news import NewsAPI
@@ -28,6 +29,8 @@ class APIFactory:
         """
         if api_type == 'weather':
             return WeatherAPI(self.config['weather_api_key'])
+        elif api_type == 'finance':
+            return FinanceAPI(self.config['finance_api_key'])
         # elif api_type == 'maps':
             # return MapsAPI(self.config['maps_api_key'])
         # elif api_type == 'spotify':
