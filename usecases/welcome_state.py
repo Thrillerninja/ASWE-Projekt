@@ -69,5 +69,8 @@ class WelcomeState:
      
         # Calculate required time for alarm clock 
         first_appointment_time = datetime.datetime.strptime(first_appointment.start, "%H:%M").time()
+        # Check second alternative process and set latest alarm time to be no later than default_wakeup_time        
+        if first_appointment_time > self.default_wakeup_time:
+            return self.default_wakeup_time
         
         return first_appointment_time - datetime.timedelta(minutes=transit_time)
