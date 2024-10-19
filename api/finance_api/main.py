@@ -24,15 +24,23 @@ class FinanceAPI(APIClient):
     """
     API client for accessing financial data from Alpha Vantage.
     """
+    _instance = None
 
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(FinanceAPI, cls).__new__(cls)
+        return cls._instance
+    
     def __init__(self, api_key: str):
         """
         Initializes the AlphaVantageAPI client with the provided API key.
 
         :param api_key: Alpha Vantage API key.
         """
-        super().__init__('https://www.alphavantage.co')
-        self.api_key = api_key
+        if not hasattr(self, 'initialized'):  # Ensure __init__ is only called once
+            super().__init__('https://www.alphavantage.co')
+            self.api_key = api_key
+            self.initialized = True
 
     def authenticate(self):
         """

@@ -1,6 +1,7 @@
-from typing import Dict
+import datetime
+import json
+from typing import Dict, List
 from api.api_client import APIClient
-
 import rapla
 
 
@@ -23,7 +24,36 @@ class RaplaAPI(APIClient):
         """
         self.calendar = rapla.create_calendar_from_rapla(url)
 
+    def get_todays_appointments(self) -> List[rapla.Appointment]:
+        """
+        Returns the appointments for today.
+        """
+        today = datetime.datetime.now().strftime("%d.%m.%Y")
+        return [appt for appt in self.calendar.appointments if appt.date == today]
 
+    def get_appointments_for_date(self, date: str) -> List[rapla.Appointment]:
+        """
+        Returns the appointments for a specific date in the format DD.MM.YYYY.
+        """
+        return [appt for appt in self.calendar.appointments if appt.date == date]
+
+    def get_calendar_as_json(self) -> str:
+        """
+        Returns the entire calendar in JSON format.
+        """
+        return json.dumps(self.calendar.toJSON(), indent=4, ensure_ascii=False)
+
+    def save_calendar_to_file(self, filepath: str):
+        """
+        Saves the current calendar to a specified JSON file.
+        """
+        self.calendar.save(filepath)
+
+    def refresh_calendar(self):
+        """
+        Refreshes the calendar data by fetching it again from the URL.
+        """
+        self.calendar = self.update_rapla_calendar()
 
 
 
