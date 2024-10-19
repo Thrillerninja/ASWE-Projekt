@@ -1,6 +1,6 @@
 import sys
 from PyQt5 import QtWidgets
-from ui_templates.main_window import Ui_MainWindow
+from .ui_templates.main_window import Ui_MainWindow
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -12,9 +12,3 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def on_bt_exit_clicked(self):
         pass
-
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
