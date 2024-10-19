@@ -5,6 +5,12 @@ class WeatherAPI(APIClient):
     """
     API client for accessing weather data from OpenWeatherMap.
     """
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(WeatherAPI, cls).__new__(cls)
+        return cls._instance
 
     def __init__(self, api_key: str):
         """
@@ -12,8 +18,10 @@ class WeatherAPI(APIClient):
 
         :param api_key: OpenWeatherMap API key.
         """
-        super().__init__('https://api.openweathermap.org/data/2.5')
-        self.api_key = api_key
+        if not hasattr(self, 'initialized'):  # Ensure __init__ is only called once
+            super().__init__('https://api.openweathermap.org/data/2.5')
+            self.api_key = api_key
+            self.initialized = True
 
     def authenticate(self):
         """
