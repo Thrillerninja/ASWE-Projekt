@@ -12,6 +12,12 @@ class VoiceInterface():
         self.engine = pyttsx3.init()
 
         self.r = sr.Recognizer()
+        
+    def authenticate(self):
+        """
+        No authentication required
+        """
+        pass
 
     def speak(self, text:str):
         """
