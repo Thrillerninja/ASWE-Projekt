@@ -1,3 +1,19 @@
 {
-    "fuel_type": "diesel"
+    "fuel_type": "diesel",
+    "default_alarm_time": "08:00",
+    "default_destination": {
+      "name": "dhbw",
+      "vvs_code": "de:08111:6072",
+      "address": {
+        "street": "Lerchenstraße",
+        "number": "1",
+        "zipcode": "70174",
+        "city": "Stuttgart",
+        "country": "Germany"
+      },
+      "coordinates": {
+        "latitude": 48.782600,
+        "longitude": 9.167025
+        }
+    }
 }
