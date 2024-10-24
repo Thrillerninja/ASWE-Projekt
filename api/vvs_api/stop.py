@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 from typing import List, Optional, Dict
+from enum import Enum
 
 class Stop:
     def __init__(self, **kwargs):
@@ -107,3 +108,25 @@ def parse_stop_info(json_data: Dict) -> Stop:
     Stop: The parsed Stop object.
     """
     return Stop(**json_data)
+
+
+
+class VSSStationType(Enum):
+    """
+    Enum class for different types of stations.
+    """
+    HALTESTELLE = "stop"
+    POI = "poi"
+    STANDORT = "locality"
+    MISC = "uncategorized"
+    
+    
+class VVSProdukte(Enum):
+    """
+    Enum class for different types of transport services.
+    """
+    X1=0
+    X2=1 #TODO: Valid descriptors
+    X3=3
+    X4=5
+    X5=11
