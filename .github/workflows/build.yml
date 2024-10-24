@@ -23,6 +23,10 @@ jobs:
         with:
           python-version: '3.9'
 
+      # Step to install eSpeak
+      - name: Install eSpeak
+        run: sudo apt-get install espeak -y
+
       # Install dependencies
       - name: Install dependencies
         run: |
@@ -79,7 +83,11 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'  # Ensure this matches the testing job
+          python-version: '3.9'  # Ensure this matches the testing 
+          
+      # Step to install eSpeak
+      - name: Install eSpeak
+        run: sudo apt-get install espeak -y
 
       # Install dependencies
       - name: Install dependencies
