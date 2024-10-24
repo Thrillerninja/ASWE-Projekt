@@ -23,6 +23,9 @@ class VoiceInterface():
         """
         Converts the input text into a voice output
         """
+        if not isinstance(text, str) or not text.strip():
+            raise ValueError("Text input must be a non-empty string.")
+        
         self.engine.say(text)
         self.engine.runAndWait()
 
@@ -30,14 +33,16 @@ class VoiceInterface():
         """
         Listens for microphone input and returns a string of the speech input
         """
-        with sr.Microphone() as source:
-            self.r.adjust_for_ambient_noise(source)
-            audio = self.r.listen(source)
+        try:
+            with sr.Microphone() as source:
+                self.r.adjust_for_ambient_noise(source)
+                audio = self.r.listen(source)
 
-            try:
-                text = self.r.recognize_google(audio, language="de-DE") 
-                return(text)
-            except sr.UnknownValueError:
-                return("Google konnte das Audio nicht verstehen")
-            except sr.RequestError as e:
-                return("Fehler bei der Anfrage an Google Speech Recognition; {0}".format(e))
+                text = self.r.recognize_google(audio, language="de-DE")
+                return text
+        except sr.UnknownValueError:
+            return "Google konnte das Audio nicht verstehen"
+        except sr.RequestError as e:
+            return f"Fehler bei der Anfrage an Google Speech Recognition; {0}".format(e)
+        except Exception as e:
+            return f"Ein Fehler ist aufgetreten: {str(e)}"
