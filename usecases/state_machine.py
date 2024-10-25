@@ -30,6 +30,9 @@ class StateMachine:
         self.idle = IdleState(self)
         self.welcome = WelcomeState(self)
         self.speach = SpeachState(self)
+        self.news = None # TODO: Replace with NewsState object
+        self.finance = None
+        self.activity = None
         
         # Setup transitions
         self.machine.add_transition('start', 'idle', 'welcome')
@@ -58,7 +61,10 @@ class StateMachine:
         state_dict = {
             'idle': self.idle,
             'welcome': self.welcome,
-            'speach': self.speach
+            'speach': self.speach,
+            'news': self.news,
+            'finance': self.finance,
+            'activity': self.activity,
         }
         # Call the on_enter method of the state object
         state_dict[self.state].on_enter()
