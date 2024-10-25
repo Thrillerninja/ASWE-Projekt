@@ -1,10 +1,9 @@
 from typing import Dict
-from api.api_client import APIClient
 
 import rapla
 
 
-class RaplaAPI(APIClient):
+class RaplaAPI():
     """
     API client for accessing rapla from a given url.
     """
