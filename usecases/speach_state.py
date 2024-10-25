@@ -1,30 +1,53 @@
 from typing import Dict
+from api.tts_api import VoiceInterface
 
 class SpeachState:
     """
-    State that represents the speach state/usecase of the application.
+    State that represents the speech recognition state/use case of the application.
     """
-    
+
     def __init__(self, state_machine):
         self.state_machine = state_machine
+        self.voice_interface = state_machine.api_factory.create_api(api_type="t2s")
         print("SpeachState initialized")
-        
+
     def on_enter(self):
         """
-        Start the speach recognition.
+        Start the speech recognition.
         """
         print("SpeachState entered")
+        self.voice_interface.speak("Bitte sprechen Sie einen Befehl.")
         
         while True:
             self.check_triggers()
-            
+
     def check_triggers(self):
         """
-        Check if a trigger is activated.
+        Listens for user input and determines the next action.
         """
-        trigger = input("Press 'e' to exit the speach recognition: ")
-        if trigger == 'e':
-            self.state_machine.exit()
-            return
+        user_input = self.voice_interface.listen()
+        print(f"User said: {user_input}")
+        
+        # Interpret the user's input and trigger the appropriate state transition
+        if "beenden" in user_input.lower() or "exit" in user_input.lower():
+            self.voice_interface.speak("Spracherkennung wird beendet.")
+            self.state_machine.goto_idle()
+
+        elif "willkommen" in user_input.lower() or "welcome" in user_input.lower():
+            self.voice_interface.speak("Wechsel zu Willkommensnachricht.")
+            self.state_machine.goto_welcome()
+        
+        elif "finanzen" in user_input.lower() or "finance" in user_input.lower():
+            self.voice_interface.speak("Wechsel zu Finanzinformationen.")
+            self.state_machine.goto_finance()
+        
+        elif "nachrichten" in user_input.lower() or "news" in user_input.lower():
+            self.voice_interface.speak("Wechsel zu Nachrichten.")
+            self.state_machine.goto_news()
+        
+        elif "aktivitäten" in user_input.lower() or "activities" in user_input.lower():
+            self.voice_interface.speak("Wechsel zu Aktivitäten.")
+            self.state_machine.goto_activity()
+        
         else:
-            print("Invalid input. Please try again.")
+            self.voice_interface.speak("Befehl nicht erkannt. Bitte versuchen Sie es erneut.")
