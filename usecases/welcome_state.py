@@ -10,7 +10,7 @@ class WelcomeState:
     def __init__(self, state_machine):
         self.state_machine = state_machine
         
-        self.t2s_api = None # TODO: Replace with t2s API object
+        self.t2s_api = self.state_machine.api_factory.create_api(api_type="t2s")
         self.transit_api = None # TODO: Replace with transit API object
         self.weather_api = self.state_machine.api_factory.create_api(api_type="weather")
         self.rapla_api = self.state_machine.api_factory.create_api(api_type="rapla")
