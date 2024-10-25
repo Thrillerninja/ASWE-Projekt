@@ -19,7 +19,7 @@ class VoiceInterface():
         """
         pass
 
-    def speak(self, text:str):
+    def speak(self, text: str):
         """
         Converts the input text into a voice output
         """
@@ -46,3 +46,17 @@ class VoiceInterface():
             return f"Fehler bei der Anfrage an Google Speech Recognition; {0}".format(e)
         except Exception as e:
             return f"Ein Fehler ist aufgetreten: {str(e)}"
+        
+    def ask_yes_no(self, text: str):
+        self.speak(text)
+        response = self.listen()
+        
+        yes_alternatives = ['yes', 'yeah', 'yep', 'ja', 'jep', 'jo']
+        no_alternatives = ['no', 'nope', 'nein']
+        
+        if any(x in response.lower() for x in yes_alternatives):
+            return True 
+        elif any(x in response.lower() for x in no_alternatives):
+            return False
+        else:
+            return self.ask_yes_no("I'm sorry, I didn't understand your response. Please answer with yes or no.")
