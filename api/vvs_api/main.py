@@ -1,13 +1,20 @@
 import requests  # Add requests import
 from typing import List
 from vvspy.enums import Station
-from vvspy import get_trip
+import vvspy
 from vvspy.models import Trip
 import logging
 import datetime
 from api.api_client import APIClient
 
 from .stop import Stop, VSSStationType
+
+# Import the get_trips function with added arrival flags
+from .vvs_api_lib_fix import get_trips
+# Replace the get_trips function in the vvspy module with the one with added arrival flags
+vvspy.get_trips = get_trips
+
+
 class VVSAPI(APIClient):
     """
     API client for accessing public transportation data.
@@ -67,11 +74,7 @@ class VVSAPI(APIClient):
         response_json = self.get("XML_STOPFINDER_REQUEST", params=params)
 
         self.logger.debug("Initializing parsing of response...")
-        try:
-            return self._parse_response(response_json)
-        except requests.JSONDecodeError as e:
-            self.logger.error(f"Invalid JSON.")
-            raise e
+        return self._parse_response(response_json)
 
     def _parse_response(self, result: dict) -> List[Stop]:
         parsed_response = []
@@ -88,14 +91,36 @@ class VVSAPI(APIClient):
     
 
     def calc_trip_time(self, start_station: Station, end_station: Station) -> Trip:
-        trip_time = get_trip(start_station, end_station)
+        trip_time = get_trips(start_station, end_station)
         if trip_time is None:
-            trip_time = get_trip(end_station, start_station)
+            trip_time = get_trips(end_station, start_station)
         return trip_time if trip_time is not None else -1  # Return -1 if no trip time is found
     
-    def calc_trip(self, start_station: Station, end_station: Station, start_time: datetime = None) -> Trip:
-        trip_time = get_trip(start_station, end_station, check_time=start_time)
+    def calc_trip(self, start_station: Station, end_station: Station, departure_time: datetime = None, arrival_time: datetime = None) -> Trip:
+        """
+        Calculate the trip time between two stations.
+        """
+            
+        def get_trip_wrapper(start_station: Station, end_station: Station, departure_time: datetime = None, arrival_time: datetime = None) -> Trip:
+            if departure_time is not None and arrival_time is None:
+                return get_trips(start_station, end_station, check_time=departure_time, itdDateTimeDepArr="dep", itdTripDateTimeDepArr="dep")
+            elif arrival_time is not None and departure_time is None:
+                return get_trips(start_station, end_station, check_time=arrival_time, itdDateTimeDepArr="arr", itdTripDateTimeDepArr="arr")
+            else:
+                Exception("Either departure_time or arrival_time must be set.")
+        
+        trip_time = get_trip_wrapper(start_station, end_station, departure_time=departure_time, arrival_time=arrival_time)
         if trip_time is None:
-            trip_time = get_trip(end_station, start_station, check_time=start_time)
-        return trip_time if trip_time is not None else -1  # Return -1 if no trip time is found
-    
+            trip_time = get_trip_wrapper(end_station, start_station, departure_time=departure_time, arrival_time=arrival_time)
+        if trip_time is None:
+            Exception("No trip time found.")
+            
+        for trip in trip_time:
+            # Increment each time by 2h
+            for connection in trip.connections:
+                connection.origin.departure_time_estimated += datetime.timedelta(hours=2)
+                connection.origin.departure_time_planned += datetime.timedelta(hours=2)
+                connection.destination.arrival_time_estimated += datetime.timedelta(hours=2)
+                connection.destination.arrival_time_planned += datetime.timedelta(hours=2)
+            
+        return trip_time
