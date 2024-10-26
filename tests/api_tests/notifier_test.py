@@ -13,8 +13,8 @@ class MockToastNotifier:
 
 class TestPushNotifierAPI(unittest.TestCase):
 
-    @patch.object(sys, 'platform', 'win32')
     @patch('win10toast.ToastNotifier', new=MockToastNotifier)  # Patch the actual import
+    @unittest.skipUnless(sys.platform == 'win32', "Skipping Windows-specific tests on non-Windows platforms.")
     def test_init_windows(self):
         api = PushNotifierAPI()
         self.assertIsNotNone(api.toaster)
@@ -31,8 +31,8 @@ class TestPushNotifierAPI(unittest.TestCase):
             self.assertFalse(api.notification_active())
             mocked_print.assert_called_once_with("Notification not supported on this platform.")
 
-    @patch.object(sys, 'platform', 'win32')
     @patch('win10toast.ToastNotifier', new=MockToastNotifier)  # Patch the actual import
+    @unittest.skipUnless(sys.platform == 'win32', "Skipping Windows-specific tests on non-Windows platforms.")
     def test_push_windows(self):
         api = PushNotifierAPI()
         api.push("Test Title", "Test Message", duration=5, icon_path="icon.ico", threaded=False)
