@@ -1,9 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-
-
-class Station:
+class GasStation:
     def __init__(self, name:str, price:float):
         self.name = name
         self.price = price
@@ -12,7 +10,6 @@ class Station:
         return f"{self.name}: {self.price}"
     def __repr__(self) -> str:
         return self.__str__()
-    
 
 fuels  = {
         "lpg": 1,
@@ -23,8 +20,6 @@ fuels  = {
         "super-e5": 7
     }
 
-
-
 def get_soup(city, fuel_name, range_km):
     city = city.replace(" ", "+")
     fuel_type = fuels.get(fuel_name)
@@ -32,9 +27,6 @@ def get_soup(city, fuel_name, range_km):
     url = f"https://www.clever-tanken.de/tankstelle_liste?ort={city}&spritsorte={fuel_type}&r={range_km}"
     response = requests.get(url)
     return BeautifulSoup(response.text, "html.parser")
-
-
-
 
 def get_average_price(city, fuel_name, range_km):
     '''
@@ -59,9 +51,7 @@ def get_average_price(city, fuel_name, range_km):
     # print(f"{avg_fuel} in {avg_city} is {avg_price}")
     return avg_city, avg_fuel, avg_price
 
-
-
-def get_petrol_stations(city, fuel_name, range_km):
+def get_gas_stations(city, fuel_name, range_km):
     '''
     Get gas prices for a city and fuel type
     - param `city`: City name
@@ -85,13 +75,7 @@ def get_petrol_stations(city, fuel_name, range_km):
         if len(line.split("\'")) < 10: continue
         name = line.split("\'")[7]
         price = line.split("\'")[9].replace(",", ".")
-        stations.append(Station(name, float(price)))
+        stations.append(GasStation(name, float(price)))
     # sort by price (lowest first)
     if stations: stations.sort(key=lambda x: x.price)
     return stations
-
-
-
-# if __name__ == "__main__":
-#     # Example call
-#     get_petrol_stations("Stuttgart", "super-e10", 5)

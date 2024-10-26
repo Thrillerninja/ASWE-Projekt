@@ -1,7 +1,6 @@
 from typing import Dict
 
-import petrol
-
+from .petrol import get_gas_stations
 
 class PetrolAPI():
     """
@@ -20,7 +19,7 @@ class PetrolAPI():
         """
         Updates the petrol stations.
         """
-        self.stations = petrol.get_petrol_stations(self.city, self.fuel_name, self.range_km)
+        self.stations = get_gas_stations(self.city, self.fuel_name, self.range_km)
 
     def get_lowest_price_station(self):
         """
@@ -29,10 +28,3 @@ class PetrolAPI():
         if not self.stations:
             self.update_stations()
         return self.stations[0]
-
-
-
-if __name__ == "__main__":
-    # Example call
-    pet1 = PetrolAPI("Stuttgart", "super-e10", 5)
-    print(pet1.get_lowest_price_station())
