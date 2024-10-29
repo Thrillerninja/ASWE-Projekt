@@ -40,6 +40,7 @@ class StateMachine:
         
         self.machine.add_transition(trigger='interact', source='idle', dest='speach')
         self.machine.add_transition(trigger='morning_news', source='welcome', dest='news')
+        self.machine.add_transition(trigger='interaction', source="welcome", dest='speach')
         
         self.machine.add_transition(trigger='exit', source='speach', dest='idle')
         self.machine.add_transition(trigger='goto_welcome', source='speach', dest='welcome')

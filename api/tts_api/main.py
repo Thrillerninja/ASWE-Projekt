@@ -26,8 +26,8 @@ class TTSAPI():
         if not isinstance(text, str) or not text.strip():
             raise ValueError("Text input must be a non-empty string.")
         
-        #self.engine.say(text)
-        #self.engine.runAndWait()
+        self.engine.say(text)
+        self.engine.runAndWait()
 
     def listen(self):
         """
@@ -46,3 +46,25 @@ class TTSAPI():
             return f"Fehler bei der Anfrage an Google Speech Recognition; {0}".format(e)
         except Exception as e:
             return f"Ein Fehler ist aufgetreten: {str(e)}"
+        
+    def ask_yes_no(self, text: str):
+        self.speak(text)
+        response = self.listen()
+        
+        yes_alternatives = ['yes', 'yeah', 'yep', 'ja', 'jep', 'jo']
+        no_alternatives = ['no', 'nope', 'nein']
+        
+        if any(x in response.lower() for x in yes_alternatives):
+            return True 
+        elif any(x in response.lower() for x in no_alternatives):
+            return False
+        else:
+            return self.ask_yes_no("I'm sorry, I didn't understand your response. Please answer with yes or no.")
+        
+        
+    def play_sound(self, sound:str):
+        """
+        Plays a sound
+        """
+        print(f"Playing sound: {sound}")
+        #TODO: Implement sound playing

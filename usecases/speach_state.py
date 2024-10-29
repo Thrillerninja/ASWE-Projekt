@@ -1,3 +1,4 @@
+import datetime
 from typing import Dict
 
 class SpeachState:
@@ -17,9 +18,12 @@ class SpeachState:
         print("SpeachState entered")
         self.voice_interface.speak("Bitte sprechen Sie einen Befehl.")
         
-        while True:
+        start_time = datetime.datetime.now().timestamp()
+        while  datetime.datetime.now().timestamp() - start_time < 10:
             self.check_triggers()
-
+        
+        self.voice_interface.play_sound("idle")
+        
     def check_triggers(self):
         """
         Listens for user input and determines the next action.
