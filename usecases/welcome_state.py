@@ -10,7 +10,7 @@ class WelcomeState:
     def __init__(self, state_machine):
         self.state_machine = state_machine
         
-        self.t2s_api = self.state_machine.api_factory.create_api(api_type="t2s")
+        self.tts_api = self.state_machine.api_factory.create_api(api_type="tts")
         self.transit_api = None # TODO: Replace with transit API object
         self.weather_api = self.state_machine.api_factory.create_api(api_type="weather")
         self.rapla_api = self.state_machine.api_factory.create_api(api_type="rapla")
@@ -34,19 +34,20 @@ class WelcomeState:
         # TODO: Set the alarm using the calculated wakeup_time
 
         # Retrieve and provide the current weather forecast
-        weather_forecast = self.weather_api.get_forecast()
-        self.t2s_api.speak(f"Good morning! It's {datetime.datetime.now().strftime('%H:%M')} The weather forecast for today is: {weather_forecast}")
+        weather_forecast = self.weather_api.get_forecast("Stuttgart")
+        self.tts_api.speak(f"Good morning! It's {datetime.datetime.now().strftime('%H:%M')} The weather forecast for today is: {weather_forecast}")
         
         # Provide the user with the information about their first appointment
         first_appointment = self.rapla_api.get_todays_appointments()[0]
-        self.t2s_api.speak(f"Your first appointment is at {first_appointment.start} in {first_appointment.room}.")
+        self.tts_api.speak(f"Your first appointment is at {first_appointment.start} in {first_appointment.room}.")
         
         # Ask the user if they want to start the next use case (e.g., Nachrichtenassistent)
-        user_response = self.t2s_api.ask_yes_no("Would you like to hear the news?")
+        user_response = self.tts_api.ask_yes_no("Would you like to hear the news?")
         if user_response:
             self.state_machine.transition_to("morning_news")
         else:
-            self.t2s_api.speak("Okay, let me know if you need anything!")
+            self.tts_api.speak("Okay, let me know if you need anything!")
+            self.state_machine.transition_to("interact")
         
     def calc_alarm_time(self):
         """
@@ -69,8 +70,12 @@ class WelcomeState:
      
         # Calculate required time for alarm clock 
         first_appointment_time = datetime.datetime.strptime(first_appointment.start, "%H:%M").time()
+        first_appointment_date = datetime.datetime.strptime(first_appointment.date, "%d.%m.%Y")
+        first_appointment_datetime = datetime.datetime.combine(first_appointment_date, first_appointment_time)
+        
         # Check second alternative process and set latest alarm time to be no later than default_wakeup_time        
         if first_appointment_time > self.default_wakeup_time:
             return self.default_wakeup_time
         
-        return first_appointment_time - datetime.timedelta(minutes=transit_time)
+        alarm_time = first_appointment_datetime - datetime.timedelta(minutes=transit_time)
+        return alarm_time.time()

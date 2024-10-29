@@ -1,1 +1,1 @@
-from .main import VoiceInterface
+from .main import TTSAPI
