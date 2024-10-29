@@ -1,0 +1,16 @@
+{
+    "access_token": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM1BRTlQiLCJzdWIiOiI3M0c4SE0iLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyYWN0IHJsb2MgcndlaSByaHIgcnBybyByc2xlIiwiZXhwIjoxNzMwMjY4MzE4LCJpYXQiOjE3MzAyMzk1MTh9.8U87K3jv-qACIzRX_N92otDuUe113BnUt5rDDcxHKBs",
+    "expires_in": 28800,
+    "refresh_token": "b97d5ca8134dc79f62a4d04321dc2d62746f5ca76b14c8d89ab0ec9f7c2274da",
+    "scope": [
+        "activity",
+        "location",
+        "heartrate",
+        "profile",
+        "weight",
+        "sleep"
+    ],
+    "token_type": "Bearer",
+    "user_id": "73G8HM",
+    "expires_at": 1730268318.3713791
+}
