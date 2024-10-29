@@ -1,7 +1,7 @@
 import pyttsx3
 import speech_recognition as sr
 
-class VoiceInterface():
+class TTSAPI():
     """
     Class for text to speech and speech to text
     """
@@ -26,8 +26,8 @@ class VoiceInterface():
         if not isinstance(text, str) or not text.strip():
             raise ValueError("Text input must be a non-empty string.")
         
-        self.engine.say(text)
-        self.engine.runAndWait()
+        #self.engine.say(text)
+        #self.engine.runAndWait()
 
     def listen(self):
         """

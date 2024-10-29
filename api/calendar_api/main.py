@@ -2,7 +2,7 @@ import datetime
 import json
 from typing import Dict, List
 from api.api_client import APIClient
-import rapla
+from . import rapla
 
 
 class RaplaAPI(APIClient):
@@ -17,12 +17,18 @@ class RaplaAPI(APIClient):
         self.url:str = url
         self.calendar:rapla.Calendar = calendar
         if not calendar: self.update_rapla_calendar()
+        
+    def authenticate(self):
+        """
+        Authentication is not required for accessing rapla.
+        """
+        pass
 
     def update_rapla_calendar(self):
         """
         Updates the rapla calendar with the url.
         """
-        self.calendar = rapla.create_calendar_from_rapla(url)
+        self.calendar = rapla.create_calendar_from_rapla(self.url)
 
     def get_todays_appointments(self) -> List[rapla.Appointment]:
         """
