@@ -53,6 +53,24 @@ class TestVoiceInterface(unittest.TestCase):
 
         result = self.voice_interface.listen()
         self.assertIn("Ein Fehler ist aufgetreten", result)
+        
+    def test_yes_no(self):
+        """
+        Test ask_yes_no functionality
+        """
+        with patch.object(self.voice_interface, 'speak') as mock_speak:
+            with patch.object(self.voice_interface, 'listen') as mock_listen:
+                mock_listen.return_value = "yes"
+                self.assertTrue(self.voice_interface.ask_yes_no("Do you like ice cream?"))
+                mock_speak.assert_called_with("Do you like ice cream?")
+
+                mock_listen.return_value = "no"
+                self.assertFalse(self.voice_interface.ask_yes_no("Do you like ice cream?"))
+                mock_speak.assert_called_with("Do you like ice cream?")
+
+                mock_listen.return_value = "I don't know"
+                self.assertFalse(self.voice_interface.ask_yes_no("Do you like ice cream?"))
+                mock_speak.assert_called_with("Do you like ice cream?")
 
 if __name__ == '__main__':
     unittest.main()
