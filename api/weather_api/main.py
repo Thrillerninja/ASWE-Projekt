@@ -40,7 +40,42 @@ class WeatherAPI(APIClient):
         """
         params = {
             'q': city,
+            'units': units,
+            'appid': self.api_key
+        }
+        return self.get('weather', params=params)
+    
+    def get_forecast(self, city: str, units: str = 'metric') -> Dict:
+        """
+        Retrieves weather forecast data for the specified city.
+
+        :param city: Name of the city (e.g., "Berlin").
+        :param units: Units of measurement ('metric', 'imperial', or 'standard').
+        :return: Weather forecast as a string.
+        """
+        params = {
+            'q': city,
             'appid': self.api_key,
             'units': units
         }
-        return self.get('weather', params=params)
+        response = self.get('forecast', params=params)
+        forecast = self.format_forecast(response)
+        return forecast
+    
+    def format_forecast(self, forecast: Dict) -> str:
+        """
+        Formats the weather forecast data into a human-readable string.
+
+        :param forecast: Weather forecast data as a dictionary.
+        :return: Formatted weather forecast as a string.
+        """
+        city = forecast['city']['name']
+        country = forecast['city']['country']
+        lines = [f"Forecast for {city}, {country}:"]
+        for item in forecast['list']:
+            date = item['dt_txt']
+            temp = item['main']['temp']
+            desc = item['weather'][0]['description']
+            line = f"{date}: {temp}°C, {desc}"
+            lines.append(line)
+        return '\n'.join(lines)

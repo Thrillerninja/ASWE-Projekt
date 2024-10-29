@@ -2,7 +2,8 @@ from typing import Dict
 from api.api_client import APIClient
 from api.weather_api.main import WeatherAPI
 from api.finance_api import FinanceAPI
-from api.rapla_api import RaplaAPI
+from api.calendar_api import RaplaAPI
+from api.tts_api import TTSAPI
 
 class APIFactory:
     """
@@ -31,5 +32,7 @@ class APIFactory:
             return FinanceAPI(self.config['finance_api_key'])
         elif api_type == 'rapla':
             return RaplaAPI(self.config['rapla_url'])
+        elif api_type == 'tts':
+            return TTSAPI()
         else:
             raise ValueError(f"API type '{api_type}' is not supported.")

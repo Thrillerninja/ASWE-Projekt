@@ -1,5 +1,4 @@
 from typing import Dict
-from api.tts_api import VoiceInterface
 
 class SpeachState:
     """
@@ -8,7 +7,7 @@ class SpeachState:
 
     def __init__(self, state_machine):
         self.state_machine = state_machine
-        self.voice_interface = state_machine.api_factory.create_api(api_type="t2s")
+        self.voice_interface = state_machine.api_factory.create_api(api_type="tts")
         print("SpeachState initialized")
 
     def on_enter(self):
