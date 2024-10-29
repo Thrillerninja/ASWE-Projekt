@@ -44,10 +44,10 @@ class WelcomeState:
         # Ask the user if they want to start the next use case (e.g., Nachrichtenassistent)
         user_response = self.tts_api.ask_yes_no("Would you like to hear the news?")
         if user_response:
-            self.state_machine.transition_to("morning_news")
+            self.state_machine.morning_news()
         else:
             self.tts_api.speak("Okay, let me know if you need anything!")
-            self.state_machine.transition_to("interact")
+            self.state_machine.interaction()
         
     def calc_alarm_time(self):
         """

@@ -26,8 +26,8 @@ class TTSAPI():
         if not isinstance(text, str) or not text.strip():
             raise ValueError("Text input must be a non-empty string.")
         
-        #self.engine.say(text)
-        #self.engine.runAndWait()
+        self.engine.say(text)
+        self.engine.runAndWait()
 
     def listen(self):
         """
@@ -60,3 +60,11 @@ class TTSAPI():
             return False
         else:
             return self.ask_yes_no("I'm sorry, I didn't understand your response. Please answer with yes or no.")
+        
+        
+    def play_sound(self, sound:str):
+        """
+        Plays a sound
+        """
+        print(f"Playing sound: {sound}")
+        #TODO: Implement sound playing
