@@ -59,8 +59,24 @@ class WeatherAPI(APIClient):
             'units': units
         }
         response = self.get('forecast', params=params)
-        forecast = self.format_forecast(response)
-        return forecast
+        daily_forecast = {}
+        for item in response['list']:
+            date = item['dt_txt'].split(' ')[0]
+            if date not in daily_forecast:
+                daily_forecast[date] = {
+                    'temp_min': item['main']['temp_min'],
+                    'temp_max': item['main']['temp_max'],
+                    'description': item['weather'][0]['description']
+                }
+            else:
+                daily_forecast[date]['temp_min'] = min(daily_forecast[date]['temp_min'], item['main']['temp_min'])
+                daily_forecast[date]['temp_max'] = max(daily_forecast[date]['temp_max'], item['main']['temp_max'])
+            
+        formatted_forecast = []
+        for date, data in daily_forecast.items():
+            formatted_forecast.append(f"{data['temp_min']}°C to {data['temp_max']}°C, {data['description']}")
+        
+        return "Aktuelles Wetter" + formatted_forecast[0] + " Heute Mittag" + formatted_forecast[len(formatted_forecast)//2] + " Morgen" + formatted_forecast[-1]
     
     def format_forecast(self, forecast: Dict) -> str:
         """

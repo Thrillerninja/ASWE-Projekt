@@ -9,8 +9,11 @@ class TTSAPI():
         """
         Initializes the Interface
         """
-        self.engine = pyttsx3.init()
-
+        self.engine = pyttsx3.init(driverName='sapi5')
+        
+        voices = self.engine.getProperty('voices')
+        self.engine.setProperty('voice', voices[1].id)
+        
         self.r = sr.Recognizer()
         
     def authenticate(self):
@@ -28,6 +31,16 @@ class TTSAPI():
         
         self.engine.say(text)
         self.engine.runAndWait()
+        
+    def list_mics(self):
+        """
+        Lists all available microphones
+        """
+        mics = sr.Microphone.list_microphone_names()
+        print("Available microphones:")
+        for i, mic in enumerate(mics):
+            print(f"{i}: {mic}")
+        return mics
 
     def listen(self):
         """
