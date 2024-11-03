@@ -71,6 +71,3 @@ class TestVoiceInterface(unittest.TestCase):
                 mock_listen.return_value = "I don't know"
                 self.assertFalse(self.voice_interface.ask_yes_no("Do you like ice cream?"))
                 mock_speak.assert_called_with("Do you like ice cream?")
-
-if __name__ == '__main__':
-    unittest.main()
