@@ -43,8 +43,8 @@ class WelcomeState:
         
         self.tts_api.speak(f"Good morning! It's {datetime.datetime.now().strftime('%H:%M')}. The weather forecast for today is: minimum temperature {min_temp}°C, maximum temperature {max_temp}°C, and it will be {condition}. Right now its {current_weather['main']['temp']}°C.")
         
-        # Ckeck for delays in the public transport
-        
+        # TODO: Check for delays in the public transport
+
         
         
         # Provide the user with the information about their first appointment

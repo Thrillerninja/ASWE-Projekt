@@ -112,7 +112,7 @@ class WeatherAPI(APIClient):
                 weather.append(item)
                 
         if not weather:
-            return None
+            return {}
 
         # Extract relevant data
         day_min_temp = float('inf')
