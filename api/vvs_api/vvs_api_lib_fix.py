@@ -115,7 +115,7 @@ def get_trips(
         "useLocalityMainStop": kwargs.get("useLocalityMainStop", "0"),
         "useRealtime": kwargs.get("useRealtime", "1"),
         "useUT": kwargs.get("useUT", "1"),
-        "version": kwargs.get("version", "10.2.10.139"),
+        "version": kwargs.get("version", "10.2" + ".10.139"),
         "w_objPrefAl": kwargs.get("w_objPrefAl", "12"),
         "w_regPrefAm": kwargs.get("w_regPrefAm", "1"),
     }
