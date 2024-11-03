@@ -35,13 +35,17 @@ class WelcomeState:
 
         # Retrieve and provide the current weather forecast
         weather_forecast = self.weather_api.get_daily_forecast("Stuttgart", datetime.datetime.today()) # Using tomorrow's date
-        min_temp = weather_forecast['min_temp']
-        max_temp = weather_forecast['max_temp']
-        condition = weather_forecast['avg_condition']
+        min_temp = weather_forecast.get('min_temp', None)
+        max_temp = weather_forecast.get('max_temp', None)
+        condition = weather_forecast.get('avg_condition', None)
         
         current_weather = self.weather_api.get_weather("Stuttgart")
         
-        self.tts_api.speak(f"Good morning! It's {datetime.datetime.now().strftime('%H:%M')}. The weather forecast for today is: minimum temperature {min_temp}°C, maximum temperature {max_temp}°C, and it will be {condition}. Right now its {current_weather['main']['temp']}°C.")
+        # Build a string with the populated elements and provide the user with the information
+        good_morning_message = f"Good morning! It's {datetime.datetime.now().strftime('%H:%M')}. "
+        weather_info = f"The weather forecast for today is: Minimum temperature: {min_temp}°C, Maximum temperature: {max_temp}°C" if min_temp is not None and max_temp is not None else f"and it will be {condition}" if condition is not None else ""
+        current_weather_info = f"Right now its {current_weather['main']['temp']}°C." if current_weather else ""
+        self.tts_api.speak(good_morning_message + weather_info + current_weather_info)
         
         # TODO: Check for delays in the public transport
 

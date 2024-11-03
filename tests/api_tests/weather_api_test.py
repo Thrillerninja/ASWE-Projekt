@@ -32,7 +32,7 @@ class TestWeatherAPI(unittest.TestCase):
 
         # Assert the response matches the mock
         self.assertEqual(response['weather'][0]['description'], CLEAR_SKY)
-        self.assertEqual(response['main']['humidity'], 70)
+        self.assertEqual(response['main']['temp'], 15)
 
     @patch('api.weather_api.main.APIClient.get')
     def test_get_forecast(self, mock_get):
