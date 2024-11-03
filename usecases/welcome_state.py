@@ -34,7 +34,7 @@ class WelcomeState:
         # TODO: Set the alarm using the calculated wakeup_time
 
         # Retrieve and provide the current weather forecast
-        weather_forecast = self.weather_api.get_daily_forecast("Stuttgart") # Using tomorrow's date
+        weather_forecast = self.weather_api.get_daily_forecast("Stuttgart", datetime.datetime.today()) # Using tomorrow's date
         min_temp = weather_forecast['min_temp']
         max_temp = weather_forecast['max_temp']
         condition = weather_forecast['avg_condition']

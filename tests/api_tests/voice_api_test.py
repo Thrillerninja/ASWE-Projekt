@@ -1,12 +1,12 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from api.tts_api import VoiceInterface
+from api.tts_api import TTSAPI
 import pyttsx3
 import speech_recognition as sr
 
 class TestVoiceInterface(unittest.TestCase):
     def setUp(self):
-        self.voice_interface = VoiceInterface()
+        self.voice_interface = TTSAPI()
         self.voice_interface.engine = MagicMock()
 
     @patch('pyttsx3.init')
@@ -16,7 +16,7 @@ class TestVoiceInterface(unittest.TestCase):
         """
         mock_pyttsx3_init.return_value = self.voice_interface.engine
 
-        vi = VoiceInterface()
+        vi = TTSAPI()
         mock_pyttsx3_init.assert_called_once()
         self.assertIsNotNone(vi.r)
 
@@ -28,7 +28,7 @@ class TestVoiceInterface(unittest.TestCase):
         mock_engine = MagicMock()
         mock_pyttsx3_init.return_value = mock_engine
 
-        vi = VoiceInterface()
+        vi = TTSAPI()
         vi.speak("Hello")
         mock_engine.say.assert_called_with("Hello")
         mock_engine.runAndWait.assert_called_once()

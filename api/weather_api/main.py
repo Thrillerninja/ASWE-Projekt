@@ -62,7 +62,7 @@ class WeatherAPI(APIClient):
         response = self.get('data/2.5/forecast', params=params)
         return response
     
-    def get_formated_forecast(self, city: str, units: str = 'metric') -> str:
+    def get_formatted_forecast(self, city: str, units: str = 'metric') -> str:
         """
         Retrieves the formatted weather forecast for the specified city.
         
