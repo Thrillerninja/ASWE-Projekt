@@ -48,10 +48,13 @@ class TTSAPI():
         """
         try:
             with sr.Microphone() as source:
+                self.speak("Ich höre zu...")
                 self.r.adjust_for_ambient_noise(source)
                 audio = self.r.listen(source)
+                self.speak("Verarbeitung der Eingabe...")
 
                 text = self.r.recognize_google(audio, language="de-DE")
+                print(text)
                 return text
         except sr.UnknownValueError:
             return "Google konnte das Audio nicht verstehen"

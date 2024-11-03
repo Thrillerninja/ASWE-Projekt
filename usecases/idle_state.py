@@ -22,9 +22,4 @@ class IdleState:
         """
         Check if a trigger is activated.
         """
-        trigger = input("Press 's' to start the next usecase: ")
-        if trigger == 's':
-            self.state_machine.start()
-            return
-        else:
-            print("Invalid input. Please try again.")
+        self.state_machine.start()

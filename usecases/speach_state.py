@@ -23,12 +23,17 @@ class SpeachState:
             self.check_triggers()
         
         self.voice_interface.play_sound("idle")
-        
+        self.voice_interface.speak("Spracherkennung beendet.")
+
     def check_triggers(self):
         """
         Listens for user input and determines the next action.
         """
         user_input = self.voice_interface.listen()
+        if not user_input:
+            self.voice_interface.speak("Keine Eingabe erkannt. Bitte versuchen Sie es erneut.")
+            return
+        
         print(f"User said: {user_input}")
         
         # Interpret the user's input and trigger the appropriate state transition
