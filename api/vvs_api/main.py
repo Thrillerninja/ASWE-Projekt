@@ -34,7 +34,7 @@ class VVSAPI(APIClient):
         """
         pass
     
-    def search_station(self, station_name: str, type: VSSStationType) -> List[Station]:
+    def search_station(self, station_name: str, station_type: VSSStationType) -> List[Station]:
         """
         Search for stations by name and filter by station type.
 
@@ -46,9 +46,9 @@ class VVSAPI(APIClient):
             List[Station]: List of stations matching the search string and type.
         """
         stations = self.get_stations_by_name(station_name)
-        type = type.value
+        station_type = station_type.value
         
-        return [station for station in stations if station.type == type]
+        return [station for station in stations if station.type == station_type]
 
     def get_stations_by_name(self, name: str, **kwargs) -> List[Stop]:
         """
@@ -105,13 +105,13 @@ class VVSAPI(APIClient):
             elif arrival_time is not None and departure_time is None:
                 return get_trips(start_station, end_station, check_time=arrival_time, itdDateTimeDepArr="arr", itdTripDateTimeDepArr="arr")
             else:
-                Exception("Either departure_time or arrival_time must be set.")
+                raise ValueError("Either departure_time or arrival_time must be set.")
         
         trip_time = get_trip_wrapper(start_station, end_station, departure_time=departure_time, arrival_time=arrival_time)
         if trip_time is None:
             trip_time = get_trip_wrapper(end_station, start_station, departure_time=departure_time, arrival_time=arrival_time)
         if trip_time is None:
-            Exception("No trip time found.")
+            raise ValueError("No trip time found.")
             
         for trip in trip_time:
             # Increment each time by 2h

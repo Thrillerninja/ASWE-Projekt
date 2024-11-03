@@ -11,6 +11,7 @@ class TestVVSAPI(unittest.TestCase):
 
     def setUp(self):
         self.api = VVSAPI()
+        self.example_station_str = 'Stuttgarter Straße'
 
     def test_initialization(self):
         self.assertEqual(self.api.base_url, "https://www3.vvs.de/vvs/")
@@ -20,17 +21,17 @@ class TestVVSAPI(unittest.TestCase):
         try:
             result = self.api.search_station("stut", VSSStationType.HALTESTELLE)
             self.assertGreater(len(result), 0)
-            self.assertEqual(result[0].disassembled_name, 'Stuttgarter Straße')
+            self.assertEqual(result[0].disassembled_name, self.example_station_str)
             self.assertEqual(result[0].type, "stop")
         except Exception as e:
             print(f"Direct test failed: {e}")
             with patch('api.vvs_api.VVSAPI.search_station') as mock_search_station:
                 mock_search_station.return_value = [
-                    MagicMock(disassembled_name='Stuttgarter Straße', type='stop')
+                    MagicMock(disassembled_name=self.example_station_str, type='stop')
                 ]
                 result = self.api.search_station("stut", VSSStationType.HALTESTELLE)
                 self.assertGreater(len(result), 0)
-                self.assertEqual(result[0].disassembled_name, 'Stuttgarter Straße')
+                self.assertEqual(result[0].disassembled_name, self.example_station_str)
                 self.assertEqual(result[0].type, "stop")
 
     def test_calc_trip_time(self):
@@ -124,9 +125,9 @@ class TestStop(unittest.TestCase):
         stop = Stop(type="stop", id="de:08111:6020", name="Stuttgarter Straße", match_quality=None)
         self.assertEqual(str(stop), "Stop(type=stop,id=de:08111:6020, name=Stuttgarter Straße, matchQuality=None)")
         stop.info()
-        self.assertEqual(stop.stop_name, None)
-        self.assertEqual(stop.name_wo, None)
-        self.assertEqual(stop.point_type, None)
+        self.assertIsNone(stop.stop_name)
+        self.assertIsNone(stop.name_wo)
+        self.assertIsNone(stop.point_type)
         self.assertEqual(stop.countdown, 0)
         
     def test_parse_stop_info(self):
@@ -138,9 +139,9 @@ class TestStop(unittest.TestCase):
         })
         self.assertEqual(str(stop), "Stop(type=stop,id=de:08111:6020, name=Stuttgarter Straße, matchQuality=100)")
         stop.info()
-        self.assertEqual(stop.stop_name, None)
-        self.assertEqual(stop.name_wo, None)
-        self.assertEqual(stop.point_type, None)
+        self.assertIsNone(stop.stop_name)
+        self.assertIsNone(stop.name_wo)
+        self.assertIsNone(stop.point_type)
         self.assertEqual(stop.countdown, 0)
         
     def test_vss_station_type(self):
@@ -150,6 +151,8 @@ class TestStop(unittest.TestCase):
         self.assertEqual(VSSStationType.MISC.value, "uncategorized")
         
 class TestVVSApiLibFix(unittest.TestCase):
+    REQUESTS_GET = 'requests.get'
+
     def test_get_trips_success(self):
         with patch.object(VVSAPI, 'get', return_value=MagicMock(status_code=200, json=lambda: {"trips": []})):
             result = get_trips(Station.CANNSTATTER_WASEN, Station.DITZINGEN_HERDWEG)
@@ -157,7 +160,7 @@ class TestVVSApiLibFix(unittest.TestCase):
 
     def test_get_trips_comms_err(self):
         # Simulate a 500 server error response
-        with patch('requests.get') as mock_get:
+        with patch(self.REQUESTS_GET) as mock_get:
             mock_response = MagicMock()
             mock_response.status_code = 500
             mock_response.text = "Internal Server Error"
@@ -172,7 +175,7 @@ class TestVVSApiLibFix(unittest.TestCase):
 
     def test_get_trips_invalid_json(self):
         # Simulate a 200 OK response with invalid JSON content
-        with patch('requests.get') as mock_get:
+        with patch(self.REQUESTS_GET) as mock_get:
             mock_response = MagicMock()
             mock_response.status_code = 200
             # This will raise JSONDecodeError when `.json()` is called
@@ -184,7 +187,7 @@ class TestVVSApiLibFix(unittest.TestCase):
 
     def test_get_trips_status_code(self):
         # Simulate a 404 not found error response
-        with patch('requests.get', return_value=MagicMock(status_code=404, text="Not Found")):
+        with patch(self.REQUESTS_GET, return_value=MagicMock(status_code=404, text="Not Found")):
             with self.assertRaises(Exception) as context:
                 get_trips(Station.CANNSTATTER_WASEN, Station.DITZINGEN_HERDWEG)
             self.assertIn("Error in API request: 404", str(context.exception))

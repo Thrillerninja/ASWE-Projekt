@@ -131,7 +131,7 @@ def get_trips(
         __logger.error("Error in API request")
         __logger.error(f"Request: {r.status_code}")
         __logger.error(f"{r.text}")
-        raise Exception(f"Error in API request: {r.status_code}")
+        raise requests.exceptions.HTTPError(f"Error in API request: {r.status_code}")
 
     if return_response:
         return r

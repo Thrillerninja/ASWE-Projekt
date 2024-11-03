@@ -123,10 +123,10 @@ class VSSStationType(Enum):
     
 class VVSProdukte(Enum):
     """
-    Enum class for different types of transport services.
+    Enum class for different types of transport services. Not all are known since there are no docs
     """
-    X1=0
-    X2=1 #TODO: Valid descriptors
-    X3=3
-    X4=5
-    X5=11
+    TRAIN=0
+    SBAHN=1
+    STADTBAHN=3
+    BUS=5
+    FOOTPATH=100
