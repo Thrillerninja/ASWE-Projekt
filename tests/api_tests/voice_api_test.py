@@ -20,23 +20,26 @@ class TestVoiceInterface(unittest.TestCase):
         mock_pyttsx3_init.assert_called_once()
         self.assertIsNotNone(vi.r)
 
-    @patch('pyttsx3.Engine.say')
-    @patch('pyttsx3.Engine.runAndWait')
-    def test_speak(self, mock_run_and_wait, mock_say):
+    @patch('pyttsx3.init')
+    def test_speak(self, mock_pyttsx3_init):
         """
         Test speak functionality with valid and invalid inputs
         """
-        self.voice_interface.speak("Hello")
-        mock_say.assert_called_with("Hello")
-        mock_run_and_wait.assert_called_once()
+        mock_engine = MagicMock()
+        mock_pyttsx3_init.return_value = mock_engine
+
+        vi = VoiceInterface()
+        vi.speak("Hello")
+        mock_engine.say.assert_called_with("Hello")
+        mock_engine.runAndWait.assert_called_once()
 
         # Test empty string
         with self.assertRaises(ValueError):
-            self.voice_interface.speak("")
+            vi.speak("")
 
         # Test non-string input
         with self.assertRaises(ValueError):
-            self.voice_interface.speak(123)
+            vi.speak(123)
 
     @patch('speech_recognition.Recognizer.recognize_google')
     @patch('speech_recognition.Recognizer.listen')
@@ -45,7 +48,7 @@ class TestVoiceInterface(unittest.TestCase):
         """
         Test listen handling for a general exception
         """
-        mock_listen.return_value = self.voice_interface.engine
+        mock_listen.return_value = MagicMock()
         mock_recognize_google.side_effect = Exception("General Error")
 
         result = self.voice_interface.listen()
