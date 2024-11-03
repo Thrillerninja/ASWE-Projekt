@@ -7,38 +7,39 @@ import speech_recognition as sr
 class TestVoiceInterface(unittest.TestCase):
     def setUp(self):
         self.voice_interface = VoiceInterface()
+        self.voice_interface.engine = MagicMock()
 
     @patch('pyttsx3.init')
     def test_init(self, mock_pyttsx3_init):
         """
         Test initialization of VoiceInterface
         """
-        mock_engine = MagicMock()
-        mock_pyttsx3_init.return_value = mock_engine
+        mock_pyttsx3_init.return_value = self.voice_interface.engine
 
         vi = VoiceInterface()
         mock_pyttsx3_init.assert_called_once()
         self.assertIsNotNone(vi.r)
 
-    @patch('pyttsx3.Engine')
-    def test_speak(self, mock_engine):
+    @patch('pyttsx3.init')
+    def test_speak(self, mock_pyttsx3_init):
         """
         Test speak functionality with valid and invalid inputs
         """
         mock_engine = MagicMock()
-        self.voice_interface.engine = mock_engine
+        mock_pyttsx3_init.return_value = mock_engine
 
-        self.voice_interface.speak("Hello")
+        vi = VoiceInterface()
+        vi.speak("Hello")
         mock_engine.say.assert_called_with("Hello")
         mock_engine.runAndWait.assert_called_once()
 
         # Test empty string
         with self.assertRaises(ValueError):
-            self.voice_interface.speak("")
+            vi.speak("")
 
         # Test non-string input
         with self.assertRaises(ValueError):
-            self.voice_interface.speak(123)
+            vi.speak(123)
 
     @patch('speech_recognition.Recognizer.recognize_google')
     @patch('speech_recognition.Recognizer.listen')
@@ -47,8 +48,7 @@ class TestVoiceInterface(unittest.TestCase):
         """
         Test listen handling for a general exception
         """
-        mock_audio = MagicMock()
-        mock_listen.return_value = mock_audio
+        mock_listen.return_value = MagicMock()
         mock_recognize_google.side_effect = Exception("General Error")
 
         result = self.voice_interface.listen()
@@ -58,19 +58,17 @@ class TestVoiceInterface(unittest.TestCase):
         """
         Test ask_yes_no functionality
         """
+        question = "Do you like ice cream?"
         with patch.object(self.voice_interface, 'speak') as mock_speak:
             with patch.object(self.voice_interface, 'listen') as mock_listen:
                 mock_listen.return_value = "yes"
-                self.assertTrue(self.voice_interface.ask_yes_no("Do you like ice cream?"))
-                mock_speak.assert_called_with("Do you like ice cream?")
+                self.assertTrue(self.voice_interface.ask_yes_no(question))
+                mock_speak.assert_called_with(question)
 
                 mock_listen.return_value = "no"
-                self.assertFalse(self.voice_interface.ask_yes_no("Do you like ice cream?"))
-                mock_speak.assert_called_with("Do you like ice cream?")
-
+                self.assertFalse(self.voice_interface.ask_yes_no(question))
+                mock_speak.assert_called_with(question)
+                
                 mock_listen.return_value = "I don't know"
-                self.assertFalse(self.voice_interface.ask_yes_no("Do you like ice cream?"))
-                mock_speak.assert_called_with("Do you like ice cream?")
-
-if __name__ == '__main__':
-    unittest.main()
+                self.assertFalse(self.voice_interface.ask_yes_no(question))
+                mock_speak.assert_called_with(question)
