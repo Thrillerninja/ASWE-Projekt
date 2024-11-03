@@ -34,12 +34,26 @@ class WelcomeState:
         # TODO: Set the alarm using the calculated wakeup_time
 
         # Retrieve and provide the current weather forecast
-        weather_forecast = self.weather_api.get_forecast("Stuttgart")
-        self.tts_api.speak(f"Good morning! It's {datetime.datetime.now().strftime('%H:%M')} The weather forecast for today is: {weather_forecast}")
+        weather_forecast = self.weather_api.get_daily_forecast("Stuttgart") # Using tomorrow's date
+        min_temp = weather_forecast['min_temp']
+        max_temp = weather_forecast['max_temp']
+        condition = weather_forecast['avg_condition']
+        
+        current_weather = self.weather_api.get_weather("Stuttgart")
+        
+        self.tts_api.speak(f"Good morning! It's {datetime.datetime.now().strftime('%H:%M')}. The weather forecast for today is: minimum temperature {min_temp}°C, maximum temperature {max_temp}°C, and it will be {condition}. Right now its {current_weather['main']['temp']}°C.")
+        
+        # Ckeck for delays in the public transport
+        
+        
         
         # Provide the user with the information about their first appointment
-        first_appointment = self.rapla_api.get_todays_appointments()[0]
-        self.tts_api.speak(f"Your first appointment is at {first_appointment.start} in {first_appointment.room}.")
+        appointments = self.rapla_api.get_todays_appointments()
+        if appointments:
+            first_appointment = appointments[0]
+            self.tts_api.speak(f"Your first appointment is at {first_appointment.start} in {first_appointment.room}.")
+        else:
+            self.tts_api.speak("You have no appointments today.")
         
         # Ask the user if they want to start the next use case (e.g., Nachrichtenassistent)
         user_response = self.tts_api.ask_yes_no("Would you like to hear the news?")
@@ -57,7 +71,7 @@ class WelcomeState:
         # Retrieve user's calendar entries for the next day 
         calendar_entries = self.rapla_api.get_todays_appointments()
         
-        if calendar_entries == None:
+        if not calendar_entries:
             return self.default_wakeup_time
         
         first_appointment = calendar_entries[0]        
