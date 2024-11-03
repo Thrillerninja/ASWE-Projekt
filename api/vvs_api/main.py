@@ -50,7 +50,7 @@ class VVSAPI(APIClient):
         
         return [station for station in stations if station.type == type]
 
-    def get_stations_by_name(self, name: str, request_params: dict = None, session: requests.Session = None, **kwargs) -> List[Stop]:
+    def get_stations_by_name(self, name: str, **kwargs) -> List[Stop]:
         """
         Get stations from the VVS API by searching for the name.
 
@@ -61,8 +61,6 @@ class VVSAPI(APIClient):
         Returns:
             List[Stop]: List of Stop objects.
         """
-        if request_params is None:
-            request_params = dict()
 
         params = {
             "coordOutputFormat": kwargs.get("coordOutputFormat", "WGS84[DD.ddddd]"),
