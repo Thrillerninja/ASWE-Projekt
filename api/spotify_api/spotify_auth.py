@@ -5,19 +5,17 @@ from urllib.parse import urlencode
 import base64
 import os
 
-CLIENT_ID = 'b559fd0ad8e445249af8ed32d143188d'
-CLIENT_SECRET = '53045b0bfefa411fbb3457c518b58320'
 REDIRECT_URI = 'https://example.com/callback/'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
 TOKEN_FILE = os.path.join(os.path.dirname(__file__), 'spotify_token.json')
 
-def generate_auth_url():
+def generate_auth_url(client_id):
     """
     Generates the Spotify authorization URL for user authentication.
     Instructs the user to open the URL and copy the authorization code.
     """
     params = {
-        'client_id': CLIENT_ID,
+        'client_id': client_id,
         'response_type': 'code',
         'redirect_uri': REDIRECT_URI,
         'scope': 'playlist-read-private user-modify-playback-state user-read-playback-state'
@@ -26,7 +24,7 @@ def generate_auth_url():
     print("Open the following link in your browser and copy the 'code' parameter:")
     print(auth_url)
 
-def get_initial_token(auth_code):
+def get_initial_token(auth_code, client_id, client_secret):
     """
     Retrieves the initial access token using the authorization code.
     Saves the token to a local file for future use.
@@ -34,7 +32,7 @@ def get_initial_token(auth_code):
     :param auth_code: The authorization code received from Spotify after user authentication.
     """
     # Base64-encoded Client ID and Secret
-    auth_str = f"{CLIENT_ID}:{CLIENT_SECRET}"
+    auth_str = f"{client_id}:{client_secret}"
     b64_auth_str = base64.b64encode(auth_str.encode()).decode()
 
     headers = {
@@ -56,7 +54,7 @@ def get_initial_token(auth_code):
         print("Error retrieving the token:", response.status_code)
         print(response.json())
 
-def refresh_token():
+def refresh_token(client_id, client_secret):
     """
     Refreshes the access token using the stored refresh token.
     Updates the local token file with the new access token.
@@ -65,7 +63,7 @@ def refresh_token():
         token_data = json.load(f)
 
     headers = {
-        'Authorization': 'Basic ' + (CLIENT_ID + ':' + CLIENT_SECRET).encode('ascii').decode('latin1')
+        'Authorization': 'Basic ' + (client_id + ':' + client_secret).encode('ascii').decode('latin1')
     }
     data = {
         'grant_type': 'refresh_token',

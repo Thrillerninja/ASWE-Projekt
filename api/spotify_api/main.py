@@ -9,11 +9,13 @@ class SpotifyAPI(APIClient):
     Automatically updates the token before each request.
     """
 
-    def __init__(self):
+    def __init__(self, client_id, client_secret):
         """
         Initializes the Spotify API client with the base URL.
         """
         base_url = "https://api.spotify.com/v1"
+        self.client_id = client_id
+        self.client_secret = client_secret
         super().__init__(base_url=base_url)
         self.update_token()
 
@@ -22,7 +24,7 @@ class SpotifyAPI(APIClient):
         Authenticates with the Spotify API by retrieving an access token.
         :return: Access token as a string.
         """
-        return get_access_token()
+        return get_access_token(self.client_id, self.client_secret)
 
     def update_token(self):
         """

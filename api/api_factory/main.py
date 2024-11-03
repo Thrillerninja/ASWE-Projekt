@@ -3,7 +3,7 @@ from api.api_client import APIClient
 from api.weather_api.main import WeatherAPI
 from api.finance_api import FinanceAPI
 # from api.maps import MapsAPI
-# from api.spotify import SpotifyAPI
+from api.spotify_api import SpotifyAPI
 # from api.news import NewsAPI
 
 class APIFactory:
@@ -33,12 +33,11 @@ class APIFactory:
             return FinanceAPI(self.config['finance_api_key'])
         # elif api_type == 'maps':
             # return MapsAPI(self.config['maps_api_key'])
-        # elif api_type == 'spotify':
-            # return SpotifyAPI(
-                # client_id=self.config['spotify_client_id'],
-                # client_secret=self.config['spotify_client_secret'],
-                # refresh_token=self.config['spotify_refresh_token']
-            # )
+        elif api_type == 'spotify':
+            return SpotifyAPI(
+                client_id=self.config['spotify_client_id'],
+                client_secret=self.config['spotify_client_secret']
+            )
         # elif api_type == 'news':
             # return NewsAPI(self.config['news_api_key'])
         else:
