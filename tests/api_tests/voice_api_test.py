@@ -20,15 +20,15 @@ class TestVoiceInterface(unittest.TestCase):
         mock_pyttsx3_init.assert_called_once()
         self.assertIsNotNone(vi.r)
 
-    @patch('pyttsx3.Engine')
-    def test_speak(self, mock_engine):
+    @patch('pyttsx3.Engine.say')
+    @patch('pyttsx3.Engine.runAndWait')
+    def test_speak(self, mock_run_and_wait, mock_say):
         """
         Test speak functionality with valid and invalid inputs
         """
-
         self.voice_interface.speak("Hello")
-        mock_engine.say.assert_called_with("Hello")
-        mock_engine.runAndWait.assert_called_once()
+        mock_say.assert_called_with("Hello")
+        mock_run_and_wait.assert_called_once()
 
         # Test empty string
         with self.assertRaises(ValueError):
