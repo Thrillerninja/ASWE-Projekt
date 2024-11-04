@@ -1,11 +1,14 @@
+from datetime import datetime
 import os
 import pandas as pd
 import requests
-from fitbit_api import FitbitAPI
+from fitbit_auth import FitbitAuth
+from main import FitbitAPI
+from dotenv import load_dotenv
 
 class FitbitDataProcessor:
-    def __init__(self):
-        self.fitbit_api = FitbitAPI()
+    def __init__(self, fitbit_api: FitbitAPI):
+        self.fitbit_api = fitbit_api
 
     def calculate_daily_stress_level(self, date: str) -> pd.DataFrame:
         """
@@ -83,3 +86,18 @@ class FitbitDataProcessor:
             return "Stress"
         else:
             return "Ungültiger Wert"  # Falls die Herzfrequenz unrealistisch niedrig ist
+        
+
+load_dotenv()
+
+if __name__ == "__main__":
+    fitbit_client_id = os.getenv("FITBIT_CLIENT_ID")
+    fitbit_client_secret = os.getenv("FITBIT_CLIENT_SECRET")
+
+    fitbit_api = FitbitAPI(client_id=fitbit_client_id, client_secret=fitbit_client_secret)
+
+    fitbit_data_processor = FitbitDataProcessor(fitbit_api=fitbit_api)
+
+    today = datetime.now().strftime("%Y-%m-%d")
+    fitbit_data_processor.calculate_daily_stress_level(today)
+

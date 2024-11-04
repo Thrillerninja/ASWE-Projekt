@@ -19,4 +19,8 @@ CONFIG = {
 #     'spotify_client_secret': get_env_variable('SPOTIFY_CLIENT_SECRET'),
 #     'spotify_refresh_token': get_env_variable('SPOTIFY_REFRESH_TOKEN'),
 #     'news_api_key': get_env_variable('NEWS_API_KEY'),
+      'fitbit_client_id': get_env_variable('FITBIT_CLIENT_ID'),
+      'fitbit_client_secret': get_env_variable('FITBIT_CLIENT_SECRET'),
+
+
 }
