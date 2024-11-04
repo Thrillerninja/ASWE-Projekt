@@ -5,7 +5,10 @@ from api.fitbit_api import FitbitAPI
 class TestFitbitAPI(unittest.TestCase):
 
     def setUp(self):
-        self.fitbit_api = FitbitAPI()
+        self.fitbit_client_id = "test_client_id"
+        self.fitbit_client_secret = "test_client_secret"
+
+        self.fitbit_api = FitbitAPI(self.fitbit_client_id, self.fitbit_client_secret)
         self.date = '2024-10-30'
 
     @patch('fitbit_auth.FitbitAuth.get_access_token', return_value='test_access_token')
@@ -52,3 +55,6 @@ class TestFitbitAPI(unittest.TestCase):
             f'https://api.fitbit.com/1/user/-/sleep/date/{self.date}/json',
             headers={'Authorization': 'Bearer test_access_token'}
         )
+
+    if __name__ == '__main__':
+        unittest.main()
