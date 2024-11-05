@@ -1,6 +1,21 @@
 {
     "fuel_type": "diesel",
     "default_alarm_time": "08:00",
+    "home_location": {
+      "name": "asperg",
+      "vvs_code": "de:08118:7400",
+      "address": {
+        "street": "Alleenstraße",
+        "number": "1",
+        "zipcode": "71679",
+        "city": "Asperg",
+        "country": "Germany"
+      },
+      "coordinates": {
+        "latitude": 48.907256,
+        "longitude": 9.147977
+        }
+    },
     "default_destination": {
       "name": "dhbw",
       "vvs_code": "de:08111:6072",
