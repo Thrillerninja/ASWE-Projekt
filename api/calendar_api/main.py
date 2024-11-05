@@ -47,7 +47,7 @@ class RaplaAPI(APIClient):
         """
         Returns the entire calendar in JSON format.
         """
-        return json.dumps(self.calendar.toJSON(), indent=4, ensure_ascii=False)
+        return json.dumps(self.calendar.to_json(), indent=4, ensure_ascii=False)
 
     def save_calendar_to_file(self, filepath: str):
         """
