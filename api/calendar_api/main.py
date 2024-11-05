@@ -20,7 +20,7 @@ class RaplaAPI():
         """
         Updates the rapla calendar with the url.
         """
-        self.calendar = rapla.create_calendar_from_rapla(url)
+        self.calendar = rapla.create_calendar_from_rapla(self.url)
 
 
 

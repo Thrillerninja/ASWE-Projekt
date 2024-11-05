@@ -49,7 +49,7 @@ class Calendar:
 
 
 class Appointment:
-    def __init__(self, title, datetime_start, datetime_end:str, color:str='#000000') -> None:
+    def __init__(self, title, datetime_start, datetime_end, color:str='#000000') -> None:
         self.title = title
         self.datetime_start = datetime_start
         self.datetime_end = datetime_end
