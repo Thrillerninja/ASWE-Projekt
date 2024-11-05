@@ -1,6 +1,7 @@
 {
     "fuel_type": "diesel",
     "default_alarm_time": "08:00",
+    "sleep_time": "22:00",
     "home_location": {
       "name": "asperg",
       "vvs_code": "de:08118:7400",

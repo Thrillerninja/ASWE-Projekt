@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file './ui_templates/main_window.ui'
+# Form implementation generated from reading ui file '.\frontend\ui_templates\main_window.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.10
 #
@@ -14,11 +14,16 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
+        MainWindow.resize(635, 300)
+        MainWindow.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(".\\frontend\\ui_templates\\../../../../../../../../Users/wieckla/Downloads/p-logo-no-background.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        MainWindow.setWindowIcon(icon)
+        MainWindow.setIconSize(QtCore.QSize(24, 24))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.bt_exit = QtWidgets.QPushButton(self.centralwidget)
-        self.bt_exit.setGeometry(QtCore.QRect(710, 40, 81, 51))
+        self.bt_exit.setGeometry(QtCore.QRect(530, 220, 81, 51))
         font = QtGui.QFont()
         font.setPointSize(-1)
         font.setBold(True)
@@ -98,9 +103,9 @@ class Ui_MainWindow(object):
 "}\n"
 "")
         self.lb_select_fuel_type.setObjectName("lb_select_fuel_type")
-        self.lb_ = QtWidgets.QLabel(self.centralwidget)
-        self.lb_.setGeometry(QtCore.QRect(210, 20, 161, 31))
-        self.lb_.setStyleSheet("/* General Label Style */\n"
+        self.lb_default_alarm_type = QtWidgets.QLabel(self.centralwidget)
+        self.lb_default_alarm_type.setGeometry(QtCore.QRect(20, 110, 191, 31))
+        self.lb_default_alarm_type.setStyleSheet("/* General Label Style */\n"
 "QLabel {\n"
 "    font-size: 18px;             /* Base font size for regular labels */\n"
 "    font-weight: bold;          /* Bold text for emphasis */\n"
@@ -136,124 +141,10 @@ class Ui_MainWindow(object):
 "    color: #7f8c8d;             /* Grey text color for disabled state */\n"
 "}\n"
 "")
-        self.lb_.setObjectName("lb_")
-        self.rb_e10_2 = QtWidgets.QRadioButton(self.centralwidget)
-        self.rb_e10_2.setGeometry(QtCore.QRect(230, 110, 121, 31))
-        self.rb_e10_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.rb_e10_2.setStyleSheet("/* General Radio Button Style */\n"
-"QRadioButton {\n"
-"    spacing: 8px;                /* Space between the radio button and its label */\n"
-"    font-size: 14px;             /* Font size for the label */\n"
-"    color: #2c3e50;              /* Label text color */\n"
-"}\n"
-"\n"
-"/* Radio Button Indicator (the circle) */\n"
-"QRadioButton::indicator {\n"
-"    width: 16px;                 /* Size of the indicator */\n"
-"    height: 16px;\n"
-"    border-radius: 8px;          /* Makes the indicator perfectly circular */\n"
-"    border: 2px solid #2980b9;   /* Blue border for the indicator */\n"
-"    background-color: #ecf0f1;   /* Light grey background when unchecked */\n"
-"}\n"
-"\n"
-"/* Checked State */\n"
-"QRadioButton::indicator:checked {\n"
-"    background-color: #3498db;   /* Blue background when checked */\n"
-"    border: 2px solid #2980b9;   /* Darker blue border when checked */\n"
-"}\n"
-"\n"
-"/* Disabled State */\n"
-"QRadioButton::indicator:disabled {\n"
-"    background-color: #ecf0f1;   /* Light grey background when disabled */\n"
-"    border: 2px solid #95a5a6;   /* Grey border when disabled */\n"
-"}\n"
-"\n"
-"/* Checked and Disabled State */\n"
-"QRadioButton::indicator:checked:disabled {\n"
-"    background-color: #95a5a6;   /* Darker grey background when checked and disabled */\n"
-"    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */\n"
-"}")
-        self.rb_e10_2.setObjectName("rb_e10_2")
-        self.rb_diesel_2 = QtWidgets.QRadioButton(self.centralwidget)
-        self.rb_diesel_2.setEnabled(True)
-        self.rb_diesel_2.setGeometry(QtCore.QRect(230, 50, 121, 31))
-        self.rb_diesel_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.rb_diesel_2.setStyleSheet("/* General Radio Button Style */\n"
-"QRadioButton {\n"
-"    spacing: 8px;                /* Space between the radio button and its label */\n"
-"    font-size: 14px;             /* Font size for the label */\n"
-"    color: #2c3e50;              /* Label text color */\n"
-"}\n"
-"\n"
-"/* Radio Button Indicator (the circle) */\n"
-"QRadioButton::indicator {\n"
-"    width: 16px;                 /* Size of the indicator */\n"
-"    height: 16px;\n"
-"    border-radius: 8px;          /* Makes the indicator perfectly circular */\n"
-"    border: 2px solid #2980b9;   /* Blue border for the indicator */\n"
-"    background-color: #ecf0f1;   /* Light grey background when unchecked */\n"
-"}\n"
-"\n"
-"/* Checked State */\n"
-"QRadioButton::indicator:checked {\n"
-"    background-color: #3498db;   /* Blue background when checked */\n"
-"    border: 2px solid #2980b9;   /* Darker blue border when checked */\n"
-"}\n"
-"\n"
-"/* Disabled State */\n"
-"QRadioButton::indicator:disabled {\n"
-"    background-color: #ecf0f1;   /* Light grey background when disabled */\n"
-"    border: 2px solid #95a5a6;   /* Grey border when disabled */\n"
-"}\n"
-"\n"
-"/* Checked and Disabled State */\n"
-"QRadioButton::indicator:checked:disabled {\n"
-"    background-color: #95a5a6;   /* Darker grey background when checked and disabled */\n"
-"    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */\n"
-"}")
-        self.rb_diesel_2.setChecked(True)
-        self.rb_diesel_2.setObjectName("rb_diesel_2")
-        self.rb_benzin_2 = QtWidgets.QRadioButton(self.centralwidget)
-        self.rb_benzin_2.setEnabled(True)
-        self.rb_benzin_2.setGeometry(QtCore.QRect(230, 80, 121, 31))
-        self.rb_benzin_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.rb_benzin_2.setStyleSheet("/* General Radio Button Style */\n"
-"QRadioButton {\n"
-"    spacing: 8px;                /* Space between the radio button and its label */\n"
-"    font-size: 14px;             /* Font size for the label */\n"
-"    color: #2c3e50;              /* Label text color */\n"
-"}\n"
-"\n"
-"/* Radio Button Indicator (the circle) */\n"
-"QRadioButton::indicator {\n"
-"    width: 16px;                 /* Size of the indicator */\n"
-"    height: 16px;\n"
-"    border-radius: 8px;          /* Makes the indicator perfectly circular */\n"
-"    border: 2px solid #2980b9;   /* Blue border for the indicator */\n"
-"    background-color: #ecf0f1;   /* Light grey background when unchecked */\n"
-"}\n"
-"\n"
-"/* Checked State */\n"
-"QRadioButton::indicator:checked {\n"
-"    background-color: #3498db;   /* Blue background when checked */\n"
-"    border: 2px solid #2980b9;   /* Darker blue border when checked */\n"
-"}\n"
-"\n"
-"/* Disabled State */\n"
-"QRadioButton::indicator:disabled {\n"
-"    background-color: #ecf0f1;   /* Light grey background when disabled */\n"
-"    border: 2px solid #95a5a6;   /* Grey border when disabled */\n"
-"}\n"
-"\n"
-"/* Checked and Disabled State */\n"
-"QRadioButton::indicator:checked:disabled {\n"
-"    background-color: #95a5a6;   /* Darker grey background when checked and disabled */\n"
-"    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */\n"
-"}")
-        self.rb_benzin_2.setChecked(False)
-        self.rb_benzin_2.setObjectName("rb_benzin_2")
+        self.lb_default_alarm_type.setObjectName("lb_default_alarm_type")
         self.cb_fuel_type = QtWidgets.QComboBox(self.centralwidget)
         self.cb_fuel_type.setGeometry(QtCore.QRect(40, 60, 131, 31))
+        self.cb_fuel_type.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.cb_fuel_type.setStyleSheet("/* General Combo Box Style */\n"
 "QComboBox {\n"
 "    font-size: 14px;              /* Font size for the text */\n"
@@ -272,10 +163,11 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QComboBox::down-arrow {\n"
-"    image: url(/path/to/your/arrow/icon.png);  /* Custom arrow icon, replace with your own */\n"
+"    image: url(frontend/ui_templates/down_arrow.png);  /* Custom arrow icon */\n"
 "    width: 12px;                /* Size of the arrow */\n"
 "    height: 12px;\n"
 "}\n"
+"\n"
 "\n"
 "/* Combo Box when the dropdown is open */\n"
 "QComboBox QAbstractItemView {\n"
@@ -293,9 +185,228 @@ class Ui_MainWindow(object):
         self.cb_fuel_type.addItem("")
         self.cb_fuel_type.addItem("")
         self.cb_fuel_type.addItem("")
+        self.te_default_alarm_time = QtWidgets.QTimeEdit(self.centralwidget)
+        self.te_default_alarm_time.setGeometry(QtCore.QRect(40, 150, 131, 31))
+        self.te_default_alarm_time.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.te_default_alarm_time.setStyleSheet("/* General Time Edit Style */\n"
+"QTimeEdit {\n"
+"    font-size: 14px;               /* Font size */\n"
+"    color: #2c3e50;                /* Text color */\n"
+"    padding: 4px;                  /* Padding */\n"
+"    border: 2px solid #2980b9;     /* Blue border */\n"
+"    border-radius: 4px;            /* Rounded corners */\n"
+"    background-color: #ecf0f1;     /* Light grey background */\n"
+"}\n"
+"\n"
+"/* Time Edit Buttons (Up and Down Arrow Area) */\n"
+"QTimeEdit::up-button, QTimeEdit::down-button {\n"
+"    width: 18px;                   /* Size of the button area */\n"
+"    border: none;                  /* No border */\n"
+"    background-color: #3498db;     /* Blue background */\n"
+"}\n"
+"\n"
+"QTimeEdit::up-arrow {\n"
+"    width: 10px;                   /* Arrow size */\n"
+"    height: 10px;\n"
+"    image: url(frontend/ui_templates/up_arrow.png);  /* Custom arrow icon */\n"
+"}\n"
+"\n"
+"QTimeEdit::down-arrow {\n"
+"    width: 10px;                   /* Arrow size */\n"
+"    height: 10px;\n"
+"    image: url(frontend/ui_templates/down_arrow.png);  /* Custom arrow icon */\n"
+"}\n"
+"\n"
+"/* Hover Effect for Time Edit */\n"
+"QTimeEdit:hover {\n"
+"    border-color: #3498db;         /* Change border color on hover */\n"
+"}\n"
+"")
+        self.te_default_alarm_time.setAlignment(QtCore.Qt.AlignCenter)
+        self.te_default_alarm_time.setObjectName("te_default_alarm_time")
+        self.te_default_sleep_time = QtWidgets.QTimeEdit(self.centralwidget)
+        self.te_default_sleep_time.setGeometry(QtCore.QRect(40, 240, 131, 31))
+        self.te_default_sleep_time.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.te_default_sleep_time.setStyleSheet("/* General Time Edit Style */\n"
+"QTimeEdit {\n"
+"    font-size: 14px;               /* Font size */\n"
+"    color: #2c3e50;                /* Text color */\n"
+"    padding: 4px;                  /* Padding */\n"
+"    border: 2px solid #2980b9;     /* Blue border */\n"
+"    border-radius: 4px;            /* Rounded corners */\n"
+"    background-color: #ecf0f1;     /* Light grey background */\n"
+"}\n"
+"\n"
+"/* Time Edit Buttons (Up and Down Arrow Area) */\n"
+"QTimeEdit::up-button, QTimeEdit::down-button {\n"
+"    width: 18px;                   /* Size of the button area */\n"
+"    border: none;                  /* No border */\n"
+"    background-color: #3498db;     /* Blue background */\n"
+"}\n"
+"\n"
+"QTimeEdit::up-arrow {\n"
+"    width: 10px;                   /* Arrow size */\n"
+"    height: 10px;\n"
+"    image: url(frontend/ui_templates/up_arrow.png);  /* Custom arrow icon */\n"
+"}\n"
+"\n"
+"QTimeEdit::down-arrow {\n"
+"    width: 10px;                   /* Arrow size */\n"
+"    height: 10px;\n"
+"    image: url(frontend/ui_templates/down_arrow.png);  /* Custom arrow icon */\n"
+"}\n"
+"\n"
+"/* Hover Effect for Time Edit */\n"
+"QTimeEdit:hover {\n"
+"    border-color: #3498db;         /* Change border color on hover */\n"
+"}\n"
+"")
+        self.te_default_sleep_time.setAlignment(QtCore.Qt.AlignCenter)
+        self.te_default_sleep_time.setObjectName("te_default_sleep_time")
+        self.lb_default_alarm_type_2 = QtWidgets.QLabel(self.centralwidget)
+        self.lb_default_alarm_type_2.setGeometry(QtCore.QRect(20, 200, 191, 31))
+        self.lb_default_alarm_type_2.setStyleSheet("/* General Label Style */\n"
+"QLabel {\n"
+"    font-size: 18px;             /* Base font size for regular labels */\n"
+"    font-weight: bold;          /* Bold text for emphasis */\n"
+"    color: #3498db; ;              /* Dark grey text color */\n"
+"    padding: 4px;               /* Padding around the text */\n"
+"    border: 1px solid transparent; /* Optional border for spacing */\n"
+"}\n"
+"\n"
+"/* Prominent Headline Style */\n"
+"QLabel.headline {\n"
+"    font-size: 24px;            /* Larger font size for prominent headlines */\n"
+"    font-weight: bold;          /* Bold text for emphasis */\n"
+"    color: #3498db;             /* Distinct blue color for headlines */\n"
+"    padding: 8px;               /* Increased padding for a more spacious look */\n"
+"    border: none;               /* No border for a cleaner look */\n"
+"    background-color: #f0f8ff;  /* Light blue background to make the headline stand out */\n"
+"    border-radius: 4px;         /* Slightly rounded corners for a modern appearance */\n"
+"    margin-bottom: 12px;        /* Space below the headline to separate from other elements */\n"
+"}\n"
+"\n"
+"/* Subheadline Style */\n"
+"QLabel.subheadline {\n"
+"    font-size: 18px;            /* Slightly smaller than headlines */\n"
+"    font-weight: bold;          /* Bold text for emphasis */\n"
+"    color: #2c3e50;             /* Dark grey color for subheadlines */\n"
+"    padding: 6px;               /* Padding around the text */\n"
+"    border: none;               /* No border for a cleaner look */\n"
+"    margin-bottom: 8px;         /* Space below the subheadline */\n"
+"}\n"
+"\n"
+"/* Disabled Label Style */\n"
+"QLabel:disabled {\n"
+"    color: #7f8c8d;             /* Grey text color for disabled state */\n"
+"}\n"
+"")
+        self.lb_default_alarm_type_2.setObjectName("lb_default_alarm_type_2")
+        self.lb_alarm_text = QtWidgets.QLabel(self.centralwidget)
+        self.lb_alarm_text.setGeometry(QtCore.QRect(280, 20, 181, 41))
+        self.lb_alarm_text.setStyleSheet("/* General Label Style */\n"
+"QLabel {\n"
+"    font-size: 18px;             /* Base font size for regular labels */\n"
+"    font-weight: bold;          /* Bold text for emphasis */\n"
+"    color: #3498db; ;              /* Dark grey text color */\n"
+"    padding: 4px;               /* Padding around the text */\n"
+"    border: 1px solid transparent; /* Optional border for spacing */\n"
+"}\n"
+"\n"
+"/* Prominent Headline Style */\n"
+"QLabel.headline {\n"
+"    font-size: 24px;            /* Larger font size for prominent headlines */\n"
+"    font-weight: bold;          /* Bold text for emphasis */\n"
+"    color: #3498db;             /* Distinct blue color for headlines */\n"
+"    padding: 8px;               /* Increased padding for a more spacious look */\n"
+"    border: none;               /* No border for a cleaner look */\n"
+"    background-color: #f0f8ff;  /* Light blue background to make the headline stand out */\n"
+"    border-radius: 4px;         /* Slightly rounded corners for a modern appearance */\n"
+"    margin-bottom: 12px;        /* Space below the headline to separate from other elements */\n"
+"}\n"
+"\n"
+"/* Subheadline Style */\n"
+"QLabel.subheadline {\n"
+"    font-size: 18px;            /* Slightly smaller than headlines */\n"
+"    font-weight: bold;          /* Bold text for emphasis */\n"
+"    color: #2c3e50;             /* Dark grey color for subheadlines */\n"
+"    padding: 6px;               /* Padding around the text */\n"
+"    border: none;               /* No border for a cleaner look */\n"
+"    margin-bottom: 8px;         /* Space below the subheadline */\n"
+"}\n"
+"\n"
+"/* Disabled Label Style */\n"
+"QLabel:disabled {\n"
+"    color: #7f8c8d;             /* Grey text color for disabled state */\n"
+"}\n"
+"")
+        self.lb_alarm_text.setObjectName("lb_alarm_text")
+        self.bt_speech_to_text = QtWidgets.QPushButton(self.centralwidget)
+        self.bt_speech_to_text.setGeometry(QtCore.QRect(300, 230, 131, 41))
+        self.bt_speech_to_text.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.bt_speech_to_text.setStyleSheet("/* General Button Style */\n"
+"QPushButton {\n"
+"    font-size: 14px;               /* Font size */\n"
+"    color: #ffffff;                /* White text color */\n"
+"    padding: 6px 12px;             /* Padding around the text */\n"
+"    border: 2px solid #2980b9;     /* Blue border */\n"
+"    border-radius: 4px;            /* Rounded corners */\n"
+"    background-color: #3498db;     /* Blue background */\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #2980b9;     /* Darker blue background on hover */\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: #1f618d;     /* Even darker blue when pressed */\n"
+"    border-color: #1f618d;         /* Darker border on press */\n"
+"}\n"
+"")
+        self.bt_speech_to_text.setObjectName("bt_speech_to_text")
+        self.lb_alarm = QtWidgets.QLabel(self.centralwidget)
+        self.lb_alarm.setGeometry(QtCore.QRect(470, 20, 181, 41))
+        self.lb_alarm.setStyleSheet("/* General Label Style */\n"
+"QLabel {\n"
+"    font-size: 18px;             /* Base font size for regular labels */\n"
+"    font-weight: bold;          /* Bold text for emphasis */\n"
+"    color: #3498db; ;              /* Dark grey text color */\n"
+"    padding: 4px;               /* Padding around the text */\n"
+"    border: 1px solid transparent; /* Optional border for spacing */\n"
+"}\n"
+"\n"
+"/* Prominent Headline Style */\n"
+"QLabel.headline {\n"
+"    font-size: 24px;            /* Larger font size for prominent headlines */\n"
+"    font-weight: bold;          /* Bold text for emphasis */\n"
+"    color: #3498db;             /* Distinct blue color for headlines */\n"
+"    padding: 8px;               /* Increased padding for a more spacious look */\n"
+"    border: none;               /* No border for a cleaner look */\n"
+"    background-color: #f0f8ff;  /* Light blue background to make the headline stand out */\n"
+"    border-radius: 4px;         /* Slightly rounded corners for a modern appearance */\n"
+"    margin-bottom: 12px;        /* Space below the headline to separate from other elements */\n"
+"}\n"
+"\n"
+"/* Subheadline Style */\n"
+"QLabel.subheadline {\n"
+"    font-size: 18px;            /* Slightly smaller than headlines */\n"
+"    font-weight: bold;          /* Bold text for emphasis */\n"
+"    color: #2c3e50;             /* Dark grey color for subheadlines */\n"
+"    padding: 6px;               /* Padding around the text */\n"
+"    border: none;               /* No border for a cleaner look */\n"
+"    margin-bottom: 8px;         /* Space below the subheadline */\n"
+"}\n"
+"\n"
+"/* Disabled Label Style */\n"
+"QLabel:disabled {\n"
+"    color: #7f8c8d;             /* Grey text color for disabled state */\n"
+"}\n"
+"")
+        self.lb_alarm.setAlignment(QtCore.Qt.AlignCenter)
+        self.lb_alarm.setObjectName("lb_alarm")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 635, 21))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -307,19 +418,20 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", " "))
         self.bt_exit.setText(_translate("MainWindow", "Exit"))
         self.lb_select_fuel_type.setText(_translate("MainWindow", "Select Fuel Type"))
-        self.lb_.setText(_translate("MainWindow", "Select Fuel Type"))
-        self.rb_e10_2.setText(_translate("MainWindow", "E10"))
-        self.rb_diesel_2.setText(_translate("MainWindow", "Diesel"))
-        self.rb_benzin_2.setText(_translate("MainWindow", "Benzin"))
+        self.lb_default_alarm_type.setText(_translate("MainWindow", "Default Alarm Time"))
         self.cb_fuel_type.setItemText(0, _translate("MainWindow", "Super E10", "super_e10"))
         self.cb_fuel_type.setItemText(1, _translate("MainWindow", "Super E5"))
         self.cb_fuel_type.setItemText(2, _translate("MainWindow", "Super Plus"))
         self.cb_fuel_type.setItemText(3, _translate("MainWindow", "Diesel"))
         self.cb_fuel_type.setItemText(4, _translate("MainWindow", "LKW Diesel"))
         self.cb_fuel_type.setItemText(5, _translate("MainWindow", "LPG"))
+        self.lb_default_alarm_type_2.setText(_translate("MainWindow", "Default Sleep Time"))
+        self.lb_alarm_text.setText(_translate("MainWindow", "Alarm gesetzt für:"))
+        self.bt_speech_to_text.setText(_translate("MainWindow", "Speech to Text"))
+        self.lb_alarm.setText(_translate("MainWindow", "00:00 Uhr"))
 
 
 if __name__ == "__main__":

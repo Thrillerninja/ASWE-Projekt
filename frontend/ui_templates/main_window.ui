@@ -6,19 +6,32 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>635</width>
+    <height>300</height>
    </rect>
   </property>
+  <property name="cursor">
+   <cursorShape>ArrowCursor</cursorShape>
+  </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string> </string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../../../../../../../Users/wieckla/Downloads/p-logo-no-background.ico</normaloff>../../../../../../../../Users/wieckla/Downloads/p-logo-no-background.ico</iconset>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>24</width>
+    <height>24</height>
+   </size>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="bt_exit">
     <property name="geometry">
      <rect>
-      <x>710</x>
-      <y>40</y>
+      <x>530</x>
+      <y>220</y>
       <width>81</width>
       <height>51</height>
      </rect>
@@ -123,12 +136,12 @@ QLabel:disabled {
      <string>Select Fuel Type</string>
     </property>
    </widget>
-   <widget class="QLabel" name="lb_">
+   <widget class="QLabel" name="lb_default_alarm_type">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>20</y>
-      <width>161</width>
+      <x>20</x>
+      <y>110</y>
+      <width>191</width>
       <height>31</height>
      </rect>
     </property>
@@ -171,172 +184,7 @@ QLabel:disabled {
 </string>
     </property>
     <property name="text">
-     <string>Select Fuel Type</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="rb_e10_2">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>110</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">/* General Radio Button Style */
-QRadioButton {
-    spacing: 8px;                /* Space between the radio button and its label */
-    font-size: 14px;             /* Font size for the label */
-    color: #2c3e50;              /* Label text color */
-}
-
-/* Radio Button Indicator (the circle) */
-QRadioButton::indicator {
-    width: 16px;                 /* Size of the indicator */
-    height: 16px;
-    border-radius: 8px;          /* Makes the indicator perfectly circular */
-    border: 2px solid #2980b9;   /* Blue border for the indicator */
-    background-color: #ecf0f1;   /* Light grey background when unchecked */
-}
-
-/* Checked State */
-QRadioButton::indicator:checked {
-    background-color: #3498db;   /* Blue background when checked */
-    border: 2px solid #2980b9;   /* Darker blue border when checked */
-}
-
-/* Disabled State */
-QRadioButton::indicator:disabled {
-    background-color: #ecf0f1;   /* Light grey background when disabled */
-    border: 2px solid #95a5a6;   /* Grey border when disabled */
-}
-
-/* Checked and Disabled State */
-QRadioButton::indicator:checked:disabled {
-    background-color: #95a5a6;   /* Darker grey background when checked and disabled */
-    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */
-}</string>
-    </property>
-    <property name="text">
-     <string>E10</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="rb_diesel_2">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>50</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">/* General Radio Button Style */
-QRadioButton {
-    spacing: 8px;                /* Space between the radio button and its label */
-    font-size: 14px;             /* Font size for the label */
-    color: #2c3e50;              /* Label text color */
-}
-
-/* Radio Button Indicator (the circle) */
-QRadioButton::indicator {
-    width: 16px;                 /* Size of the indicator */
-    height: 16px;
-    border-radius: 8px;          /* Makes the indicator perfectly circular */
-    border: 2px solid #2980b9;   /* Blue border for the indicator */
-    background-color: #ecf0f1;   /* Light grey background when unchecked */
-}
-
-/* Checked State */
-QRadioButton::indicator:checked {
-    background-color: #3498db;   /* Blue background when checked */
-    border: 2px solid #2980b9;   /* Darker blue border when checked */
-}
-
-/* Disabled State */
-QRadioButton::indicator:disabled {
-    background-color: #ecf0f1;   /* Light grey background when disabled */
-    border: 2px solid #95a5a6;   /* Grey border when disabled */
-}
-
-/* Checked and Disabled State */
-QRadioButton::indicator:checked:disabled {
-    background-color: #95a5a6;   /* Darker grey background when checked and disabled */
-    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */
-}</string>
-    </property>
-    <property name="text">
-     <string>Diesel</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="rb_benzin_2">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>80</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">/* General Radio Button Style */
-QRadioButton {
-    spacing: 8px;                /* Space between the radio button and its label */
-    font-size: 14px;             /* Font size for the label */
-    color: #2c3e50;              /* Label text color */
-}
-
-/* Radio Button Indicator (the circle) */
-QRadioButton::indicator {
-    width: 16px;                 /* Size of the indicator */
-    height: 16px;
-    border-radius: 8px;          /* Makes the indicator perfectly circular */
-    border: 2px solid #2980b9;   /* Blue border for the indicator */
-    background-color: #ecf0f1;   /* Light grey background when unchecked */
-}
-
-/* Checked State */
-QRadioButton::indicator:checked {
-    background-color: #3498db;   /* Blue background when checked */
-    border: 2px solid #2980b9;   /* Darker blue border when checked */
-}
-
-/* Disabled State */
-QRadioButton::indicator:disabled {
-    background-color: #ecf0f1;   /* Light grey background when disabled */
-    border: 2px solid #95a5a6;   /* Grey border when disabled */
-}
-
-/* Checked and Disabled State */
-QRadioButton::indicator:checked:disabled {
-    background-color: #95a5a6;   /* Darker grey background when checked and disabled */
-    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */
-}</string>
-    </property>
-    <property name="text">
-     <string>Benzin</string>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
+     <string>Default Alarm Time</string>
     </property>
    </widget>
    <widget class="QComboBox" name="cb_fuel_type">
@@ -347,6 +195,9 @@ QRadioButton::indicator:checked:disabled {
       <width>131</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
     </property>
     <property name="styleSheet">
      <string notr="true">/* General Combo Box Style */
@@ -367,10 +218,11 @@ QComboBox::drop-down {
 }
 
 QComboBox::down-arrow {
-    image: url(/path/to/your/arrow/icon.png);  /* Custom arrow icon, replace with your own */
+    image: url(frontend/ui_templates/down_arrow.png);  /* Custom arrow icon */
     width: 12px;                /* Size of the arrow */
     height: 12px;
 }
+
 
 /* Combo Box when the dropdown is open */
 QComboBox QAbstractItemView {
@@ -413,13 +265,363 @@ QComboBox QAbstractItemView {
      </property>
     </item>
    </widget>
+   <widget class="QTimeEdit" name="te_default_alarm_time">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>150</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">/* General Time Edit Style */
+QTimeEdit {
+    font-size: 14px;               /* Font size */
+    color: #2c3e50;                /* Text color */
+    padding: 4px;                  /* Padding */
+    border: 2px solid #2980b9;     /* Blue border */
+    border-radius: 4px;            /* Rounded corners */
+    background-color: #ecf0f1;     /* Light grey background */
+}
+
+/* Time Edit Buttons (Up and Down Arrow Area) */
+QTimeEdit::up-button, QTimeEdit::down-button {
+    width: 18px;                   /* Size of the button area */
+    border: none;                  /* No border */
+    background-color: #3498db;     /* Blue background */
+}
+
+QTimeEdit::up-arrow {
+    width: 10px;                   /* Arrow size */
+    height: 10px;
+    image: url(frontend/ui_templates/up_arrow.png);  /* Custom arrow icon */
+}
+
+QTimeEdit::down-arrow {
+    width: 10px;                   /* Arrow size */
+    height: 10px;
+    image: url(frontend/ui_templates/down_arrow.png);  /* Custom arrow icon */
+}
+
+/* Hover Effect for Time Edit */
+QTimeEdit:hover {
+    border-color: #3498db;         /* Change border color on hover */
+}
+</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QTimeEdit" name="te_default_sleep_time">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>240</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">/* General Time Edit Style */
+QTimeEdit {
+    font-size: 14px;               /* Font size */
+    color: #2c3e50;                /* Text color */
+    padding: 4px;                  /* Padding */
+    border: 2px solid #2980b9;     /* Blue border */
+    border-radius: 4px;            /* Rounded corners */
+    background-color: #ecf0f1;     /* Light grey background */
+}
+
+/* Time Edit Buttons (Up and Down Arrow Area) */
+QTimeEdit::up-button, QTimeEdit::down-button {
+    width: 18px;                   /* Size of the button area */
+    border: none;                  /* No border */
+    background-color: #3498db;     /* Blue background */
+}
+
+QTimeEdit::up-arrow {
+    width: 10px;                   /* Arrow size */
+    height: 10px;
+    image: url(frontend/ui_templates/up_arrow.png);  /* Custom arrow icon */
+}
+
+QTimeEdit::down-arrow {
+    width: 10px;                   /* Arrow size */
+    height: 10px;
+    image: url(frontend/ui_templates/down_arrow.png);  /* Custom arrow icon */
+}
+
+/* Hover Effect for Time Edit */
+QTimeEdit:hover {
+    border-color: #3498db;         /* Change border color on hover */
+}
+</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_default_alarm_type_2">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>200</y>
+      <width>191</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">/* General Label Style */
+QLabel {
+    font-size: 18px;             /* Base font size for regular labels */
+    font-weight: bold;          /* Bold text for emphasis */
+    color: #3498db; ;              /* Dark grey text color */
+    padding: 4px;               /* Padding around the text */
+    border: 1px solid transparent; /* Optional border for spacing */
+}
+
+/* Prominent Headline Style */
+QLabel.headline {
+    font-size: 24px;            /* Larger font size for prominent headlines */
+    font-weight: bold;          /* Bold text for emphasis */
+    color: #3498db;             /* Distinct blue color for headlines */
+    padding: 8px;               /* Increased padding for a more spacious look */
+    border: none;               /* No border for a cleaner look */
+    background-color: #f0f8ff;  /* Light blue background to make the headline stand out */
+    border-radius: 4px;         /* Slightly rounded corners for a modern appearance */
+    margin-bottom: 12px;        /* Space below the headline to separate from other elements */
+}
+
+/* Subheadline Style */
+QLabel.subheadline {
+    font-size: 18px;            /* Slightly smaller than headlines */
+    font-weight: bold;          /* Bold text for emphasis */
+    color: #2c3e50;             /* Dark grey color for subheadlines */
+    padding: 6px;               /* Padding around the text */
+    border: none;               /* No border for a cleaner look */
+    margin-bottom: 8px;         /* Space below the subheadline */
+}
+
+/* Disabled Label Style */
+QLabel:disabled {
+    color: #7f8c8d;             /* Grey text color for disabled state */
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Default Sleep Time</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_alarm_text">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>20</y>
+      <width>181</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">/* General Label Style */
+QLabel {
+    font-size: 18px;             /* Base font size for regular labels */
+    font-weight: bold;          /* Bold text for emphasis */
+    color: #3498db; ;              /* Dark grey text color */
+    padding: 4px;               /* Padding around the text */
+    border: 1px solid transparent; /* Optional border for spacing */
+}
+
+/* Prominent Headline Style */
+QLabel.headline {
+    font-size: 24px;            /* Larger font size for prominent headlines */
+    font-weight: bold;          /* Bold text for emphasis */
+    color: #3498db;             /* Distinct blue color for headlines */
+    padding: 8px;               /* Increased padding for a more spacious look */
+    border: none;               /* No border for a cleaner look */
+    background-color: #f0f8ff;  /* Light blue background to make the headline stand out */
+    border-radius: 4px;         /* Slightly rounded corners for a modern appearance */
+    margin-bottom: 12px;        /* Space below the headline to separate from other elements */
+}
+
+/* Subheadline Style */
+QLabel.subheadline {
+    font-size: 18px;            /* Slightly smaller than headlines */
+    font-weight: bold;          /* Bold text for emphasis */
+    color: #2c3e50;             /* Dark grey color for subheadlines */
+    padding: 6px;               /* Padding around the text */
+    border: none;               /* No border for a cleaner look */
+    margin-bottom: 8px;         /* Space below the subheadline */
+}
+
+/* Disabled Label Style */
+QLabel:disabled {
+    color: #7f8c8d;             /* Grey text color for disabled state */
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Alarm gesetzt für:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="bt_speech_to_text">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>230</y>
+      <width>131</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">/* General Button Style */
+QPushButton {
+    font-size: 14px;               /* Font size */
+    color: #ffffff;                /* White text color */
+    padding: 6px 12px;             /* Padding around the text */
+    border: 2px solid #2980b9;     /* Blue border */
+    border-radius: 4px;            /* Rounded corners */
+    background-color: #3498db;     /* Blue background */
+}
+
+QPushButton:hover {
+    background-color: #2980b9;     /* Darker blue background on hover */
+}
+
+QPushButton:pressed {
+    background-color: #1f618d;     /* Even darker blue when pressed */
+    border-color: #1f618d;         /* Darker border on press */
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Speech to Text</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_alarm">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>20</y>
+      <width>181</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">/* General Label Style */
+QLabel {
+    font-size: 18px;             /* Base font size for regular labels */
+    font-weight: bold;          /* Bold text for emphasis */
+    color: #3498db; ;              /* Dark grey text color */
+    padding: 4px;               /* Padding around the text */
+    border: 1px solid transparent; /* Optional border for spacing */
+}
+
+/* Prominent Headline Style */
+QLabel.headline {
+    font-size: 24px;            /* Larger font size for prominent headlines */
+    font-weight: bold;          /* Bold text for emphasis */
+    color: #3498db;             /* Distinct blue color for headlines */
+    padding: 8px;               /* Increased padding for a more spacious look */
+    border: none;               /* No border for a cleaner look */
+    background-color: #f0f8ff;  /* Light blue background to make the headline stand out */
+    border-radius: 4px;         /* Slightly rounded corners for a modern appearance */
+    margin-bottom: 12px;        /* Space below the headline to separate from other elements */
+}
+
+/* Subheadline Style */
+QLabel.subheadline {
+    font-size: 18px;            /* Slightly smaller than headlines */
+    font-weight: bold;          /* Bold text for emphasis */
+    color: #2c3e50;             /* Dark grey color for subheadlines */
+    padding: 6px;               /* Padding around the text */
+    border: none;               /* No border for a cleaner look */
+    margin-bottom: 8px;         /* Space below the subheadline */
+}
+
+/* Disabled Label Style */
+QLabel:disabled {
+    color: #7f8c8d;             /* Grey text color for disabled state */
+}
+</string>
+    </property>
+    <property name="text">
+     <string>00:00 Uhr</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="bt_settings">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>170</y>
+      <width>111</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">/* General Settings Button Style */
+QPushButton {
+    background-color: #2ecc71;    /* Green background for the button */
+    color: white;                 /* White text color */
+    border: 2px solid #27ae60;    /* Darker green border */
+    border-radius: 8px;           /* Rounded corners for the button */
+    padding: 10px 20px;           /* Padding inside the button */
+    font-size: 16px;              /* Font size for the button text */
+    font-weight: bold;            /* Bold text for emphasis */
+    text-align: center;           /* Center the text inside the button */
+}
+
+/* Hover State */
+QPushButton:hover {
+    background-color: #27ae60;    /* Darker green background on hover */
+    border: 2px solid #1e8449;    /* Even darker green border on hover */
+    color: #ecf0f1;               /* Light text color on hover */
+}
+
+/* Pressed State */
+QPushButton:pressed {
+    background-color: #1e8449;    /* Darker green background when pressed */
+    border: 2px solid #1d6f43;    /* Dark border when pressed */
+    color: #bdc3c7;               /* Grey text color when pressed */
+}
+
+/* Disabled State */
+QPushButton:disabled {
+    background-color: #bdc3c7;    /* Light grey background when disabled */
+    border: 2px solid #95a5a6;    /* Grey border when disabled */
+    color: #7f8c8d;               /* Grey text color when disabled */
+}
+
+
+</string>
+    </property>
+    <property name="text">
+     <string>Settings</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>635</width>
      <height>21</height>
     </rect>
    </property>
