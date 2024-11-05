@@ -12,7 +12,10 @@ class TTSAPI():
         self.engine = pyttsx3.init(driverName='sapi5')
         
         voices = self.engine.getProperty('voices')
-        self.engine.setProperty('voice', voices[1].id)
+        # Set the voice to a specific German voice
+        german_voice = next((voice for voice in voices if "de" in voice.languages), None)
+        if german_voice:
+            self.engine.setProperty('voice', german_voice.id)
         
         self.r = sr.Recognizer()
         
@@ -67,15 +70,15 @@ class TTSAPI():
         self.speak(text)
         response = self.listen()
         
-        yes_alternatives = ['yes', 'yeah', 'yep', 'ja', 'jep', 'jo']
-        no_alternatives = ['no', 'nope', 'nein']
+        yes_alternatives = ['ja', 'jep', 'jo']
+        no_alternatives = ['nein', 'ne']
         
         if any(x in response.lower() for x in yes_alternatives):
             return True 
         elif any(x in response.lower() for x in no_alternatives):
             return False
         else:
-            return self.ask_yes_no("I'm sorry, I didn't understand your response. Please answer with yes or no.")
+            return self.ask_yes_no("Entschuldigung, ich habe Ihre Antwort nicht verstanden. Bitte antworten Sie mit ja oder nein.")
         
         
     def play_sound(self, sound:str):
