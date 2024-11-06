@@ -42,29 +42,27 @@ class WelcomeState:
         current_weather = self.weather_api.get_weather("Stuttgart")
         
         # Build a string with the populated elements and provide the user with the information
-        good_morning_message = f"Good morning! It's {datetime.datetime.now().strftime('%H:%M')}. "
-        weather_info = f"The weather forecast for today is: Minimum temperature: {min_temp}°C, Maximum temperature: {max_temp}°C" if min_temp is not None and max_temp is not None else f"and it will be {condition}" if condition is not None else ""
-        current_weather_info = f"Right now its {current_weather['main']['temp']}°C." if current_weather else ""
+        good_morning_message = f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M')}. "
+        weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {min_temp}°C und {max_temp}°C liegen." if min_temp is not None and max_temp is not None else f"und es wird {condition}." if condition is not None else ""
+        current_weather_info = f"Im Moment sind es {current_weather['main']['temp']}°C." if current_weather else ""
         self.tts_api.speak(good_morning_message + weather_info + current_weather_info)
         
         # TODO: Check for delays in the public transport
-
-        
         
         # Provide the user with the information about their first appointment
         appointments = self.rapla_api.get_todays_appointments()
         if appointments:
             first_appointment = appointments[0]
-            self.tts_api.speak(f"Your first appointment is at {first_appointment.start} in {first_appointment.room}.")
+            self.tts_api.speak(f"Ihr erster Termin ist um {first_appointment.start} in {first_appointment.room}.")
         else:
-            self.tts_api.speak("You have no appointments today.")
+            self.tts_api.speak("Sie haben heute keine Termine.")
         
         # Ask the user if they want to start the next use case (e.g., Nachrichtenassistent)
-        user_response = self.tts_api.ask_yes_no("Would you like to hear the news?")
+        user_response = self.tts_api.ask_yes_no("Möchten Sie die Nachrichten hören?")
         if user_response:
             self.state_machine.morning_news()
         else:
-            self.tts_api.speak("Okay, let me know if you need anything!")
+            self.tts_api.speak("Okay, lassen Sie mich wissen, wenn ich Ihnen helfen kann!")
             self.state_machine.interaction()
         
     def calc_alarm_time(self):
