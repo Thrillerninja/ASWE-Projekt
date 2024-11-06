@@ -1,23 +1,25 @@
 import unittest
-import os
 from unittest.mock import patch, MagicMock
 from api.fitbit_api import FitbitAPI
 
 class TestFitbitAPI(unittest.TestCase):
 
-    def setUp(self):
+    @patch('config.config.get_env_variable')
+    def setUp(self, mock_get_env_variable):
         """
         Initializes the test setup with mock Fitbit credentials and test date.
-        Simulates environment variables for testing without actual secrets.
+        Mocks the get_env_variable function to avoid using real secrets.
         """
-        # Simulate environment variables
-        os.environ['FITBIT_CLIENT_ID'] = 'test_client_id'
-        os.environ['FITBIT_CLIENT_SECRET'] = 'test_client_secret'
-        
-        self.fitbit_client_id = os.getenv('FITBIT_CLIENT_ID')
-        self.fitbit_client_secret = os.getenv('FITBIT_CLIENT_SECRET')
-        
+        # Mock the return value of get_env_variable
+        mock_get_env_variable.side_effect = lambda var_name: {
+            'FITBIT_CLIENT_ID': 'test_client_id',
+            'FITBIT_CLIENT_SECRET': 'test_client_secret'
+        }.get(var_name, None)
+
         # Instantiate the FitbitAPI client (the authentication will be mocked)
+        self.fitbit_client_id = mock_get_env_variable('FITBIT_CLIENT_ID')
+        self.fitbit_client_secret = mock_get_env_variable('FITBIT_CLIENT_SECRET')
+        
         self.fitbit_api = FitbitAPI(self.fitbit_client_id, self.fitbit_client_secret)
         self.date = '2024-10-30'  # Test date for the API calls
 
