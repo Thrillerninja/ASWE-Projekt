@@ -7,6 +7,7 @@ class IdleState:
     
     def __init__(self, state_machine):
         self.state_machine = state_machine
+        self._running = True  # Add a flag to control the loop
         print("IdleState initialized")
         
     def on_enter(self):
@@ -15,7 +16,7 @@ class IdleState:
         """
         print("IdleState entered")
         
-        while True:
+        while self._running:  # Use the flag to control the loop
             self.check_triggers()
             
     def check_triggers(self):
@@ -23,3 +24,9 @@ class IdleState:
         Check if a trigger is activated.
         """
         self.state_machine.start()
+        
+    def stop(self):
+        """
+        Stop the idle state loop.
+        """
+        self._running = False
