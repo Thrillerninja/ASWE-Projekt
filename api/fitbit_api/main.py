@@ -1,5 +1,5 @@
 import requests
-from fitbit_auth import FitbitAuth  
+from .fitbit_auth import FitbitAuth  
 
 class FitbitAPI():
     """

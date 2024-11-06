@@ -11,7 +11,7 @@ class TestFitbitAPI(unittest.TestCase):
         self.fitbit_api = FitbitAPI(self.fitbit_client_id, self.fitbit_client_secret)
         self.date = '2024-10-30'
 
-    @patch('fitbit_auth.FitbitAuth.get_access_token', return_value='test_access_token')
+    @patch('api.fitbit_api.fitbit_auth.FitbitAuth.get_access_token', return_value='test_access_token')
     @patch('requests.get')
     def test_get_heart_data(self, mock_get, mock_auth):
         mock_response = MagicMock()
@@ -26,7 +26,7 @@ class TestFitbitAPI(unittest.TestCase):
             headers={'Authorization': 'Bearer test_access_token'}
         )
 
-    @patch('fitbit_auth.FitbitAuth.get_access_token', return_value='test_access_token')
+    @patch('api.fitbit_api.fitbit_auth.FitbitAuth.get_access_token', return_value='test_access_token')
     @patch('requests.get')
     def test_get_steps_data(self, mock_get, mock_auth):
         mock_response = MagicMock()
@@ -41,7 +41,7 @@ class TestFitbitAPI(unittest.TestCase):
             headers={'Authorization': 'Bearer test_access_token'}
         )
 
-    @patch('fitbit_auth.FitbitAuth.get_access_token', return_value='test_access_token')
+    @patch('api.fitbit_api.fitbit_auth.FitbitAuth.get_access_token', return_value='test_access_token')
     @patch('requests.get')
     def test_get_sleep_data(self, mock_get, mock_auth):
         mock_response = MagicMock()
