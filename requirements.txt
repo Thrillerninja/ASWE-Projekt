@@ -8,3 +8,4 @@ python-Levenshtein==0.26.0
 SpeechRecognition==3.11.0
 pyttsx3==2.98
 transitions==0.9.2
+dotenv==1.0.1

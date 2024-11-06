@@ -10,7 +10,12 @@ class TTSAPI():
         """
         Initializes the Interface
         """
-        self.engine = pyttsx3.init(driverName='sapi5')
+        try:
+            self.engine = pyttsx3.init(driverName='sapi5')
+        except ImportError:
+            self.engine = pyttsx3.init()
+        except Exception as e:
+            print(f"Error initializing pyttsx3: {e}")
         
         voices = self.engine.getProperty('voices')
         # Set the voice to a specific German voice
