@@ -1,35 +1,36 @@
 {
-    "fuel_type": "diesel",
+    "fuel_type": "super-e5",
+    "fuel_threshold": 1.44,
     "default_alarm_time": "08:00",
     "sleep_time": "22:00",
     "home_location": {
-      "name": "asperg",
-      "vvs_code": "de:08118:7400",
-      "address": {
-        "street": "Alleenstraße",
-        "number": "1",
-        "zipcode": "71679",
-        "city": "Asperg",
-        "country": "Germany"
-      },
-      "coordinates": {
-        "latitude": 48.907256,
-        "longitude": 9.147977
+        "name": "asperg",
+        "vvs_code": "de:08118:7400",
+        "address": {
+            "street": "Alleenstra\u00c3\u0178e",
+            "number": "1",
+            "zipcode": "71679",
+            "city": "Asperg",
+            "country": "Germany"
+        },
+        "coordinates": {
+            "latitude": 48.907256,
+            "longitude": 9.147977
         }
     },
     "default_destination": {
-      "name": "dhbw",
-      "vvs_code": "de:08111:6072",
-      "address": {
-        "street": "Lerchenstraße",
-        "number": "1",
-        "zipcode": "70174",
-        "city": "Stuttgart",
-        "country": "Germany"
-      },
-      "coordinates": {
-        "latitude": 48.782600,
-        "longitude": 9.167025
+        "name": "dhbw",
+        "vvs_code": "de:08111:6072",
+        "address": {
+            "street": "Lerchenstra\u00c3\u0178e",
+            "number": "1",
+            "zipcode": "70174",
+            "city": "Stuttgart",
+            "country": "Germany"
+        },
+        "coordinates": {
+            "latitude": 48.7826,
+            "longitude": 9.167025
         }
     }
 }
