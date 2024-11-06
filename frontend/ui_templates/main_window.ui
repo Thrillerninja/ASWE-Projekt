@@ -6,9 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>491</width>
-    <height>289</height>
+    <width>475</width>
+    <height>276</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>475</width>
+    <height>250</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>475</width>
+    <height>276</height>
+   </size>
   </property>
   <property name="cursor">
    <cursorShape>ArrowCursor</cursorShape>
@@ -30,9 +42,9 @@
    <widget class="QLabel" name="lb_select_fuel_type">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>40</x>
       <y>20</y>
-      <width>161</width>
+      <width>131</width>
       <height>31</height>
      </rect>
     </property>
@@ -71,15 +83,18 @@ QLabel:disabled {
 </string>
     </property>
     <property name="text">
-     <string>Select Fuel Type</string>
+     <string>Kraftstoffart</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="lb_default_alarm_time">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>40</x>
       <y>110</y>
-      <width>191</width>
+      <width>131</width>
       <height>31</height>
      </rect>
     </property>
@@ -118,7 +133,10 @@ QLabel:disabled {
 </string>
     </property>
     <property name="text">
-     <string>Default Alarm Time</string>
+     <string>Weckzeit</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QComboBox" name="cb_fuel_type">
@@ -247,7 +265,7 @@ QTimeEdit:hover {
    <widget class="QTimeEdit" name="te_sleep_time">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>280</x>
       <y>150</y>
       <width>131</width>
       <height>31</height>
@@ -296,9 +314,9 @@ QTimeEdit:hover {
    <widget class="QLabel" name="lb_sleep_time">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>270</x>
       <y>110</y>
-      <width>191</width>
+      <width>151</width>
       <height>31</height>
      </rect>
     </property>
@@ -337,15 +355,18 @@ QLabel:disabled {
 </string>
     </property>
     <property name="text">
-     <string>Default Sleep Time</string>
+     <string>Schlafenszeit</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="lb_alarm_text">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>70</y>
-      <width>181</width>
+      <x>0</x>
+      <y>30</y>
+      <width>471</width>
       <height>41</height>
      </rect>
     </property>
@@ -386,13 +407,16 @@ QLabel:disabled {
     <property name="text">
      <string>Alarm gesetzt für:</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
    </widget>
    <widget class="QPushButton" name="bt_speech_to_text">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>140</y>
-      <width>86</width>
+      <x>190</x>
+      <y>130</y>
+      <width>91</width>
       <height>70</height>
      </rect>
     </property>
@@ -442,9 +466,9 @@ QPushButton:pressed {
    <widget class="QLabel" name="lb_alarm">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>0</x>
       <y>70</y>
-      <width>141</width>
+      <width>471</width>
       <height>41</height>
      </rect>
     </property>
@@ -492,10 +516,10 @@ QLabel:disabled {
    <widget class="QPushButton" name="bt_settings">
     <property name="geometry">
      <rect>
-      <x>350</x>
+      <x>430</x>
       <y>10</y>
-      <width>111</width>
-      <height>51</height>
+      <width>31</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="cursor">
@@ -503,37 +527,25 @@ QLabel:disabled {
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton {
-    background-color: #2ecc71;
-    color: white;
-    border: 2px solid #27ae60;
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
+    background: transparent;
+    border: none;
 }
-
 QPushButton:hover {
-    background-color: #27ae60;
-    border: 2px solid #1e8449;
-    color: #ecf0f1;
-}
-
-QPushButton:pressed {
-    background-color: #1e8449;
-    border: 2px solid #1d6f43;
-    color: #bdc3c7;
-}
-
-QPushButton:disabled {
-    background-color: #bdc3c7;
-    border: 2px solid #95a5a6;
-    color: #7f8c8d;
-}
-</string>
+	background-color: rgba(169, 169, 169, 100);
+}</string>
     </property>
     <property name="text">
-     <string>Settings</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>setting.png</normaloff>setting.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>28</width>
+      <height>40</height>
+     </size>
     </property>
    </widget>
    <widget class="QSlider" name="sl_fuel_threshold">
@@ -647,7 +659,7 @@ QLineEdit {
      <rect>
       <x>230</x>
       <y>20</y>
-      <width>221</width>
+      <width>231</width>
       <height>31</height>
      </rect>
     </property>
@@ -686,7 +698,10 @@ QLabel:disabled {
 </string>
     </property>
     <property name="text">
-     <string>Select Fuel Threshold</string>
+     <string>Kraftstoffschwelle</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QPushButton" name="bt_save_settings">
@@ -739,10 +754,10 @@ QPushButton:disabled {
    <widget class="QLabel" name="lb_sound_wave_gif">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>220</y>
-      <width>141</width>
-      <height>31</height>
+      <x>160</x>
+      <y>210</y>
+      <width>151</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -758,7 +773,7 @@ QPushButton:disabled {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>491</width>
+     <width>475</width>
      <height>21</height>
     </rect>
    </property>

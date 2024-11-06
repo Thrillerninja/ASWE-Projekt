@@ -1,6 +1,6 @@
 {
     "fuel_type": "super-e5",
-    "fuel_threshold": 1.44,
+    "fuel_threshold": 1.23,
     "default_alarm_time": "08:00",
     "sleep_time": "22:00",
     "home_location": {

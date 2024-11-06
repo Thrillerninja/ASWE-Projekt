@@ -14,7 +14,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(491, 289)
+        MainWindow.resize(475, 276)
+        MainWindow.setMinimumSize(QtCore.QSize(475, 250))
+        MainWindow.setMaximumSize(QtCore.QSize(475, 276))
         MainWindow.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(".\\frontend\\ui_templates\\p_logo.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -23,7 +25,7 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.lb_select_fuel_type = QtWidgets.QLabel(self.centralwidget)
-        self.lb_select_fuel_type.setGeometry(QtCore.QRect(20, 20, 161, 31))
+        self.lb_select_fuel_type.setGeometry(QtCore.QRect(40, 20, 131, 31))
         self.lb_select_fuel_type.setStyleSheet("QLabel {\n"
 "    font-size: 18px;\n"
 "    font-weight: bold;\n"
@@ -56,9 +58,10 @@ class Ui_MainWindow(object):
 "    color: #7f8c8d;\n"
 "}\n"
 "")
+        self.lb_select_fuel_type.setAlignment(QtCore.Qt.AlignCenter)
         self.lb_select_fuel_type.setObjectName("lb_select_fuel_type")
         self.lb_default_alarm_time = QtWidgets.QLabel(self.centralwidget)
-        self.lb_default_alarm_time.setGeometry(QtCore.QRect(20, 110, 191, 31))
+        self.lb_default_alarm_time.setGeometry(QtCore.QRect(40, 110, 131, 31))
         self.lb_default_alarm_time.setStyleSheet("QLabel {\n"
 "    font-size: 18px;\n"
 "    font-weight: bold;\n"
@@ -91,6 +94,7 @@ class Ui_MainWindow(object):
 "    color: #7f8c8d;\n"
 "}\n"
 "")
+        self.lb_default_alarm_time.setAlignment(QtCore.Qt.AlignCenter)
         self.lb_default_alarm_time.setObjectName("lb_default_alarm_time")
         self.cb_fuel_type = QtWidgets.QComboBox(self.centralwidget)
         self.cb_fuel_type.setGeometry(QtCore.QRect(40, 60, 131, 31))
@@ -168,7 +172,7 @@ class Ui_MainWindow(object):
         self.te_default_alarm_time.setAlignment(QtCore.Qt.AlignCenter)
         self.te_default_alarm_time.setObjectName("te_default_alarm_time")
         self.te_sleep_time = QtWidgets.QTimeEdit(self.centralwidget)
-        self.te_sleep_time.setGeometry(QtCore.QRect(270, 150, 131, 31))
+        self.te_sleep_time.setGeometry(QtCore.QRect(280, 150, 131, 31))
         self.te_sleep_time.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.te_sleep_time.setStyleSheet("QTimeEdit {\n"
 "    font-size: 14px;\n"
@@ -204,7 +208,7 @@ class Ui_MainWindow(object):
         self.te_sleep_time.setAlignment(QtCore.Qt.AlignCenter)
         self.te_sleep_time.setObjectName("te_sleep_time")
         self.lb_sleep_time = QtWidgets.QLabel(self.centralwidget)
-        self.lb_sleep_time.setGeometry(QtCore.QRect(250, 110, 191, 31))
+        self.lb_sleep_time.setGeometry(QtCore.QRect(270, 110, 151, 31))
         self.lb_sleep_time.setStyleSheet("QLabel {\n"
 "    font-size: 18px;\n"
 "    font-weight: bold;\n"
@@ -237,9 +241,10 @@ class Ui_MainWindow(object):
 "    color: #7f8c8d;\n"
 "}\n"
 "")
+        self.lb_sleep_time.setAlignment(QtCore.Qt.AlignCenter)
         self.lb_sleep_time.setObjectName("lb_sleep_time")
         self.lb_alarm_text = QtWidgets.QLabel(self.centralwidget)
-        self.lb_alarm_text.setGeometry(QtCore.QRect(70, 70, 181, 41))
+        self.lb_alarm_text.setGeometry(QtCore.QRect(0, 30, 471, 41))
         self.lb_alarm_text.setStyleSheet("QLabel {\n"
 "    font-size: 18px;\n"
 "    font-weight: bold;\n"
@@ -272,9 +277,10 @@ class Ui_MainWindow(object):
 "    color: #7f8c8d;\n"
 "}\n"
 "")
+        self.lb_alarm_text.setAlignment(QtCore.Qt.AlignCenter)
         self.lb_alarm_text.setObjectName("lb_alarm_text")
         self.bt_speech_to_text = QtWidgets.QPushButton(self.centralwidget)
-        self.bt_speech_to_text.setGeometry(QtCore.QRect(200, 140, 86, 70))
+        self.bt_speech_to_text.setGeometry(QtCore.QRect(190, 130, 91, 70))
         self.bt_speech_to_text.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.bt_speech_to_text.setStyleSheet("QPushButton {\n"
 "    font-size: 14px;\n"
@@ -307,7 +313,7 @@ class Ui_MainWindow(object):
         self.bt_speech_to_text.setIconSize(QtCore.QSize(35, 35))
         self.bt_speech_to_text.setObjectName("bt_speech_to_text")
         self.lb_alarm = QtWidgets.QLabel(self.centralwidget)
-        self.lb_alarm.setGeometry(QtCore.QRect(250, 70, 141, 41))
+        self.lb_alarm.setGeometry(QtCore.QRect(0, 70, 471, 41))
         self.lb_alarm.setStyleSheet("QLabel {\n"
 "    font-size: 18px;\n"
 "    font-weight: bold;\n"
@@ -343,37 +349,20 @@ class Ui_MainWindow(object):
         self.lb_alarm.setAlignment(QtCore.Qt.AlignCenter)
         self.lb_alarm.setObjectName("lb_alarm")
         self.bt_settings = QtWidgets.QPushButton(self.centralwidget)
-        self.bt_settings.setGeometry(QtCore.QRect(350, 10, 111, 51))
+        self.bt_settings.setGeometry(QtCore.QRect(430, 10, 31, 31))
         self.bt_settings.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.bt_settings.setStyleSheet("QPushButton {\n"
-"    background-color: #2ecc71;\n"
-"    color: white;\n"
-"    border: 2px solid #27ae60;\n"
-"    border-radius: 8px;\n"
-"    padding: 10px 20px;\n"
-"    font-size: 16px;\n"
-"    font-weight: bold;\n"
-"    text-align: center;\n"
+"    background: transparent;\n"
+"    border: none;\n"
 "}\n"
-"\n"
 "QPushButton:hover {\n"
-"    background-color: #27ae60;\n"
-"    border: 2px solid #1e8449;\n"
-"    color: #ecf0f1;\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: #1e8449;\n"
-"    border: 2px solid #1d6f43;\n"
-"    color: #bdc3c7;\n"
-"}\n"
-"\n"
-"QPushButton:disabled {\n"
-"    background-color: #bdc3c7;\n"
-"    border: 2px solid #95a5a6;\n"
-"    color: #7f8c8d;\n"
-"}\n"
-"")
+"    background-color: rgba(169, 169, 169, 100);\n"
+"}")
+        self.bt_settings.setText("")
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(".\\frontend\\ui_templates\\setting.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.bt_settings.setIcon(icon2)
+        self.bt_settings.setIconSize(QtCore.QSize(28, 40))
         self.bt_settings.setObjectName("bt_settings")
         self.sl_fuel_threshold = QtWidgets.QSlider(self.centralwidget)
         self.sl_fuel_threshold.setGeometry(QtCore.QRect(300, 60, 160, 31))
@@ -448,7 +437,7 @@ class Ui_MainWindow(object):
 "    }")
         self.le_fuel_threshold.setObjectName("le_fuel_threshold")
         self.lb_select_fuel_threshold = QtWidgets.QLabel(self.centralwidget)
-        self.lb_select_fuel_threshold.setGeometry(QtCore.QRect(230, 20, 221, 31))
+        self.lb_select_fuel_threshold.setGeometry(QtCore.QRect(230, 20, 231, 31))
         self.lb_select_fuel_threshold.setStyleSheet("QLabel {\n"
 "    font-size: 18px;\n"
 "    font-weight: bold;\n"
@@ -481,6 +470,7 @@ class Ui_MainWindow(object):
 "    color: #7f8c8d;\n"
 "}\n"
 "")
+        self.lb_select_fuel_threshold.setAlignment(QtCore.Qt.AlignCenter)
         self.lb_select_fuel_threshold.setObjectName("lb_select_fuel_threshold")
         self.bt_save_settings = QtWidgets.QPushButton(self.centralwidget)
         self.bt_save_settings.setGeometry(QtCore.QRect(390, 200, 71, 51))
@@ -516,13 +506,13 @@ class Ui_MainWindow(object):
 "")
         self.bt_save_settings.setObjectName("bt_save_settings")
         self.lb_sound_wave_gif = QtWidgets.QLabel(self.centralwidget)
-        self.lb_sound_wave_gif.setGeometry(QtCore.QRect(170, 220, 141, 31))
+        self.lb_sound_wave_gif.setGeometry(QtCore.QRect(160, 210, 151, 41))
         self.lb_sound_wave_gif.setText("")
         self.lb_sound_wave_gif.setAlignment(QtCore.Qt.AlignCenter)
         self.lb_sound_wave_gif.setObjectName("lb_sound_wave_gif")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 491, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 475, 21))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -535,19 +525,18 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", " "))
-        self.lb_select_fuel_type.setText(_translate("MainWindow", "Select Fuel Type"))
-        self.lb_default_alarm_time.setText(_translate("MainWindow", "Default Alarm Time"))
+        self.lb_select_fuel_type.setText(_translate("MainWindow", "Kraftstoffart"))
+        self.lb_default_alarm_time.setText(_translate("MainWindow", "Weckzeit"))
         self.cb_fuel_type.setItemText(0, _translate("MainWindow", "Super E10", "super_e10"))
         self.cb_fuel_type.setItemText(1, _translate("MainWindow", "Super E5"))
         self.cb_fuel_type.setItemText(2, _translate("MainWindow", "Super Plus"))
         self.cb_fuel_type.setItemText(3, _translate("MainWindow", "Diesel"))
         self.cb_fuel_type.setItemText(4, _translate("MainWindow", "LKW Diesel"))
         self.cb_fuel_type.setItemText(5, _translate("MainWindow", "LPG"))
-        self.lb_sleep_time.setText(_translate("MainWindow", "Default Sleep Time"))
+        self.lb_sleep_time.setText(_translate("MainWindow", "Schlafenszeit"))
         self.lb_alarm_text.setText(_translate("MainWindow", "Alarm gesetzt für:"))
         self.lb_alarm.setText(_translate("MainWindow", "00:00 Uhr"))
-        self.bt_settings.setText(_translate("MainWindow", "Settings"))
-        self.lb_select_fuel_threshold.setText(_translate("MainWindow", "Select Fuel Threshold"))
+        self.lb_select_fuel_threshold.setText(_translate("MainWindow", "Kraftstoffschwelle"))
         self.bt_save_settings.setText(_translate("MainWindow", "Ok"))
 
 

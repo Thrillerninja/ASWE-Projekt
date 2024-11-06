@@ -74,6 +74,22 @@ class TestConfigManager(unittest.TestCase):
 
         mock_open.assert_called_once_with(self.config_manager.preferences_file, 'r')
 
+    @patch('builtins.open', side_effect=FileNotFoundError)
+    def test_load_preferences_file_file_not_found(self, mock_open):
+        """Test handling of missing preferences file."""
+        self.config_manager.load_preferences_file()
+        self.assertEqual(self.config_manager.preferences, {})
+
+    @patch('builtins.open', new_callable=unittest.mock.mock_open)
+    def test_load_preferences_file_json_decode_error(self, mock_open):
+        """Test handling of invalid JSON in preferences file."""
+        mock_open.return_value.read.return_value = "{invalid_json: true}"
+
+        with patch('json.load', side_effect=json.JSONDecodeError("Expecting value", "document", 0)):
+            self.config_manager.load_preferences_file()
+
+        self.assertEqual(self.config_manager.preferences, {})
+
     @patch('builtins.open', new_callable=unittest.mock.mock_open)
     def test_save_preferences(self, mock_open):
         """Test saving preferences to a file."""
@@ -168,6 +184,26 @@ class TestConfigManager(unittest.TestCase):
         """Test invalid fuel threshold input handling."""
         self.config_manager.on_le_fuel_threshold_changed("abc")
 
+        self.mock_view.show_error_le_fuel_threshold.assert_called_with("Fuel threshold must be a number between 1.00 and 2.00")
+
+    @patch('frontend.config_manager.ConfigManager.update_preference')
+    def test_on_le_fuel_threshold_changed_currency_symbol(self, mock_update):
+        """Test fuel threshold input with currency symbol."""
+        self.config_manager.on_le_fuel_threshold_changed("1.50 €")
+
+        mock_update.assert_called_with('fuel_threshold', 1.50)
+        self.mock_view.set_sl_fuel_threshold.assert_called_with(150)
+        self.mock_view.set_le_fuel_threshold.assert_called_with("1.50")
+
+    @patch('frontend.config_manager.ConfigManager.update_preference')
+    def test_on_le_fuel_threshold_changed_out_of_range(self, mock_update):
+        """Test fuel threshold input outside valid range."""
+        # below minimum range
+        self.config_manager.on_le_fuel_threshold_changed("0.99")
+        self.mock_view.show_error_le_fuel_threshold.assert_called_with("Fuel threshold must be a number between 1.00 and 2.00")
+
+        # above maximum range
+        self.config_manager.on_le_fuel_threshold_changed("2.01")
         self.mock_view.show_error_le_fuel_threshold.assert_called_with("Fuel threshold must be a number between 1.00 and 2.00")
 
 if __name__ == '__main__':
