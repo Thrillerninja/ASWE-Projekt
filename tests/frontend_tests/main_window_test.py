@@ -78,6 +78,7 @@ class TestMainWindow(unittest.TestCase):
         self.mock_ui.cb_fuel_type.count.return_value = 3
         self.mock_ui.sl_fuel_threshold.minimum.return_value = 0
         self.mock_ui.sl_fuel_threshold.maximum.return_value = 100
+        self.mock_event = MagicMock()
 
 
     def test_toggle_view(self):
@@ -211,6 +212,13 @@ class TestMainWindow(unittest.TestCase):
         self.main_window.set_alarm(alarm_time)
         self.mock_ui.lb_alarm_text.setText.assert_called_with(alarm_time)
 
+    @patch('PyQt5.QtWidgets.QApplication.quit')  # Mock QApplication.quit
+    def test_closeEvent(self, mock_quit):
+        """Test that closeEvent calls save_preferences and quits the application."""
+        self.mock_config.save_preferences = MagicMock()
+        self.main_window.closeEvent(self.mock_event)
+        self.mock_config.save_preferences.assert_called_once()
+        mock_quit.assert_called_once()
 
 if __name__ == '__main__':
     unittest.main()
