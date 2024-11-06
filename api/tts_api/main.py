@@ -1,3 +1,4 @@
+
 import pyttsx3
 import speech_recognition as sr
 
@@ -9,7 +10,12 @@ class TTSAPI():
         """
         Initializes the Interface
         """
-        self.engine = pyttsx3.init(driverName='sapi5')
+        try:
+            self.engine = pyttsx3.init(driverName='sapi5')
+        except ImportError:
+            self.engine = pyttsx3.init()
+        except Exception as e:
+            print(f"Error initializing pyttsx3: {e}")
         
         voices = self.engine.getProperty('voices')
         # Set the voice to a specific German voice
@@ -66,20 +72,21 @@ class TTSAPI():
         except Exception as e:
             return f"Ein Fehler ist aufgetreten: {str(e)}"
         
-    def ask_yes_no(self, text: str):
-        self.speak(text)
-        response = self.listen()
-        
-        yes_alternatives = ['ja', 'jep', 'jo']
-        no_alternatives = ['nein', 'ne']
-        
-        if any(x in response.lower() for x in yes_alternatives):
-            return True 
-        elif any(x in response.lower() for x in no_alternatives):
-            return False
-        else:
-            return self.ask_yes_no("Entschuldigung, ich habe Ihre Antwort nicht verstanden. Bitte antworten Sie mit ja oder nein.")
-        
+    def ask_yes_no(self, text, retries=3):
+        """
+        Ask the user a yes/no question and return True for yes and False for no.
+        Retries the question up to a specified number of times if the response is not understood.
+        """
+        for _ in range(retries):
+            self.speak(text)
+            response = self.listen()  # Assuming listen() is a method that captures user response
+            if response.lower() in ['ja', 'yes']:
+                return True
+            elif response.lower() in ['nein', 'no']:
+                return False
+            else:
+                text = "Entschuldigung, ich habe Ihre Antwort nicht verstanden. Bitte antworten Sie mit ja oder nein."
+        return False
         
     def play_sound(self, sound:str):
         """
