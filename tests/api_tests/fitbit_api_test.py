@@ -11,10 +11,10 @@ class TestFitbitAPI(unittest.TestCase):
         Mocks the get_env_variable function to avoid using real secrets.
         """
         # Mock the return value of get_env_variable
-        mock_get_env_variable.side_effect = lambda var_name: {
+        mock_get_env_variable.return_value = {
             'FITBIT_CLIENT_ID': 'test_client_id',
             'FITBIT_CLIENT_SECRET': 'test_client_secret'
-        }.get(var_name, None)
+        }
 
         # Instantiate the FitbitAPI client (the authentication will be mocked)
         self.fitbit_client_id = mock_get_env_variable('FITBIT_CLIENT_ID')
