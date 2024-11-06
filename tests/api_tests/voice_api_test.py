@@ -54,21 +54,26 @@ class TestVoiceInterface(unittest.TestCase):
         result = self.voice_interface.listen()
         self.assertIn("Ein Fehler ist aufgetreten", result)
         
-    def test_yes_no(self):
+    @patch('api.tts_api.main.TTSAPI.listen')
+    def test_yes_no(self, mock_listen):
         """
         Test ask_yes_no functionality
         """
         question = "Do you like ice cream?"
         with patch.object(self.voice_interface, 'speak') as mock_speak:
-            with patch.object(self.voice_interface, 'listen') as mock_listen:
-                mock_listen.return_value = "yes"
-                self.assertTrue(self.voice_interface.ask_yes_no(question))
-                mock_speak.assert_called_with(question)
+            # Test case where user responds with 'yes'
+            mock_listen.return_value = "yes"
+            self.assertTrue(self.voice_interface.ask_yes_no(question))
+            mock_speak.assert_any_call(question)
 
-                mock_listen.return_value = "no"
-                self.assertFalse(self.voice_interface.ask_yes_no(question))
-                mock_speak.assert_called_with(question)
-                
-                mock_listen.return_value = "I don't know"
-                self.assertFalse(self.voice_interface.ask_yes_no(question))
-                mock_speak.assert_called_with(question)
+            # Test case where user responds with 'no'
+            mock_listen.return_value = "no"
+            self.assertFalse(self.voice_interface.ask_yes_no(question))
+            mock_speak.assert_any_call(question)
+
+            # Test case where user responds with an unrecognized answer
+            mock_listen.side_effect = ["I don't know", "yes"]
+            self.assertTrue(self.voice_interface.ask_yes_no(question))
+            mock_speak.assert_any_call(question)
+            mock_speak.assert_any_call("Entschuldigung, ich habe Ihre Antwort nicht verstanden. Bitte antworten Sie mit ja oder nein.")
+
