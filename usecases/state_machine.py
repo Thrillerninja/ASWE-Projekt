@@ -24,6 +24,7 @@ class StateMachine:
     def __init__(self):
         print("StateMachine initialized")
         self.machine = Machine(model=self, states=self.states, initial='idle')
+        self.testing = False
         
         self.api_factory = APIFactory(CONFIG)
         
@@ -43,7 +44,7 @@ class StateMachine:
         self.machine.add_transition(trigger='morning_news', source='welcome', dest='news')
         self.machine.add_transition(trigger='interaction', source="welcome", dest='speach')
         
-        self.machine.add_transition(trigger='exit', source='speach', dest='idle')
+        self.machine.add_transition(trigger='goto_idle', source='speach', dest='idle')
         self.machine.add_transition(trigger='goto_welcome', source='speach', dest='welcome')
         self.machine.add_transition(trigger='goto_finance', source='speach', dest='finance')
         self.machine.add_transition(trigger='goto_activity', source='speach', dest='activity')
@@ -52,11 +53,6 @@ class StateMachine:
         self.machine.add_transition(trigger='goto_finance', source='speach', dest='finance')
         self.machine.add_transition(trigger='exit_finance', source='finance', dest='idle')
 
-        
-        # Transition to initial state
-        # to_ is a method provided by transitions to call the transition appended
-        self.to_idle()
-        
     def on_enter(self):
         """
         Callback method that is called when entering a state.
