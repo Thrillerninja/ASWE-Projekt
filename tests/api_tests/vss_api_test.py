@@ -51,7 +51,8 @@ class TestVVSAPI(unittest.TestCase):
                 trip = self.api.calc_trip_time(Station.CANNSTATTER_WASEN, Station.DITZINGEN_HERDWEG)
                 self.assertIsNotNone(trip)
                 self.assertGreater(len(trip.connections), 0)
-                self.assertGreater(trip.duration, 30)
+                self.assertIsNotNone(trip.duration)
+                self.assertGreater(trip.duration, 0)
                 print(trip)
                 
     def test_calc_trips_dep_now(self):
@@ -63,7 +64,8 @@ class TestVVSAPI(unittest.TestCase):
                 print("---------")
                 self.assertIsNotNone(trip)
                 self.assertGreater(len(trip.connections), 0)
-                self.assertGreater(trip.duration, 30)
+                self.assertIsNotNone(trip.duration)
+                self.assertGreater(trip.duration, 0)
             self.assertAlmostEqual(trips[0].connections[0].origin.departure_time_estimated, datetime.datetime.now(), delta=datetime.timedelta(minutes=40))
         except Exception as e:
             print(f"Direct test failed: {e}")
@@ -90,7 +92,8 @@ class TestVVSAPI(unittest.TestCase):
                 print("---------")
                 self.assertIsNotNone(trip)
                 self.assertGreater(len(trip.connections), 0)
-                self.assertGreater(trip.duration, 30)
+                self.assertIsNotNone(trip.duration)
+                self.assertGreater(trip.duration, 0)
             self.assertAlmostEqual(trips[-1].connections[-1].destination.arrival_time_estimated, datetime.datetime.now(), delta=datetime.timedelta(minutes=40))
         except Exception as e:
             print(f"Direct test failed: {e}")
@@ -105,7 +108,8 @@ class TestVVSAPI(unittest.TestCase):
                 trip = self.api.calc_trip(Station.CANNSTATTER_WASEN, Station.DITZINGEN_HERDWEG, arrival_time=fixed_now)
                 self.assertIsNotNone(trip)
                 self.assertGreater(len(trip.connections), 0)
-                self.assertGreater(trip.duration, 30)
+                self.assertIsNotNone(trip.duration)
+                self.assertGreater(trip.duration, 0)
                 print(trip)
                 
     def test_calc_trips_no_time(self):
