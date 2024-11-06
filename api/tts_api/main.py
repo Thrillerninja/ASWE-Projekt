@@ -6,6 +6,13 @@ class TTSAPI():
     """
     Class for text to speech and speech to text
     """
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(TTSAPI, cls).__new__(cls)
+        return cls._instance
+    
     def __init__(self):
         """
         Initializes the Interface

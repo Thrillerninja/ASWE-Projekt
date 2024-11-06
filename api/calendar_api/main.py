@@ -9,6 +9,12 @@ class RaplaAPI(APIClient):
     """
     API client for accessing rapla from a given url.
     """
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(RaplaAPI, cls).__new__(cls)
+        return cls._instance
 
     def __init__(self, url: str, calendar:rapla.Calendar=None):
         """
