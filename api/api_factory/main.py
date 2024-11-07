@@ -2,9 +2,9 @@ from typing import Dict
 from api.api_client import APIClient
 from api.weather_api.main import WeatherAPI
 from api.finance_api import FinanceAPI
-# from api.maps import MapsAPI
 from api.spotify_api import SpotifyAPI
-# from api.news import NewsAPI
+from api.calendar_api import RaplaAPI
+from api.tts_api import TTSAPI
 
 class APIFactory:
     """
@@ -31,14 +31,14 @@ class APIFactory:
             return WeatherAPI(self.config['weather_api_key'])
         elif api_type == 'finance':
             return FinanceAPI(self.config['finance_api_key'])
-        # elif api_type == 'maps':
-            # return MapsAPI(self.config['maps_api_key'])
         elif api_type == 'spotify':
             return SpotifyAPI(
                 client_id=self.config['spotify_client_id'],
                 client_secret=self.config['spotify_client_secret']
             )
-        # elif api_type == 'news':
-            # return NewsAPI(self.config['news_api_key'])
+        elif api_type == 'rapla':
+            return RaplaAPI(self.config['rapla_url'])
+        elif api_type == 'tts':
+            return TTSAPI()
         else:
             raise ValueError(f"API type '{api_type}' is not supported.")

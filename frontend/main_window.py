@@ -1,9 +1,12 @@
 import sys
 from PyQt5 import QtWidgets
-from ui_templates.main_window import Ui_MainWindow
+from .ui_templates.main_window import Ui_MainWindow
+from usecases.state_machine import StateMachine
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self):
+    def __init__(self, state_machine: StateMachine):
+        self.state_machine = state_machine
+        
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -12,9 +15,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def on_bt_exit_clicked(self):
         pass
-
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
+    
+    # Prototype of voice activation button state change
+    def on_bt_voice_clicked(self):
+        self.state_machine.to_

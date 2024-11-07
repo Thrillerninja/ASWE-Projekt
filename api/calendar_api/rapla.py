@@ -20,15 +20,14 @@ class Calendar:
     def __repr__(self) -> str:
         return self.__str__()
     
-    def toJSON(self):
+    def to_json(self):
         self.sort()
-        return [appointment.toJSON() for appointment in self.appointments]
-    
+        return [appointment.to_json() for appointment in self.appointments]    
     
     def save(self, filepath:str):
         self.sort()
         with open(filepath, 'w', encoding='utf-8') as f:
-            json.dump(self.toJSON(), f, indent=4, ensure_ascii=False)
+            json.dump(self.to_json(), f, indent=4, ensure_ascii=False)
 
 
 
@@ -44,7 +43,7 @@ class Appointment:
     def __str__(self):
         return f"{self.date} | {self.start} | {self.end} | {self.title} | {self.color}"
     
-    def toJSON(self):
+    def to_json(self):
         return {
             'date': self.date,
             'start': self.start,
@@ -65,8 +64,8 @@ class Lecture(Appointment):
     def __str__(self):
         return f"{super().__str__()} | {self.room} | {self.lecturer}"
     
-    def toJSON(self):
-        js = super().toJSON()
+    def to_json(self):
+        js = super().to_json()
         js.update({
             'room': self.room,
             'lecturer': self.lecturer
