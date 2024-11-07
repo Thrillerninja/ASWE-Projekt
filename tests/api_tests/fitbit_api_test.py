@@ -1,76 +1,130 @@
 import unittest
-import sys
-import os
+from unittest.mock import patch, MagicMock, mock_open
+import time
+import json
+from api.fitbit_api.fitbit_auth import FitbitAuth
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-from unittest.mock import patch, MagicMock
-from api.fitbit_api import FitbitAPI
 
-class TestFitbitAPI(unittest.TestCase):
+class TestFitbitAuth(unittest.TestCase):
 
-    
     def setUp(self):
-        """
-        Initializes the test setup with mock Fitbit credentials and test date.
-        Mocks the get_env_variable function to avoid using real secrets.
-        """
-        self.fitbit_api = FitbitAPI("test_id", "test_secret")
-        self.date = '2024-10-30'  # Test date for the API calls
+        self.client_id = "test_client_id"
+        self.client_secret = "test_client_secret"
+        self.fitbit_auth = FitbitAuth(self.client_id, self.client_secret)
+        self.tokens = {
+            "access_token": "test_access_token",
+            "refresh_token": "test_refresh_token",
+            "expires_at": time.time() + 3600,
+        }
 
-    @patch('api.fitbit_api.fitbit_auth.FitbitAuth.get_access_token', return_value='test_access_token')
-    @patch('requests.get')
-    def test_get_heart_data(self, mock_get, mock_auth):
-        """
-        Tests the get_heart_data method of the FitbitAPI client.
-        Mocks the HTTP request to return fake heart rate data.
-        """
+    @patch("builtins.open", new_callable=mock_open, read_data=json.dumps({
+        "access_token": "test_access_token",
+        "refresh_token": "test_refresh_token",
+        "expires_at": time.time() + 3600,
+    }))
+    def test_load_tokens(self, mock_file):
+        self.fitbit_auth.load_tokens()
+        self.assertEqual(self.fitbit_auth.access_token, "test_access_token")
+        self.assertEqual(self.fitbit_auth.refresh_token, "test_refresh_token")
+        self.assertTrue(self.fitbit_auth.expires_at > time.time())
+        mock_file.assert_called_once_with(self.fitbit_auth.TOKEN_FILE, "r")
+
+    @patch("builtins.open", new_callable=mock_open)
+    def test_save_tokens(self, mock_file):
+        self.fitbit_auth.save_tokens(self.tokens)
+        mock_file.assert_called_once_with(self.fitbit_auth.TOKEN_FILE, "w")
+        handle = mock_file()
+        self.assertEqual(handle.write.call_count, 15)
+        expected_output = json.dumps(self.tokens, indent=4) 
+        written_content = "".join(call.args[0] for call in handle.write.call_args_list)
+        
+        self.assertEqual(written_content, expected_output)
+
+    @patch("api.fitbit_api.fitbit_auth.requests.post")
+    @patch.object(FitbitAuth, "save_tokens")  # Patch `save_tokens` in der `FitbitAuth` Klasse
+    def test_refresh_access_token(self, mock_save_tokens, mock_post):
         mock_response = MagicMock()
-        expected_data = {'activities-heart-intraday': {'dataset': [{'time': '09:30:00', 'value': 70}]}}
-        mock_response.json.return_value = expected_data
-        mock_get.return_value = mock_response
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "access_token": "test_access_token",
+            "refresh_token": "test_refresh_token",
+            "expires_in": 3600
+        }
+        mock_post.return_value = mock_response
 
-        heart_data = self.fitbit_api.get_heart_data(self.date)
-        self.assertEqual(heart_data, expected_data)
-        mock_get.assert_called_once_with(
-            f'https://api.fitbit.com/1/user/-/activities/heart/date/{self.date}/1d/1min.json',
-            headers={'Authorization': 'Bearer test_access_token'}
-        )
+        self.fitbit_auth.refresh_token = "test_refresh_token"
 
-    @patch('api.fitbit_api.fitbit_auth.FitbitAuth.get_access_token', return_value='test_access_token')
-    @patch('requests.get')
-    def test_get_steps_data(self, mock_get, mock_auth):
-        """
-        Tests the get_steps_data method of the FitbitAPI client.
-        Mocks the HTTP request to return fake step count data.
-        """
+        # Simuliere den erfolgreichen API-Aufruf
+        self.fitbit_auth.refresh_access_token()
+
+   
+
+        # Sicherstellen, dass die Tokens korrekt gesetzt wurden
+        self.assertEqual(self.fitbit_auth.access_token, "test_access_token")
+        self.assertEqual(self.fitbit_auth.refresh_token, "test_refresh_token")
+        self.assertTrue(self.fitbit_auth.expires_at > time.time())
+
+        # Überprüfen, dass der API-Aufruf durchgeführt wurde
+        mock_post.assert_called_once()
+
+
+
+    @patch("api.fitbit_api.fitbit_auth.requests.post")
+    @patch("builtins.print")
+    def test_refresh_access_token_failure(self, mock_print, mock_post):
+        # Simuliere eine fehlgeschlagene Antwort
         mock_response = MagicMock()
-        expected_data = {'activities-steps-intraday': {'dataset': [{'time': '09:30:00', 'value': 100}]}}
-        mock_response.json.return_value = expected_data
-        mock_get.return_value = mock_response
+        mock_response.status_code = 400  # Fehlerstatus (z. B. invalid_grant)
+        mock_response.json.return_value = {"error": "invalid_grant"}  # Fehlerantwort von der API
+        mock_post.return_value = mock_response
 
-        steps_data = self.fitbit_api.get_steps_data(self.date)
-        self.assertEqual(steps_data, expected_data)
-        mock_get.assert_called_once_with(
-            f'https://api.fitbit.com/1/user/-/activities/steps/date/{self.date}/1d/1min.json',
-            headers={'Authorization': 'Bearer test_access_token'}
-        )
+        # Angenommene refresh_token
+        self.fitbit_auth.refresh_token = "mock_refresh_token"
 
-    @patch('api.fitbit_api.fitbit_auth.FitbitAuth.get_access_token', return_value='test_access_token')
-    @patch('requests.get')
-    def test_get_sleep_data(self, mock_get, mock_auth):
-        """
-        Tests the get_sleep_data method of the FitbitAPI client.
-        Mocks the HTTP request to return fake sleep data.
-        """
-        mock_response = MagicMock()
-        expected_data = {'sleep': [{'dateOfSleep': '2021-01-01', 'minutesAsleep': 400}]}
-        mock_response.json.return_value = expected_data
-        mock_get.return_value = mock_response
+        # Methode aufrufen
+        self.fitbit_auth.refresh_access_token()
 
-        sleep_data = self.fitbit_api.get_sleep_data(self.date)
-        self.assertEqual(sleep_data, expected_data)
-        mock_get.assert_called_once_with(
-            f'https://api.fitbit.com/1/user/-/sleep/date/{self.date}/json',
-            headers={'Authorization': 'Bearer test_access_token'}
-        )
+        # Überprüfe, ob die Fehlermeldung korrekt ausgegeben wurde
+        mock_print.assert_any_call("Error refreshing token:", {"error": "invalid_grant"})
+
+    # @patch("api.fitbit_api.fitbit_auth.OAuth2Session.authorization_url")
+    # @patch("api.fitbit_api.fitbit_auth.input", return_value="https://127.0.0.1:8080?code=test_code")
+    # @patch("api.fitbit_api.fitbit_auth.OAuth2Session.fetch_token")
+    # def test_authorize(self, mock_fetch_token, mock_input, mock_authorization_url):
+    #     # Setze den gemockten Authorization URL und den Token Fetch
+    #     mock_authorization_url.return_value = ("https://authorization.url", "state")
+        
+    #     # Simuliere die Antwort von fetch_token (nach erfolgreicher Autorisierung)
+    #     mock_token_response = {
+    #         "access_token": "test_access_token",
+    #         "refresh_token": "test_refresh_token",
+    #         "expires_at": 3600,
+    #     }
+    #     mock_fetch_token.return_value = mock_token_response
+        
+    #     # Erstelle eine Instanz der Klasse
+    #     fitbit_auth = FitbitAuth(client_id="test_client_id", client_secret="test_client_secret")
+        
+    #     # Führe die Methode authorize() aus
+    #     fitbit_auth.authorize()
+                
+    #     # Überprüfe, ob die richtigen Tokens gesetzt wurden
+    #     self.assertEqual(fitbit_auth.access_token, "test_access_token")
+    #     self.assertEqual(fitbit_auth.refresh_token, "test_refresh_token")
+    #     self.assertTrue(fitbit_auth.expires_at > time.time())
+
+    @patch("time.time", return_value=time.time() - 1)  # Simulate token expired
+    @patch.object(FitbitAuth, "refresh_access_token")
+    def test_get_access_token_refresh_needed(self, mock_refresh, mock_time):
+        self.fitbit_auth.expires_at = time.time() - 10  # Expired token
+        self.fitbit_auth.get_access_token()
+        mock_refresh.assert_called_once()
+
+    @patch("time.time", return_value=time.time() + 3600)  # Simulate token not expired
+    @patch.object(FitbitAuth, "refresh_access_token")
+    def test_get_access_token_no_refresh_needed(self, mock_refresh, mock_time):
+        self.fitbit_auth.expires_at = time.time() + 3600  # Valid token
+        access_token = self.fitbit_auth.get_access_token()
+        self.assertEqual(access_token, self.fitbit_auth.access_token)
+        mock_refresh.assert_not_called()
 

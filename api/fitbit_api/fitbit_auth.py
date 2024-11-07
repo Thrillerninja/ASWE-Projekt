@@ -116,7 +116,6 @@ class FitbitAuth:
                 self.save_tokens(new_tokens)
                 print("Access token successfully refreshed.")
             else:
-                print(f"Refresh token {self.refresh_token}")
                 print("Error refreshing token:", response.json())
         else:
             print("No refresh token available. Please re-authenticate.")
