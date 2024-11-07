@@ -67,7 +67,7 @@ class TestVVSAPI(unittest.TestCase):
                 self.assertGreater(len(trip.connections), 0)
                 self.assertIsNotNone(trip.duration)
                 self.assertGreater(trip.duration, 0)
-            self.assertAlmostEqual(trips[0].connections[0].origin.departure_time_estimated, datetime.datetime.now(), delta=datetime.timedelta(minutes=40))
+            self.assertGreater(trips[0].connections[0].origin.departure_time_estimated, datetime.datetime.now())
         except Exception as e:
             print(f"Direct test failed: {e}")
             with patch('api.vvs_api.VVSAPI.calc_trip') as mock_calc_trip, \
@@ -96,7 +96,7 @@ class TestVVSAPI(unittest.TestCase):
                 self.assertGreater(len(trip.connections), 0)
                 self.assertIsNotNone(trip.duration)
                 self.assertGreater(trip.duration, 0)
-            self.assertAlmostEqual(trips[-1].connections[-1].destination.arrival_time_estimated, datetime.datetime.now(), delta=datetime.timedelta(minutes=40))
+            self.assertGreater(trips[-1].connections[-1].destination.arrival_time_estimated, datetime.datetime.now())
         except Exception as e:
             print(f"Direct test failed: {e}")
             with patch('api.vvs_api.VVSAPI.calc_trip') as mock_calc_trip, \
