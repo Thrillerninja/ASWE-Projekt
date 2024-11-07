@@ -1,8 +1,10 @@
 from datetime import datetime
+import sys
 import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
 import pandas as pd
 import requests
-from fitbit_auth import FitbitAuth
 from main import FitbitAPI
 from dotenv import load_dotenv
 

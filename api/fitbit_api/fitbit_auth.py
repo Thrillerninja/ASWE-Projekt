@@ -27,6 +27,8 @@ class FitbitAuth:
 
         :return: None
         """
+        self.client_id = client_id
+        self.client_secret = client_secret
         self.access_token = None
         self.refresh_token = None
         self.expires_at = None
@@ -90,7 +92,7 @@ class FitbitAuth:
         if self.refresh_token:
 
             auth_header = base64.b64encode(
-                f"{self.CLIENT_ID}:{self.CLIENT_SECRET}".encode()
+                f"{self.client_id}:{self.client_secret}".encode()
             ).decode()
 
             response = requests.post(
@@ -130,7 +132,7 @@ class FitbitAuth:
         """
         state = str(uuid.uuid4())
         fitbit = OAuth2Session(
-            self.CLIENT_ID,
+            self.client_id,
             scope=self.SCOPE,
             redirect_uri=self.REDIRECT_URI,
             state=state,

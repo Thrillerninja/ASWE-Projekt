@@ -1,1 +1,1 @@
-from .main import FitbitAPI, FitbitAuth
+from .main import FitbitAPI
