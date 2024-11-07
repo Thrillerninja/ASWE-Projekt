@@ -8,7 +8,9 @@ from ui_templates.main_window import Ui_MainWindow
 from config_manager import ConfigManager
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self):
+    def __init__(self, state_machine: StateMachine):
+        self.state_machine = state_machine
+        
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
