@@ -11,10 +11,9 @@ class TestApiFactory(unittest.TestCase):
     def setUp(self):
         config = {
             'weather_api_key': 'test_key',
-            'finance_api_key': 'test_key2',
+            'finance_api_key': 'test_key',
             'spotify_client_id': 'test_key3',
             'spotify_client_secret': 'test_key4'
-            'finance_api_key': 'test_api'
             }
         self.factory = APIFactory(config)
 
@@ -26,14 +25,13 @@ class TestApiFactory(unittest.TestCase):
     # test finance api creation
     def test_create_finance_api(self):
         api = self.factory.create_api('finance')
-        self.assertEqual(api.api_key, 'test_key2')
+        self.assertEqual(api.api_key, 'test_key')
 
     # test spotify api creation
-    def test_create_finance_api(self):
+    def test_create_spotify_api(self):
         api = self.factory.create_api('spotify')
         self.assertEqual(api.client_id, 'test_key3')
         self.assertEqual(api.client_secret, 'test_key4')
-        self.assertEqual(api.api_key, 'test_api')
     
     # test unsupported api type
     def test_create_unsupported_api(self):

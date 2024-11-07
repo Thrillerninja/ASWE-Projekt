@@ -22,7 +22,8 @@ class TestMainWindow(unittest.TestCase):
         self.addCleanup(patcher_ui.stop)
         self.addCleanup(patcher_config.stop)
 
-        self.main_window = MainWindow()
+        self.state_machine = MagicMock()
+        self.main_window = MainWindow(self.state_machine)
 
         self.mock_ui = self.main_window.ui
         self.mock_config = self.main_window.config_manager
