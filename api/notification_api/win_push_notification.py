@@ -31,4 +31,4 @@ class PushNotifierAPI:
                 threaded=threaded
             )
         else:
-            print(f"Notification: {title} - {message} (not supported on this platform)")
+            print(f"Notification: {title} - {message} (Push-Notifier not supported on this platform)")
