@@ -6,6 +6,7 @@ from PyQt5.QtGui import QMovie
 
 from ui_templates.main_window import Ui_MainWindow
 from config_manager import ConfigManager
+from usecases.state_machine import StateMachine
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, state_machine: StateMachine):
