@@ -1,5 +1,6 @@
 from typing import Dict, Optional, List
 import json
+import requests
 from api.spotify_api.spotify_auth import get_access_token
 from api.api_client import APIClient
 
@@ -72,14 +73,17 @@ class SpotifyAPI(APIClient):
             "position_ms": 0
         }
         
-        # if device_id:
-        #     data["device_id"] = device_id
+        if device_id:
+            data["device_id"] = device_id
         json_data = json.dumps(data)
 
         self.update_token()
-        
-        response = super().put(endpoint, data=json_data)
-        # response = self.put(endpoint, data=json_data)
+        try:
+            response = super().put(endpoint, data=json_data)
+        except requests.exceptions.HTTPError:
+            print(f"ERROR playing music: Device '{device_id}' is not active.")
+            return
+            
         
         if response.status_code == 204:
             print("Playback started successfully!")
@@ -91,6 +95,3 @@ class SpotifyAPI(APIClient):
                 response_json = None
 
             raise Exception(f"Failed to start playback: {response_json or 'No response content'}")
-
-#TODO Start playbackwhile music is not already running
-#TODO Write tests

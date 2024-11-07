@@ -82,6 +82,9 @@ def refresh_token(client_id, client_secret):
         if 'refresh_token' in response_data:
             token_data['refresh_token'] = response_data['refresh_token']
 
+        token_data['expires_in'] = response_data.get('expires_in', 3600)
+        token_data['expires_at'] = time.time() + token_data['expires_in']
+
         save_token(token_data)
     else:
         print(f'Failed to retrieve token: {response.status_code} - {response.text}')
@@ -93,7 +96,6 @@ def save_token(data):
 
     :param data: The token data returned by the Spotify API.
     """
-    data['expires_at'] = time.time() + data['expires_in']
     with open(TOKEN_FILE, 'w') as f:
         json.dump(data, f)
 
