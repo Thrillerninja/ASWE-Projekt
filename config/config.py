@@ -13,12 +13,10 @@ def get_env_variable(var_name):
     return value
 
 CONFIG = {
-      'weather_api_key': get_env_variable('WEATHER_API_KEY'),
-      'finance_api_key': get_env_variable('FINANCE_API_KEY'),
-      'rapla_url': "https://rapla.dhbw.de/rapla/internal_calendar?user=doelker%40verwaltung.ba-stuttgart.de&file=22A&day=30&month=9&year=2024&pages=20"
-#     'maps_api_key': get_env_variable('MAPS_API_KEY'),
-#     'spotify_client_id': get_env_variable('SPOTIFY_CLIENT_ID'),
-#     'spotify_client_secret': get_env_variable('SPOTIFY_CLIENT_SECRET'),
-#     'spotify_refresh_token': get_env_variable('SPOTIFY_REFRESH_TOKEN'),
-#     'news_api_key': get_env_variable('NEWS_API_KEY'),
+    'weather_api_key': get_env_variable('WEATHER_API_KEY'),
+    'weather_api_key': get_env_variable('WEATHER_API_KEY'),
+    'finance_api_key': get_env_variable('FINANCE_API_KEY'),
+    'rapla_url': "https://rapla.dhbw.de/rapla/internal_calendar?user=doelker%40verwaltung.ba-stuttgart.de&file=22A&day=30&month=9&year=2024&pages=20"
+    'spotify_client_id': get_env_variable('SPOTIFY_CLIENT_ID'),
+    'spotify_client_secret': get_env_variable('SPOTIFY_CLIENT_SECRET'),
 }
