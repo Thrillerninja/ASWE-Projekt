@@ -1,3 +1,5 @@
+"""This file will be deleted. Used for testing only."""
+
 # from api.api_factory import APIFactory
 # from config.config import CONFIG
 
@@ -15,4 +17,4 @@
 
 # playlist_uri = "37i9dQZF1DWZd79rJ6a7lp" # sleep playlist
 # playlist_uri = "37i9dQZF1E34Rz2KH9OkTj" # my mixtape 4
-# spotify.start_playback(playlist_uri, device_id)
+# spotify.start_playback(playlist_uri)

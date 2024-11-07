@@ -83,7 +83,6 @@ class SpotifyAPI(APIClient):
         except requests.exceptions.HTTPError:
             print(f"ERROR playing music: Device '{device_id}' is not active.")
             return
-            
         
         if response.status_code == 204:
             print("Playback started successfully!")
