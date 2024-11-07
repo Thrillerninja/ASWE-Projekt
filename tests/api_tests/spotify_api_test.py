@@ -2,17 +2,19 @@ import unittest
 from unittest.mock import patch, MagicMock, ANY
 import json
 import time
-import os
 import requests
 from api.api_client import APIClient
 from api.spotify_api.main import SpotifyAPI
 from api.spotify_api.spotify_auth import generate_auth_url, get_initial_token, refresh_token, save_token, get_access_token, TOKEN_FILE
-
+from api.api_factory import APIFactory
+from config.config import CONFIG
 
 class TestSpotifyAPI(unittest.TestCase):
 
     def setUp(self):
-        # Sample client ID and client secret
+        factory = APIFactory(CONFIG)
+        sp = factory.create_api('spotify')
+        
         self.client_id = "test_client_id"
         self.client_secret = "test_client_secret"
         self.spotify_api = SpotifyAPI(self.client_id, self.client_secret)
@@ -110,6 +112,10 @@ class TestSpotifyAPI(unittest.TestCase):
         self.assertEqual(str(context.exception), "Failed to start playback: No response content")
 
 class TestSpotifyAuth(unittest.TestCase):
+
+    def setUp(self):
+        factory = APIFactory(CONFIG)
+        sp = factory.create_api('spotify')
 
     @patch('builtins.print')
     def test_generate_auth_url(self, mock_print):

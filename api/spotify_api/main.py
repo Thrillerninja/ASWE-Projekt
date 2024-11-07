@@ -59,7 +59,6 @@ class SpotifyAPI(APIClient):
         response = self.get(endpoint)
         return response['devices']  # List of devices
 
-    
     def start_playback(self, playlist_id: str, device_id: Optional[str] = None) -> None:
         """
         Starts playback of a specified playlist on the user's active device.
