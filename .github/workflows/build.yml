@@ -38,11 +38,15 @@ jobs:
       - name: Set environment variables
         run: |
           echo "WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }}" >> $GITHUB_ENV
+          echo "FITBIT_CLIENT_ID=${{ secrets.FITBIT_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "FITBIT_CLIENT_SECRET=${{ secrets.FITBIT_CLIENT_SECRET }}" >> $GITHUB_ENV
 
       # Run tests without coverage
       - name: Run tests
         env:
           WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
+          FITBIT_CLIENT_ID: ${{ secrets.FITBIT_CLIENT_ID }}
+          FITBIT_CLIENT_SECRET: ${{ secrets.FITBIT_CLIENT_SECRET }}
         run: |
           python -m unittest discover -p "*_test.py"
         continue-on-error: false  # Fail the job if tests fail
@@ -51,6 +55,8 @@ jobs:
       - name: Run tests with coverage
         env:
           WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
+          FITBIT_CLIENT_ID: ${{ secrets.FITBIT_CLIENT_ID }}
+          FITBIT_CLIENT_SECRET: ${{ secrets.FITBIT_CLIENT_SECRET }}
           PYTHONPATH: ${{ github.workspace }}
         run: |
           coverage run -m unittest discover -p "*_test.py"

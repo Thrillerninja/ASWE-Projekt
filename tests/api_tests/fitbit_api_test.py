@@ -8,23 +8,13 @@ from api.fitbit_api import FitbitAPI
 
 class TestFitbitAPI(unittest.TestCase):
 
-    @patch('config.config.get_env_variable')
-    def setUp(self, mock_get_env_variable):
+    
+    def setUp(self):
         """
         Initializes the test setup with mock Fitbit credentials and test date.
         Mocks the get_env_variable function to avoid using real secrets.
         """
-        # Mock the return value of get_env_variable
-        mock_get_env_variable.return_value = {
-            'FITBIT_CLIENT_ID': 'test_client_id',
-            'FITBIT_CLIENT_SECRET': 'test_client_secret'
-        }
-
-        # Instantiate the FitbitAPI client (the authentication will be mocked)
-        self.fitbit_client_id = mock_get_env_variable('FITBIT_CLIENT_ID')
-        self.fitbit_client_secret = mock_get_env_variable('FITBIT_CLIENT_SECRET')
-        
-        self.fitbit_api = FitbitAPI(self.fitbit_client_id, self.fitbit_client_secret)
+        self.fitbit_api = FitbitAPI("test_id", "test_secret")
         self.date = '2024-10-30'  # Test date for the API calls
 
     @patch('api.fitbit_api.fitbit_auth.FitbitAuth.get_access_token', return_value='test_access_token')
@@ -84,5 +74,3 @@ class TestFitbitAPI(unittest.TestCase):
             headers={'Authorization': 'Bearer test_access_token'}
         )
 
-if __name__ == '__main__':
-    unittest.main()
