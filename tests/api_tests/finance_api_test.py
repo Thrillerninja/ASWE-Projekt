@@ -5,7 +5,7 @@ from api.finance_api import FinanceAPI, Interval
 class TestFinanceAPI(unittest.TestCase):
 
     def setUp(self):
-        self.api_key = 'test_api'
+        self.api_key = 'test_key'
         self.finance_api = FinanceAPI(self.api_key)
         self.url = 'https://www.alphavantage.co/query'
 
