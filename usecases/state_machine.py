@@ -4,6 +4,7 @@ from api.api_factory import APIFactory
 from .idle_state import IdleState
 from .welcome_state import WelcomeState
 from .speach_state import SpeachState
+from .financetracker_state import FinanceState
 
 class StateMachine:
     """
@@ -31,7 +32,7 @@ class StateMachine:
         self.welcome = WelcomeState(self)
         self.speach = SpeachState(self)
         self.news = None # TODO: Replace with NewsState object
-        self.finance = None
+        self.finance = FinanceState(self)
         self.activity = None
         
         # Setup transitions
@@ -48,6 +49,9 @@ class StateMachine:
         self.machine.add_transition(trigger='goto_activity', source='speach', dest='activity')
         self.machine.add_transition(trigger='goto_news', source='speach', dest='news')
         
+        self.machine.add_transition(trigger='goto_finance', source='speach', dest='finance')
+        self.machine.add_transition(trigger='exit_finance', source='finance', dest='idle')
+
         
         # Transition to initial state
         # to_ is a method provided by transitions to call the transition appended
