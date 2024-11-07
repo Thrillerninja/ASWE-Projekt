@@ -210,7 +210,3 @@ jobs:
           args: >
             -Dsonar.python.coverage.reportPaths=coverage.xml
             -Dsonar.verbose=true
-        with:
-          args: >
-            -Dsonar.python.coverage.reportPaths=coverage.xml
-            -Dsonar.verbose=true
