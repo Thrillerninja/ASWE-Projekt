@@ -62,17 +62,30 @@ def refresh_token(client_id, client_secret):
     with open(TOKEN_FILE, 'r') as f:
         token_data = json.load(f)
 
+    auth_header = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode('ascii')
     headers = {
-        'Authorization': 'Basic ' + (client_id + ':' + client_secret).encode('ascii').decode('latin1')
+        'Authorization': f'Basic {auth_header}',
+        'Content-Type': 'application/x-www-form-urlencoded'
     }
+
     data = {
         'grant_type': 'refresh_token',
         'refresh_token': token_data['refresh_token']
     }
-    response = requests.post(TOKEN_URL, headers=headers, data=data)
-    response_data = response.json()
 
-    save_token(response_data)
+    response = requests.post(TOKEN_URL, headers=headers, data=data)
+
+    if response.status_code == 200:
+        response_data = response.json()
+        
+        token_data['access_token'] = response_data.get('access_token')
+        if 'refresh_token' in response_data:
+            token_data['refresh_token'] = response_data['refresh_token']
+
+        save_token(token_data)
+    else:
+        print(f'Failed to retrieve token: {response.status_code} - {response.text}')
+        raise ConnectionRefusedError("Failed to refresh the token")
 
 def save_token(data):
     """
@@ -84,7 +97,7 @@ def save_token(data):
     with open(TOKEN_FILE, 'w') as f:
         json.dump(data, f)
 
-def get_access_token():
+def get_access_token(client_id, client_secret):
     """
     Retrieves the current access token, refreshing it if it has expired.
     Raises an error if the token file does not exist.
@@ -96,7 +109,7 @@ def get_access_token():
             token_data = json.load(f)
 
         if token_data['expires_at'] < time.time():
-            refresh_token()
+            refresh_token(client_id, client_secret)
             with open(TOKEN_FILE, 'r') as f:
                 token_data = json.load(f)
 

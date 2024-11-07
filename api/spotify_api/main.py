@@ -41,7 +41,7 @@ class SpotifyAPI(APIClient):
         """
         endpoint = "me/playlists"
         params = {
-            "limit": 10,  # Maximum allowed by Spotify API is 50
+            "limit": 5,  # Maximum allowed by Spotify API is 50
             "offset": 0
         }
         self.update_token()
@@ -72,13 +72,14 @@ class SpotifyAPI(APIClient):
             "position_ms": 0
         }
         
-        if device_id:
-            data["device_id"] = device_id
+        # if device_id:
+        #     data["device_id"] = device_id
         json_data = json.dumps(data)
 
         self.update_token()
         
         response = super().put(endpoint, data=json_data)
+        # response = self.put(endpoint, data=json_data)
         
         if response.status_code == 204:
             print("Playback started successfully!")
@@ -90,15 +91,6 @@ class SpotifyAPI(APIClient):
                 response_json = None
 
             raise Exception(f"Failed to start playback: {response_json or 'No response content'}")
-
-
-spotify_api = SpotifyAPI()
-playlists = spotify_api.get_user_playlists()
-for playlist in playlists:
-    print(f"Name: {playlist['name']}")
-
-playlist_id = playlists[0]['id']
-spotify_api.start_playback(playlist_id)
 
 #TODO Start playbackwhile music is not already running
 #TODO Write tests
