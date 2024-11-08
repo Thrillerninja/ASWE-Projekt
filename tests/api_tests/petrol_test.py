@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from api.petrol_api.main import PetrolAPI
 from api.petrol_api.petrol import GasStation, get_soup, get_average_price, get_gas_stations
 
+
 class TestPetrol(unittest.TestCase):
 
     # Testen der Station-Klasse
@@ -52,3 +53,7 @@ class TestPetrolAPI(unittest.TestCase):
         self.assertIsInstance(station, GasStation)
         self.assertIsInstance(station.price, float)
         self.assertIsInstance(station.name, str)
+
+
+if __name__ == '__main__':
+    unittest.main()

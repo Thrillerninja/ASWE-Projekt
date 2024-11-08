@@ -19,12 +19,10 @@ class PetrolChecker:
         """
         Checks if the current petrol price is below the threshold in the preferences
         """
-
         while True:
             threshold_pref = 1.50  # TODO get from preferences
             if not self.notified:
                 self.last_notified_threshold = threshold_pref
-
 
             # Overwrite current price for demo purposes
             overwrite_current_price = ""  # TODO get from GUI Input field
@@ -32,7 +30,6 @@ class PetrolChecker:
                 current_price_eur = float(overwrite_current_price)
             else:
                 current_price_eur = self.petrol_api.get_current_lowest_price()
-
 
             # Reset notification flag if price is above threshold
             if self.notified and current_price_eur > threshold_pref:

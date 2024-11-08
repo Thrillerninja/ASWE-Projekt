@@ -45,5 +45,6 @@ class TestPushNotifierAPI(unittest.TestCase):
             api.push("Test Title", "Test Message")
             mocked_print.assert_called_once_with("Notification: Test Title - Test Message (not supported on this platform)")
 
+
 if __name__ == '__main__':
     unittest.main()
