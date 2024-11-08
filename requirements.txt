@@ -10,3 +10,4 @@ win10toast==0.9 ; platform_system == "Windows"
 pypiwin32 ; platform_system == "Windows"
 SpeechRecognition==3.11.0
 pyttsx3==2.98
+newsapi-python==0.2.7
