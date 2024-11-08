@@ -9,7 +9,7 @@ class FitbitAPI(APIClient):
 
     API_URL_HEART = '1/user/-/activities/heart/date/{}/1d/1min.json'
     API_URL_STEPS = '1/user/-/activities/steps/date/{}/1d/1min.json'
-    API_URL_SLEEP = '1/user/-/sleep/date/{}/json'
+    API_URL_SLEEP = '1.2/user/-/sleep/date/{}.json'
 
     def __init__(self, client_id: str, client_secret: str):
         """

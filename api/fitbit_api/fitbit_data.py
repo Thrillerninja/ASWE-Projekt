@@ -1,4 +1,4 @@
-# from datetime import datetime
+# from datetime import datetime, timedelta
 # import sys
 # import os
 # sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
@@ -89,7 +89,40 @@
 #         else:
 #             return "Ungültiger Wert"  # Falls die Herzfrequenz unrealistisch niedrig ist
         
+#     def get_sleep_start_time(self, date: str) -> str:
+#         """
+#         Retrieves the time when the user went to sleep at night on the previous day,
+#         ignoring naps.
 
+#         :param date: The date for which the sleep start time is to be retrieved (in 'YYYY-MM-DD' format).
+#         :return: The time when the user went to sleep at night, in 'HH:MM' format.
+#         """
+#         try:
+#             # Calculate the date for the previous day
+#             previous_day = (datetime.strptime(date, "%Y-%m-%d") - timedelta(days=1)).strftime("%Y-%m-%d")
+            
+#             # Fetch sleep data for the previous day
+#             sleep_data = self.fitbit_api.get_sleep_data(previous_day)
+
+#             if sleep_data and 'sleep' in sleep_data:
+#                 # Iterate over sleep phases to find the first night sleep phase
+#                 for sleep_phase in sleep_data['sleep']:
+#                     if sleep_phase['isMainSleep']:  # Look for the main sleep (not naps)
+#                         sleep_start_time = sleep_phase['startTime']  # This is the time the user went to sleep
+                        
+#                         # Extract and return the start time in 'HH:MM' format
+#                         sleep_start_time = sleep_start_time.split("T")[1].split(".")[0]  # Remove date and milliseconds
+#                         print(f"User went to sleep at night at: {sleep_start_time}")
+#                         return sleep_start_time
+
+#                 print("No main sleep data found.")
+#                 return None
+#             else:
+#                 print("No sleep data found.")
+#                 return None
+#         except requests.RequestException as e:
+#             print("Error fetching sleep data:", e)
+#             return None
 # load_dotenv()
 
 # if __name__ == "__main__":
@@ -102,4 +135,6 @@
 
 #     today = datetime.now().strftime("%Y-%m-%d")
 #     fitbit_data_processor.calculate_daily_stress_level(today)
+#     fitbit_data_processor.get_sleep_start_time(today)
+
 
