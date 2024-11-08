@@ -39,14 +39,12 @@ jobs:
         run: |
           echo "WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }}" >> $GITHUB_ENV
           echo "NEWS_API_KEY=${{ secrets.NEWS_API_KEY }}" >> $GITHUB_ENV
-          echo "FINANCE_API_KEY=${{ secrets.FINANCE_API_KEY }}" >> $GITHUB_ENV
 
       # Run tests without coverage
       - name: Run tests
         env:
           WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
           NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
-          FINANCE_API_KEY: ${{ secrets.FINANCE_API_KEY }}
         run: |
           python -m unittest discover -p "*_test.py"
         continue-on-error: false  # Fail the job if tests fail
@@ -56,7 +54,6 @@ jobs:
         env:
           WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
           NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
-          FINANCE_API_KEY: ${{ secrets.FINANCE_API_KEY }}
           PYTHONPATH: ${{ github.workspace }}
         run: |
           coverage run -m unittest discover -p "*_test.py"
