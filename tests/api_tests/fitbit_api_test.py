@@ -121,6 +121,18 @@ class TestFitbitAPI(unittest.TestCase):
         self.date = "2023-11-08"
         self.fitbit_api = FitbitAPI(self.client_id, self.client_secret)
 
+    @patch("api.fitbit_api.fitbit_auth.FitbitAuth.get_access_token")
+    def test_authenticate(self, mock_get_access_token):
+        mock_access_token = "mock_access_token"
+        mock_get_access_token.return_value = mock_access_token
+
+        self.fitbit_api.authenticate()
+
+        # Check that headers have been updated with the correct Authorization token
+        self.assertIn("Authorization", self.fitbit_api.headers)
+        self.assertEqual(self.fitbit_api.headers["Authorization"], f"Bearer {mock_access_token}")
+        mock_get_access_token.assert_called_once()
+
     @patch.object(FitbitAPI, "get")
     @patch.object(FitbitAPI, "authenticate")
     def test_get_heart_data(self, mock_authenticate, mock_get):
