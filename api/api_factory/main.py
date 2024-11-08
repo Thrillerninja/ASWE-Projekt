@@ -33,7 +33,8 @@ class APIFactory:
         elif api_type == 'finance':
             return FinanceAPI(self.config['finance_api_key'])
         elif api_type == 'fitbit':
-            return FitbitAPI(self.config['fitbit_client_id'], self.config['fitbit_client_secret'])
+            return FitbitAPI(self.config['fitbit_client_id'], 
+                             self.config['fitbit_client_secret'])
         # elif api_type == 'maps':
             # return MapsAPI(self.config['maps_api_key'])
         # elif api_type == 'spotify':

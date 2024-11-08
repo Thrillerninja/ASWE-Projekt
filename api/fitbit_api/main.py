@@ -17,7 +17,9 @@ class FitbitAPI(APIClient):
         :param client_id: Fitbit API Client ID.
         :param client_secret: Fitbit API Client Secret.
         """
-        self.auth = FitbitAuth(client_id, client_secret)
+        self.client_id=client_id
+        self.client_secret=client_secret
+        self.auth = FitbitAuth(self.client_id, self.client_secret)
         base_url = "https://api.fitbit.com"
         super().__init__(base_url) 
 
