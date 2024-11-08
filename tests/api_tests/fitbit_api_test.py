@@ -158,4 +158,4 @@ class TestFitbitAPI(unittest.TestCase):
         result = self.fitbit_api.get_sleep_data(self.date)
         self.assertEqual(result, {"sleep": [{"dateOfSleep": self.date, "minutesAsleep": 480}]})
         mock_authenticate.assert_called_once()
-        mock_get.assert_called_once_with(f"1/user/-/sleep/date/{self.date}/json")
+        mock_get.assert_called_once_with(f"1.2/user/-/sleep/date/{self.date}.json")
