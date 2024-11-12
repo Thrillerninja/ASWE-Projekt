@@ -8,7 +8,7 @@ import datetime
 class Calendar:
     def __init__(self, appointments:list=[]) -> None:
         self.appointments = appointments
-        if len(appointments) > 0:
+        if len(self.appointments) > 0:
             self.sort()
 
     def sort(self):

@@ -7,7 +7,7 @@ from unittest.mock import patch
 from api.calendar_api.cal import Calendar, Appointment, Lecture
 
 
-class TestNewsAPI(unittest.TestCase):
+class TestCalAPI(unittest.TestCase):
 
     def setUp(self):
         # Testdaten
@@ -20,7 +20,7 @@ class TestNewsAPI(unittest.TestCase):
     # ============================
 
     def test_calendar_initialization(self):
-        calendar = Calendar()
+        calendar = Calendar([])
         self.assertEqual(calendar.appointments, [])
 
     def test_calendar_repr_and_str(self):
@@ -30,7 +30,7 @@ class TestNewsAPI(unittest.TestCase):
 
 
     def test_calendar_add_appointments(self):
-        calendar = Calendar()
+        calendar = Calendar([])
         calendar.add_appointments([self.future_appointment])
         self.assertEqual(len(calendar.appointments), 1)
         self.assertEqual(calendar.appointments[0], self.future_appointment)
