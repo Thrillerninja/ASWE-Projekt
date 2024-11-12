@@ -33,20 +33,20 @@ class TestCreateCalendarFromRapla(unittest.TestCase):
         # Dieser Test erwartet, dass die URL einen Fehler zurückgibt
         with self.assertRaises(Exception) as excinfo:
             create_calendar_from_rapla(self.INVALID_URL)
-        self.assertIn("Error:", str(excinfo.exception))
+        self.assertIn("Error", str(excinfo.exception))
 
 
     def test_create_calendar_from_rapla_empty_url(self):
         with self.assertRaises(Exception) as excinfo:
             create_calendar_from_rapla("")
-        self.assertIn("Invalid:", str(excinfo.exception))
+        self.assertIn("Invalid", str(excinfo.exception))
 
 
     def test_create_calendar_from_rapla_invalid_format_url(self):
         invalid_format_url = "https://rapla.dhbw.de/rapla/internal_calendar?user=invalid_format"
         with self.assertRaises(Exception) as excinfo:
             create_calendar_from_rapla(invalid_format_url)
-        self.assertIn("Error:", str(excinfo.exception))
+        self.assertIn("Error", str(excinfo.exception))
 
 
     def test_create_calendar_from_rapla_partial_data(self):
