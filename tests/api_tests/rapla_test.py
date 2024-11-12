@@ -39,7 +39,7 @@ class TestCreateCalendarFromRapla(unittest.TestCase):
     def test_create_calendar_from_rapla_empty_url(self):
         with self.assertRaises(Exception) as excinfo:
             create_calendar_from_rapla("")
-        self.assertIn("Error:", str(excinfo.exception))
+        self.assertIn("Invalid:", str(excinfo.exception))
 
 
     def test_create_calendar_from_rapla_invalid_format_url(self):
