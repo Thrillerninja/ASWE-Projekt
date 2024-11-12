@@ -42,17 +42,17 @@ class TestPetrol(unittest.TestCase):
             get_soup("Stuttgart", "invalid-fuel", 5)
         self.assertIn("Fuel type invalid-fuel not found", str(excinfo.exception))
 
+
 class TestPetrolAPI(unittest.TestCase):
 
     # Testen der PetrolAPI-Klasse
     def test_petrol_api(self):
         api = PetrolAPI(city="Stuttgart", fuel_name="super-e10", range_km=5)
+        api.update_stations()
         self.assertIsInstance(api.stations, list)
         self.assertNotEqual(len(api.stations), 0)
-        station = api.get_lowest_price_station()
-        self.assertIsInstance(station, GasStation)
-        self.assertIsInstance(station.price, float)
-        self.assertIsInstance(station.name, str)
+        lowest = api.get_current_lowest_price()
+        self.assertIsInstance(lowest, float)
 
 
 if __name__ == '__main__':

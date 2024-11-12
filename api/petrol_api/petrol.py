@@ -11,6 +11,7 @@ class GasStation:
     def __repr__(self) -> str:
         return self.__str__()
 
+
 fuels  = {
         "lpg": 1,
         "lkw-diesel": 2,
@@ -20,6 +21,7 @@ fuels  = {
         "super-e5": 7
     }
 
+
 def get_soup(city, fuel_name, range_km):
     city = city.replace(" ", "+")
     fuel_type = fuels.get(fuel_name)
@@ -27,6 +29,7 @@ def get_soup(city, fuel_name, range_km):
     url = f"https://www.clever-tanken.de/tankstelle_liste?ort={city}&spritsorte={fuel_type}&r={range_km}"
     response = requests.get(url)
     return BeautifulSoup(response.text, "html.parser")
+
 
 def get_average_price(city, fuel_name, range_km):
     '''
