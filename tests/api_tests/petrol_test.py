@@ -44,7 +44,6 @@ class TestPetrol(unittest.TestCase):
 
 
 class TestPetrolAPI(unittest.TestCase):
-
     # Testen der PetrolAPI-Klasse
     def test_petrol_api(self):
         api = PetrolAPI(city="Stuttgart", fuel_name="super-e10", range_km=5)

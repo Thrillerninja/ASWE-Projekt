@@ -42,8 +42,10 @@ class TestPushNotifierAPI(unittest.TestCase):
     def test_push_non_windows(self):
         api = PushNotifierAPI()
         with patch('builtins.print') as mocked_print:
-            api.push("Test Title", "Test Message")
-            mocked_print.assert_called_once_with("Notification: Test Title - Test Message (not supported on this platform)")
+            test_title = "Test Title"
+            test_message = "Test Message"
+            api.push(test_title, test_message)
+            mocked_print.assert_called_once_with(f"Notification: {test_title} - {test_message} (Push-Notifier not supported on this platform)")
 
 
 if __name__ == '__main__':
