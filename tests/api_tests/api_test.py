@@ -31,7 +31,7 @@ class TestApiFactory(unittest.TestCase):
     @patch('api.spotify_api.main.SpotifyAPI.update_token')
     def test_create_spotify_api(self, mock_update_token):
         mock_update_token.return_value = None  # Assuming update_token does not return anything
-        api = self.factory.create_api('spotify')
+        self.factory.create_api('spotify')
         mock_update_token.assert_called_once()
     
     # test unsupported api type
