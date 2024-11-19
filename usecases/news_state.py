@@ -98,6 +98,10 @@ class NewsState:
                 try:
                     article= self.news_api.get_article(article_number)
                     summary = self.news_api.summarize_article(article)
+                    logger.debug(f"Article summary: {summary}")
+                    self.tts_api.speak(summary)
+                    logger.debug(f"Article summary: {summary}")
+                    self.tts_api.speak("Ich hoffe der Artikel war interessant für dich.")
                 except Exception as e:
                     logger.error(f"Error summarizing article: {e}")
                     self.tts_api.speak("Es tut mir leid, ich konnte den Artikel nicht zusammenfassen.")
