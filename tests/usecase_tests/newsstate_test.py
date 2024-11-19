@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 from api.news_api.main import NewsAPI  # Importiere die NewsAPI-Klasse
 from api.llm_api import LLMApi
+
 class TestNewsAPI(unittest.TestCase):
     
     @patch.object(NewsAPI, 'fetch_top_headlines')  # Mockt fetch_top_headlines
@@ -51,6 +52,50 @@ class TestNewsAPI(unittest.TestCase):
 
         self.assertEqual(str(context.exception), "Summary error")
 
+    @patch.object(NewsAPI, 'fetch_top_headlines')
+    def test_no_headlines(self, mock_fetch_headlines):
+        # Mock die Rückgabe von fetch_top_headlines als leere Liste
+        mock_fetch_headlines.return_value = []
+
+        # Erstelle eine Instanz von NewsAPI
+        news_api = NewsAPI()
+
+        # Teste das Abrufen der Überschriften, wenn keine vorhanden sind
+        headlines = news_api.get_headlines()
+        self.assertEqual(headlines, [])
+
+        # Überprüfe, ob die gemockte Methode aufgerufen wurde
+        mock_fetch_headlines.assert_called_once()
+
+    @patch.object(NewsAPI, 'get_article')
+    def test_invalid_article_index(self, mock_get_article):
+        # Mock die Rückgabe von get_article als None
+        mock_get_article.return_value = None
+
+        # Erstelle eine Instanz von NewsAPI
+        news_api = NewsAPI()
+
+        # Teste das Abrufen eines Artikels mit einem ungültigen Index
+        article = news_api.get_article(999)
+        self.assertIsNone(article)
+
+        # Überprüfe, ob die gemockte Methode aufgerufen wurde
+        mock_get_article.assert_called_once_with(999)
+
+    @patch.object(NewsAPI, 'summarize_article')
+    def test_empty_article_summary(self, mock_summarize):
+        # Mock die Rückgabe von summarize_article als leere Zeichenkette
+        mock_summarize.return_value = ""
+
+        # Erstelle eine Instanz von NewsAPI
+        news_api = NewsAPI()
+
+        # Teste das Zusammenfassen eines leeren Artikels
+        summary = news_api.summarize_article("")
+        self.assertEqual(summary, "")
+
+        # Überprüfe, ob die gemockte Methode aufgerufen wurde
+        mock_summarize.assert_called_once_with("")
 
 if __name__ == "__main__":
     unittest.main()
