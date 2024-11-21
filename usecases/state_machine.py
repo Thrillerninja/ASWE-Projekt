@@ -1,10 +1,12 @@
 from transitions import Machine, State
 from config import CONFIG
+from frontend.config_manager import load_preferences_file
 from api.api_factory import APIFactory
 from .idle_state import IdleState
 from .welcome_state import WelcomeState
 from .speach_state import SpeachState
 from .news_state import NewsState
+
 class StateMachine:
     """
     State machine that controls the flow of the application.
@@ -24,6 +26,9 @@ class StateMachine:
         print("StateMachine initialized")
         self.machine = Machine(model=self, states=self.states, initial='idle')
         self.testing = False
+
+        # User preferences, hover over function to see details. This dictionary is kept up to date with the frontend.
+        self.preferences = load_preferences_file()
         
         self.api_factory = APIFactory(CONFIG)
         
@@ -50,6 +55,7 @@ class StateMachine:
         self.machine.add_transition(trigger='goto_finance', source='speach', dest='finance')
         self.machine.add_transition(trigger='goto_activity', source='speach', dest='activity')
         self.machine.add_transition(trigger='goto_news', source='speach', dest='news')
+
         
     def on_enter(self):
         """

@@ -3,8 +3,9 @@ import sys
 # from frontend.main_window import MainWindow
 from usecases.state_machine import StateMachine
 
-# Start the backand & state machine
+# Start the backend & state machine
 sm = StateMachine()
+
 # Transition to initial state
 sm.to_idle()
 
@@ -13,4 +14,3 @@ sm.to_idle()
 # window = MainWindow(sm)
 # window.show()
 sys.exit(app.exec_())
-
