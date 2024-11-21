@@ -1,7 +1,7 @@
 import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTime, QTimer
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QMessageBox
 from PyQt5.QtGui import QMovie
 
 from frontend.ui_templates.main_window import Ui_MainWindow
@@ -9,9 +9,8 @@ from frontend.config_manager import ConfigManager
 from usecases.state_machine import StateMachine
 
 class MainWindow(QtWidgets.QMainWindow):
-    # def __init__(self, state_machine: StateMachine):
-    def __init__(self):
-        # self.state_machine = state_machine
+    def __init__(self, state_machine: StateMachine):
+        self.state_machine = state_machine
         
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
@@ -48,11 +47,17 @@ class MainWindow(QtWidgets.QMainWindow):
             lambda: self.config_manager.on_le_fuel_demo_price_changed(self.ui.le_fuel_demo_price.text())
         )
 
+        self.error_fuel_threshold = False
+        self.error_fuel_demo_price = False
+
     def on_bt_save_settings_clicked(self) -> None:
         """Saves preferences and toggles the view.
 
         This method saves the current settings and switches the UI view between settings and non-settings.
         """
+        if self.error_fuel_threshold or self.error_fuel_demo_price:
+            return
+        
         self.config_manager.save_preferences()
         self.toggle_view()
 
@@ -119,6 +124,7 @@ class MainWindow(QtWidgets.QMainWindow):
         Args:
             message (str): The error message to show.
         """
+        self.error_fuel_threshold = True
         self.ui.le_fuel_threshold.setProperty("class", "error")
         self.ui.le_fuel_threshold.style().unpolish(self.ui.le_fuel_threshold)  # Re-apply the style
         self.ui.le_fuel_threshold.style().polish(self.ui.le_fuel_threshold)
@@ -130,6 +136,7 @@ class MainWindow(QtWidgets.QMainWindow):
         Args:
             message (str): The error message to show.
         """
+        self.error_fuel_demo_price = True
         self.ui.le_fuel_demo_price.setProperty("class", "error")
         self.ui.le_fuel_demo_price.style().unpolish(self.ui.le_fuel_demo_price)  # Re-apply the style
         self.ui.le_fuel_demo_price.style().polish(self.ui.le_fuel_demo_price)
@@ -137,12 +144,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def remove_error_le_fuel_threshold(self) -> None:
         """Removes error indication from the fuel threshold input."""
+        self.error_fuel_threshold = False
         self.ui.le_fuel_threshold.setProperty("class", "")
         self.ui.le_fuel_threshold.style().unpolish(self.ui.le_fuel_threshold)
         self.ui.le_fuel_threshold.style().polish(self.ui.le_fuel_threshold)
 
     def remove_error_le_fuel_demo_price(self) -> None:
         """Removes error indication from the fuel demo price input."""
+        self.error_fuel_demo_price = False
         self.ui.le_fuel_demo_price.setProperty("class", "")
         self.ui.le_fuel_demo_price.style().unpolish(self.ui.le_fuel_demo_price)
         self.ui.le_fuel_demo_price.style().polish(self.ui.le_fuel_demo_price)
@@ -222,8 +231,8 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         self.ui.lb_alarm_text.setText(time)
 
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
+# if __name__ == "__main__":
+#     app = QtWidgets.QApplication(sys.argv)
+#     window = MainWindow()
+#     window.show()
+#     sys.exit(app.exec_())

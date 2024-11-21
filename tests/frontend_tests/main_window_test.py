@@ -43,6 +43,8 @@ class TestMainWindow(unittest.TestCase):
         self.mock_ui.lb_alarm = MagicMock()
         self.mock_ui.lb_alarm_text = MagicMock()
         self.mock_ui.lb_sound_wave_gif = MagicMock()
+        self.mock_ui.lb_fuel_demo_price = MagicMock()
+        self.mock_ui.le_fuel_demo_price = MagicMock()
 
         for el in self.mock_ui.__dict__.values():
             if isinstance(el, MagicMock):
@@ -66,7 +68,9 @@ class TestMainWindow(unittest.TestCase):
             self.mock_ui.sl_fuel_threshold,
             self.mock_ui.te_default_alarm_time,
             self.mock_ui.te_sleep_time,
-            self.mock_ui.bt_save_settings
+            self.mock_ui.bt_save_settings,
+            self.mock_ui.lb_fuel_demo_price,
+            self.mock_ui.le_fuel_demo_price
         ]
 
         self.not_settings_elements = [
@@ -93,11 +97,20 @@ class TestMainWindow(unittest.TestCase):
         for el in self.not_settings_elements:
             el.setVisible.assert_called_with(True)
 
-    def test_on_bt_save_settings_clicked(self):
-        """Test on_bt_save_settings_clicked saves preferences and toggles view."""
+    def test_on_bt_save_settings_clicked_no_error(self):
+        """Test on_bt_save_settings_clicked saves preferences and toggles view when no error.""" 
         self.main_window.on_bt_save_settings_clicked()
         self.mock_config.save_preferences.assert_called_once()
         self.assertEqual(self.main_window.settings_are_hidden, True)
+
+    def test_on_bt_save_settings_clicked_with_error(self):
+        """Test on_bt_save_settings_clicked does not save preferences or toggle view when there's an error."""
+        self.main_window.error_fuel_threshold = True
+        self.main_window.error_fuel_demo_price = False
+
+        self.main_window.on_bt_save_settings_clicked()
+        self.mock_config.save_preferences.assert_not_called()
+        self.assertEqual(self.main_window.settings_are_hidden, False)
 
 
     @patch('PyQt5.QtCore.QTimer.singleShot')
@@ -136,6 +149,27 @@ class TestMainWindow(unittest.TestCase):
 
         self.mock_ui.le_fuel_threshold.style().unpolish.assert_called_with(self.mock_ui.le_fuel_threshold)
         self.mock_ui.le_fuel_threshold.style().polish.assert_called_with(self.mock_ui.le_fuel_threshold)
+
+    def test_show_error_le_fuel_demo_price(self):
+        """Test show_error_le_fuel_demo_price sets error properties correctly."""
+        error_message = "Fuel threshold must be a number between 1.00 and 2.00"
+
+        self.main_window.show_error_le_fuel_demo_price(error_message)
+
+        self.mock_ui.le_fuel_demo_price.setProperty.assert_called_with("class", "error")
+
+        self.mock_ui.le_fuel_demo_price.style().unpolish.assert_called_with(self.mock_ui.le_fuel_demo_price)
+        self.mock_ui.le_fuel_demo_price.style().polish.assert_called_with(self.mock_ui.le_fuel_demo_price)
+
+        self.mock_ui.le_fuel_demo_price.setToolTip.assert_called_with(error_message)
+
+    def test_remove_error_le_fuel_demo_price(self):
+        """Test remove_error_le_fuel_demo_price removes error properties correctly."""
+        self.main_window.remove_error_le_fuel_demo_price()
+        self.mock_ui.le_fuel_demo_price.setProperty.assert_called_with("class", "")
+
+        self.mock_ui.le_fuel_demo_price.style().unpolish.assert_called_with(self.mock_ui.le_fuel_demo_price)
+        self.mock_ui.le_fuel_demo_price.style().polish.assert_called_with(self.mock_ui.le_fuel_demo_price)
 
     @patch("builtins.print")
     def test_set_cb_fuel_type_valid(self, mock_print):
@@ -194,6 +228,24 @@ class TestMainWindow(unittest.TestCase):
         text_value = "invalid_input"
         self.main_window.set_le_fuel_threshold(text_value)
         self.mock_ui.le_fuel_threshold.setText.assert_called_with(f'{text_value} €')
+
+    def test_set_le_fuel_demo_price(self):
+        """Test that set_le_fuel_demo_price correctly sets the text with currency symbol."""
+        text_value = "1.53"
+        self.main_window.set_le_fuel_demo_price(text_value)
+        self.mock_ui.le_fuel_demo_price.setText.assert_called_with(f'{text_value} €')
+
+    def test_set_le_fuel_demo_price_with_integer(self):
+        """Test that set_le_fuel_demo_price correctly handles integer input."""
+        text_value = "50"
+        self.main_window.set_le_fuel_demo_price(text_value)
+        self.mock_ui.le_fuel_demo_price.setText.assert_called_with(f'{text_value} €')
+
+    def test_set_le_fuel_demo_price_with_invalid_input(self):
+        """Test that set_le_fuel_demo_price handles unexpected input gracefully."""
+        text_value = "invalid_input"
+        self.main_window.set_le_fuel_demo_price(text_value)
+        self.mock_ui.le_fuel_demo_price.setText.assert_called_with(f'{text_value} €')
 
     def test_set_alarm(self):
         """Test that set_alarm correctly sets the alarm text."""
