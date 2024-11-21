@@ -1,8 +1,8 @@
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, mock_open
 import json
 from PyQt5.QtCore import QTime
-from frontend.config_manager import ConfigManager
+from frontend.config_manager import ConfigManager, load_preferences_file, PREFERENCES_FILE
 
 class TestConfigManager(unittest.TestCase):
 
@@ -10,6 +10,7 @@ class TestConfigManager(unittest.TestCase):
         """Set up the test environment."""
         self.mock_view = MagicMock()
         self.mock_view.ui = MagicMock()
+        self.mock_view.state_machine = MagicMock()
         
         self.config_manager = ConfigManager(self.mock_view)
 
@@ -20,76 +21,6 @@ class TestConfigManager(unittest.TestCase):
             'fuel_threshold': 1.5,
             'fuel_demo_price': 0.0,
         }
-
-    @patch('builtins.open', new_callable=unittest.mock.mock_open)
-    def test_load_preferences_file(self, mock_open):
-        """Test loading preferences from a file."""
-        # Simulate loading preferences
-        mock_open.return_value.read.return_value = """{
-            "fuel_type": "diesel",
-            "fuel_threshold": 2.0,
-            "default_alarm_time": "00:00",
-            "sleep_time": "00:00",
-            "home_location": {
-                "name": "asperg",
-                "vvs_code": "de:08118:7400",
-                "address": {
-                    "street": "Alleenstra\u00c3\u0178e",
-                    "number": "1",
-                    "zipcode": "71679",
-                    "city": "Asperg",
-                    "country": "Germany"
-                },
-                "coordinates": {
-                    "latitude": 48.907256,
-                    "longitude": 9.147977
-                }
-            },
-            "default_destination": {
-                "name": "dhbw",
-                "vvs_code": "de:08111:6072",
-                "address": {
-                    "street": "Lerchenstra\u00c3\u0178e",
-                    "number": "1",
-                    "zipcode": "70174",
-                    "city": "Stuttgart",
-                    "country": "Germany"
-                },
-                "coordinates": {
-                    "latitude": 48.7826,
-                    "longitude": 9.167025
-                }
-            }
-        }"""
-
-        self.config_manager.load_preferences_file()
-
-        self.assertEqual(self.config_manager.preferences['fuel_type'], 'diesel')
-        self.assertEqual(self.config_manager.preferences['fuel_threshold'], 2.0)
-        self.assertEqual(self.config_manager.preferences['default_alarm_time'], '00:00')
-        self.assertEqual(self.config_manager.preferences['sleep_time'], '00:00')
-
-        self.assertEqual(self.config_manager.preferences['home_location']['name'], 'asperg')
-        self.assertEqual(self.config_manager.preferences['home_location']['address']['city'], 'Asperg')
-        self.assertEqual(self.config_manager.preferences['default_destination']['coordinates']['latitude'], 48.7826)
-
-        mock_open.assert_called_once_with(self.config_manager.preferences_file, 'r')
-
-    @patch('builtins.open', side_effect=FileNotFoundError)
-    def test_load_preferences_file_file_not_found(self, mock_open):
-        """Test handling of missing preferences file."""
-        self.config_manager.load_preferences_file()
-        self.assertEqual(self.config_manager.preferences, {})
-
-    @patch('builtins.open', new_callable=unittest.mock.mock_open)
-    def test_load_preferences_file_json_decode_error(self, mock_open):
-        """Test handling of invalid JSON in preferences file."""
-        mock_open.return_value.read.return_value = "{invalid_json: true}"
-
-        with patch('json.load', side_effect=json.JSONDecodeError("Expecting value", "document", 0)):
-            self.config_manager.load_preferences_file()
-
-        self.assertEqual(self.config_manager.preferences, {})
 
     @patch('builtins.open', new_callable=unittest.mock.mock_open)
     def test_save_preferences(self, mock_open):
@@ -279,6 +210,78 @@ class TestConvertTextToFloat(unittest.TestCase):
         """Test input with just a dot."""
         result = self.config_manager.convert_text_to_float(".")
         self.assertEqual(result, -1)
+
+class TestLoadPreferencesFile(unittest.TestCase):
+
+    @patch('builtins.open', new_callable=mock_open)
+    def test_load_preferences_file(self, mock_open):
+        """Test loading preferences from a file."""
+        # Simulate loading preferences
+        mock_open.return_value.read.return_value = """{
+            "fuel_type": "diesel",
+            "fuel_threshold": 2.0,
+            "default_alarm_time": "00:00",
+            "sleep_time": "00:00",
+            "home_location": {
+                "name": "asperg",
+                "vvs_code": "de:08118:7400",
+                "address": {
+                    "street": "Alleenstraße",
+                    "number": "1",
+                    "zipcode": "71679",
+                    "city": "Asperg",
+                    "country": "Germany"
+                },
+                "coordinates": {
+                    "latitude": 48.907256,
+                    "longitude": 9.147977
+                }
+            },
+            "default_destination": {
+                "name": "dhbw",
+                "vvs_code": "de:08111:6072",
+                "address": {
+                    "street": "Lerchenstraße",
+                    "number": "1",
+                    "zipcode": "70174",
+                    "city": "Stuttgart",
+                    "country": "Germany"
+                },
+                "coordinates": {
+                    "latitude": 48.7826,
+                    "longitude": 9.167025
+                }
+            }
+        }"""
+
+        preferences = load_preferences_file()
+
+        self.assertEqual(preferences['fuel_type'], 'diesel')
+        self.assertEqual(preferences['fuel_threshold'], 2.0)
+        self.assertEqual(preferences['default_alarm_time'], '00:00')
+        self.assertEqual(preferences['sleep_time'], '00:00')
+
+        self.assertEqual(preferences['home_location']['name'], 'asperg')
+        self.assertEqual(preferences['home_location']['address']['city'], 'Asperg')
+        self.assertEqual(preferences['default_destination']['coordinates']['latitude'], 48.7826)
+
+        mock_open.assert_called_once_with(PREFERENCES_FILE, 'r')
+
+    @patch('builtins.open', side_effect=FileNotFoundError)
+    def test_load_preferences_file_file_not_found(self, mock_open):
+        """Test handling of missing preferences file."""
+        preferences = load_preferences_file()
+        self.assertEqual(preferences, {})
+
+    @patch('builtins.open', new_callable=mock_open)
+    def test_load_preferences_file_json_decode_error(self, mock_open):
+        """Test handling of invalid JSON in preferences file."""
+        mock_open.return_value.read.return_value = "{invalid_json: true}"
+
+        with patch('json.load', side_effect=json.JSONDecodeError("Expecting value", "document", 0)):
+            preferences = load_preferences_file()
+
+        self.assertEqual(preferences, {})
 
 if __name__ == '__main__':
     unittest.main()

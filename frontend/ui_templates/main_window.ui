@@ -531,7 +531,8 @@ QLabel:disabled {
     border: none;
 }
 QPushButton:hover {
-	background-color: rgba(169, 169, 169, 100);
+    background: transparent;
+    border: none;
 }</string>
     </property>
     <property name="text">

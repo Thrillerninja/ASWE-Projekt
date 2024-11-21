@@ -3,6 +3,49 @@ import os
 from PyQt5.QtCore import QTime
 from typing import Union
 
+script_dir = os.path.dirname(os.path.realpath(__file__))
+parent_dir = os.path.dirname(script_dir)
+PREFERENCES_FILE = os.path.join(parent_dir, 'config', 'preferences.json')
+
+def load_preferences_file() -> dict:
+    """Loads and returns preferences from a JSON file.
+
+    This function loads the preferences stored in a JSON file and returns them as a dictionary. 
+    If the file is not found, or if the JSON is invalid, it returns an empty dictionary.
+
+    The dictionary returned contains the following possible keys and their corresponding types:
+        - "fuel_type" (str): Type of fuel (e.g., "diesel").
+        - "fuel_threshold" (float): Fuel threshold in € (e.g., 1.5).
+        - "fuel_step_size" (float): Step size for fuel threshold in € (e.g., 0.05).
+        - "fuel_radius" (float): Radius for fuel search in km (e.g., 5.0).
+        - "fuel_demo_price" (float): Price for fuel demo in € (0.0 indicates using the API).
+        - "default_alarm_time" (str): Default alarm time in HH:MM format (e.g., "08:00").
+        - "sleep_time" (str): Sleep time in HH:MM format (e.g., "22:00").
+        - "home_location" (dict): Details of the home location, including:
+            - "name" (str): Name of the location (e.g., "asperg").
+            - "vvs_code" (str): VVS code for the location (e.g., "de:08118:7400").
+            - "address" (dict): Address details, including:
+                - "street" (str): Street name (e.g., "Alleenstraße").
+                - "number" (str): Street number (e.g., "1").
+                - "zipcode" (str): Zipcode (e.g., "71679").
+                - "city" (str): City name (e.g., "Asperg").
+                - "country" (str): Country name (e.g., "Germany").
+            - "coordinates" (dict): Geographical coordinates, including:
+                - "latitude" (float): Latitude of the location (e.g., 48.907256).
+                - "longitude" (float): Longitude of the location (e.g., 9.147977).
+        - "default_destination" (dict): Details of the default destination, structured similarly to "home_location".
+
+    Returns:
+        dict: A dictionary containing the loaded preferences, or an empty dictionary if the file is not found or invalid.
+    """
+    try:
+        with open(PREFERENCES_FILE, 'r') as file:
+            preferences = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        preferences = {}
+    finally:
+        return preferences
+
 class ConfigManager:
     
     def __init__(self, view):
@@ -15,32 +58,20 @@ class ConfigManager:
         self.view = view
         self.ui = self.view.ui
 
-        script_dir = os.path.dirname(os.path.realpath(__file__))
-        parent_dir = os.path.dirname(script_dir)  # Go up one directory
-        self.preferences_file = os.path.join(parent_dir, 'config', 'preferences.json')
+        self.preferences_file = PREFERENCES_FILE
 
-        self.preferences = {}
+        self.preferences = load_preferences_file()
         self.fuel_types = ['super-e10', 'super-e5', 'super-plus', 'diesel', 'lkw-diesel', 'lpg',]
 
-        self.load_preferences_file()
+        self.view.state_machine.config = self.preferences
         self.set_initial_values()
-
-    def load_preferences_file(self) -> None:
-        """Loads preferences from a JSON file into the `self.preferences` dictionary.
-
-        If the file does not exist or is empty, `self.preferences` will remain an empty dictionary.
-        """
-        try:
-            with open(self.preferences_file, 'r') as file:
-                self.preferences = json.load(file)
-        except (FileNotFoundError, json.JSONDecodeError):
-            self.preferences = {}
 
     def save_preferences(self) -> None:
         """Saves the current preferences from `self.preferences` to a JSON file.
 
         This will overwrite the file specified in `self.preferences_file`.
         """
+        self.view.state_machine.config = self.preferences
         with open(self.preferences_file, 'w') as file:
             json.dump(self.preferences, file, indent=4)
 
