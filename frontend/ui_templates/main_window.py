@@ -18,6 +18,7 @@ class Ui_MainWindow(object):
         MainWindow.setMinimumSize(QtCore.QSize(475, 250))
         MainWindow.setMaximumSize(QtCore.QSize(475, 276))
         MainWindow.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+        MainWindow.setWindowTitle("")
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(".\\frontend\\ui_templates\\p_logo.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
@@ -510,6 +511,72 @@ class Ui_MainWindow(object):
         self.lb_sound_wave_gif.setText("")
         self.lb_sound_wave_gif.setAlignment(QtCore.Qt.AlignCenter)
         self.lb_sound_wave_gif.setObjectName("lb_sound_wave_gif")
+        self.le_fuel_demo_price = QtWidgets.QLineEdit(self.centralwidget)
+        self.le_fuel_demo_price.setGeometry(QtCore.QRect(110, 210, 61, 31))
+        self.le_fuel_demo_price.setStyleSheet("QLineEdit {\n"
+"    font-size: 14px;\n"
+"    color: #2c3e50;\n"
+"    padding: 4px;\n"
+"    border: 2px solid #2980b9;\n"
+"    border-radius: 4px;\n"
+"    background-color: #ecf0f1;\n"
+"}\n"
+"\n"
+"QLineEdit:focus {\n"
+"    border-color: #3498db;\n"
+"    background-color: #ffffff;\n"
+"}\n"
+"\n"
+"QLineEdit::placeholder {\n"
+"    color: #7f8c8d;\n"
+"    font-style: italic;\n"
+"}\n"
+"\n"
+"QLineEdit {\n"
+"    color: #2c3e50;\n"
+"}\n"
+"\n"
+".error {\n"
+"        border: 2px solid red;\n"
+"        background-color: #f8d7da;\n"
+"    }")
+        self.le_fuel_demo_price.setObjectName("le_fuel_demo_price")
+        self.lb_fuel_demo_price = QtWidgets.QLabel(self.centralwidget)
+        self.lb_fuel_demo_price.setGeometry(QtCore.QRect(0, 200, 101, 51))
+        self.lb_fuel_demo_price.setStyleSheet("QLabel {\n"
+"    font-size: 18px;\n"
+"    font-weight: bold;\n"
+"    color: #3498db;\n"
+"    padding: 4px;\n"
+"    border: 1px solid transparent;\n"
+"}\n"
+"\n"
+"QLabel.headline {\n"
+"    font-size: 24px;\n"
+"    font-weight: bold;\n"
+"    color: #3498db;\n"
+"    padding: 8px;\n"
+"    border: none;\n"
+"    background-color: #f0f8ff;\n"
+"    border-radius: 4px;\n"
+"    margin-bottom: 12px;\n"
+"}\n"
+"\n"
+"QLabel.subheadline {\n"
+"    font-size: 18px;\n"
+"    font-weight: bold;\n"
+"    color: #2c3e50;\n"
+"    padding: 6px;\n"
+"    border: none;\n"
+"    margin-bottom: 8px;\n"
+"}\n"
+"\n"
+"QLabel:disabled {\n"
+"    color: #7f8c8d;\n"
+"}\n"
+"")
+        self.lb_fuel_demo_price.setAlignment(QtCore.Qt.AlignCenter)
+        self.lb_fuel_demo_price.setObjectName("lb_fuel_demo_price")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 475, 21))
@@ -524,7 +591,6 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", " "))
         self.lb_select_fuel_type.setText(_translate("MainWindow", "Kraftstoffart"))
         self.lb_default_alarm_time.setText(_translate("MainWindow", "Weckzeit"))
         self.cb_fuel_type.setItemText(0, _translate("MainWindow", "Super E10", "super_e10"))
@@ -538,6 +604,8 @@ class Ui_MainWindow(object):
         self.lb_alarm.setText(_translate("MainWindow", "00:00 Uhr"))
         self.lb_select_fuel_threshold.setText(_translate("MainWindow", "Kraftstoffschwelle"))
         self.bt_save_settings.setText(_translate("MainWindow", "Ok"))
+        self.lb_fuel_demo_price.setText(_translate("MainWindow", "DEMO\n"
+"Sprit Preis"))
 
 
 if __name__ == "__main__":
