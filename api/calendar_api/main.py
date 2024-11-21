@@ -1,15 +1,10 @@
-<<<<<<< HEAD
 from typing import Dict
-
-import api.calendar_api.rapla as rapla
-=======
-import rapla
 import datetime
-import json
 from typing import Dict, List
+import json
+
 from api.api_client import APIClient
-from . import rapla
->>>>>>> 89fd07d6b3b89fd8528f3381ebf3dd11ae170c1e
+import api.calendar_api.rapla as rapla
 
 
 class RaplaAPI():
