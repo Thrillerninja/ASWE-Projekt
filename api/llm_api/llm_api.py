@@ -1,5 +1,5 @@
 import ollama
-
+from loguru import logger
 
 class LLMApi:
     """This class acts as API to chat with API-models. It uses ollama's REST-API.
@@ -65,6 +65,7 @@ class LLMApi:
         Returns:
             str: only the parsed answer gets returned as a string
         """
+        logger.info(f"Sending Prompt: {message_content}")
         response = ollama.chat(
             model=model, messages=[{"role": "user", "content": message_content}]
         )
