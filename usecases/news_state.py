@@ -112,6 +112,7 @@ class NewsState:
             logger.debug(f"Article summary: {summary}")
             self.tts_api.speak(summary)
             self.tts_api.speak("Ich hoffe der Artikel war interessant für dich.")
+            return "exit"
         except Exception as e:
             logger.error(f"Error summarizing article: {e}")
             self.tts_api.speak("Es tut mir leid, ich konnte den Artikel nicht zusammenfassen.")

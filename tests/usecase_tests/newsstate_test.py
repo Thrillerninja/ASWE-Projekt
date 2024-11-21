@@ -35,7 +35,7 @@ class TestNewsState(unittest.TestCase):
 
         # Erstellen des NewsState Objekts mit den gemockten APIs
         self.news_state = NewsState(self.mock_state_machine)
-    
+
     @patch.object(NewsState, 'read_article', return_value="exit")  # Mocking der read_article Methode
     @patch.object(NewsAPI, 'get_headlines', return_value=["Headline 1", "Headline 2", "Headline 3"])  # Mocking get_headlines
     def test_on_enter(self, mock_get_headlines, mock_read_article):
@@ -59,5 +59,33 @@ class TestNewsState(unittest.TestCase):
         # Überprüfen, ob der Übergang in den Idle-Zustand nach dem Durchlaufen des NewsState erfolgt ist
         self.mock_state_machine.news_idle.assert_called_once()
 
+    @patch.object(NewsAPI, 'get_article', return_value="Article content")  # Mocking get_article
+    @patch.object(NewsAPI, 'summarize_article', return_value="Summary of article")  # Mocking summarize_article
+    @patch.object(LLMApi, 'get_response', return_value="1")  # Mocking LLMApi.get_response
+    def test_read_article(self, mock_get_response, mock_summarize_article, mock_get_article):
+        # Simulieren des Aufrufs der read_article-Methode
+        headlines = ["Headline 1", "Headline 2", "Headline 3"]
+        
+        # Führen der Methode aus, die wir testen wollen
+        result = self.news_state.read_article(headlines)
+        
+        # Überprüfen, ob LLMApi.get_response mit der richtigen Nachricht aufgerufen wurde
+        message = (
+            f"This is input from a user: {self.mock_tts_api.listen.return_value}. "
+            f"These are possible headlines: {headlines}. "
+            f"Which headline interests the user the most? Respond with the number of the headline."
+        )
+        mock_get_response.assert_called_once_with(model="llama3.2:1b", message_content=message)
+        
+        # Überprüfen, ob die richtigen Artikelinformationen abgerufen wurden
+        mock_get_article.assert_called_once_with(1)
+        mock_summarize_article.assert_called_once_with("Article content")
+        
+        # Überprüfen, ob die TTS-API das richtige Ergebnis spricht
+        self.mock_tts_api.speak.assert_any_call("Summary of article")
+        
+        # Sicherstellen, dass die Methode 'exit' zurückgibt
+        self.assertEqual(result, "exit")
+    
 if __name__ == '__main__':
     unittest.main()
