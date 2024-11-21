@@ -43,8 +43,8 @@ def load_preferences_file() -> dict:
             preferences = json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
         preferences = {}
-    finally:
-        return preferences
+        
+    return preferences
 
 class ConfigManager:
     
