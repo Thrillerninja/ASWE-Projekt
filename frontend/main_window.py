@@ -1,8 +1,8 @@
-import sys
+from PyQt5.QtWidgets import QApplication, QPushButton
+from PyQt5.QtCore import QTime, QTimer, QSize
+from PyQt5.QtGui import QMovie, QIcon
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QTime, QTimer
-from PyQt5.QtWidgets import QApplication, QMessageBox
-from PyQt5.QtGui import QMovie
+import sys
 
 from frontend.ui_templates.main_window import Ui_MainWindow
 from frontend.config_manager import ConfigManager
@@ -20,6 +20,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.movie = QMovie("frontend/ui_templates/sound_wave.gif")
         self.ui.lb_sound_wave_gif.setMovie(self.movie)
         self.ui.lb_sound_wave_gif.setVisible(False)
+
+        settings_icon = QIcon("frontend/ui_templates/settings.png")
+        self.ui.bt_settings.setIcon(settings_icon)
+        self.ui.bt_settings.setIconSize(self.ui.bt_settings.size() * 0.8)
+
+        self.ui.bt_settings.enterEvent = self.on_hover_enter_settings
+        self.ui.bt_settings.leaveEvent = self.on_hover_leave_settings
+
+        mic_icon = QIcon("frontend/ui_templates/microphone.png")
+        self.ui.bt_speech_to_text.setIcon(mic_icon)
+        self.ui.bt_speech_to_text.setIconSize(QSize(35, 35))
+
+        self.ui.bt_speech_to_text.enterEvent = self.on_hover_enter_speech_to_text
+        self.ui.bt_speech_to_text.leaveEvent = self.on_hover_leave_speech_to_text
 
         self.settings_are_hidden = True
         self.toggle_view()
@@ -231,8 +245,15 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         self.ui.lb_alarm_text.setText(time)
 
-# if __name__ == "__main__":
-#     app = QtWidgets.QApplication(sys.argv)
-#     window = MainWindow()
-#     window.show()
-#     sys.exit(app.exec_())
+    def on_hover_enter_settings(self):
+        new_size = self.ui.bt_settings.size() * 0.9
+        self.ui.bt_settings.setIconSize(new_size)
+
+    def on_hover_leave_settings(self):
+        self.ui.bt_settings.setIconSize(self.ui.bt_settings.size() * 0.8)
+
+    def on_hover_enter_speech_to_text(self):
+        self.ui.bt_speech_to_text.setIconSize(QSize(38, 38))
+
+    def on_hover_leave_speech_to_text(self):
+        self.ui.bt_speech_to_text.setIconSize(QSize(35, 35))

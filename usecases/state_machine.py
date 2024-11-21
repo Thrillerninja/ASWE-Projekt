@@ -4,6 +4,7 @@ from api.api_factory import APIFactory
 from .idle_state import IdleState
 from .welcome_state import WelcomeState
 from .speach_state import SpeachState
+from frontend.config_manager import load_preferences_file
 from .financetracker_state import FinanceState
 
 class StateMachine:
@@ -25,6 +26,9 @@ class StateMachine:
         print("StateMachine initialized")
         self.machine = Machine(model=self, states=self.states, initial='idle')
         self.testing = False
+
+        # User preferences, hover over function to see details. This dictionary is kept up to date with the frontend.
+        self.preferences = load_preferences_file()
         
         self.api_factory = APIFactory(CONFIG)
         

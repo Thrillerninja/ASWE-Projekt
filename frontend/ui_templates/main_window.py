@@ -357,7 +357,8 @@ class Ui_MainWindow(object):
 "    border: none;\n"
 "}\n"
 "QPushButton:hover {\n"
-"    background-color: rgba(169, 169, 169, 100);\n"
+"    background: transparent;\n"
+"    border: none;\n"
 "}")
         self.bt_settings.setText("")
         icon2 = QtGui.QIcon()

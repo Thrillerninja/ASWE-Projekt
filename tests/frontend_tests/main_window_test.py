@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QTime
+from PyQt5.QtWidgets import QApplication, QPushButton
+from PyQt5.QtCore import QTime, QSize, QEvent
 import sys
 import os
 
@@ -38,8 +38,8 @@ class TestMainWindow(unittest.TestCase):
         self.mock_ui.te_default_alarm_time = MagicMock()
         self.mock_ui.te_sleep_time = MagicMock()
         self.mock_ui.bt_save_settings = MagicMock()
-        self.mock_ui.bt_settings = MagicMock()
-        self.mock_ui.bt_speech_to_text = MagicMock()
+        self.mock_ui.bt_settings = MagicMock(spec=QPushButton)
+        self.mock_ui.bt_speech_to_text = MagicMock(spec=QPushButton)
         self.mock_ui.lb_alarm = MagicMock()
         self.mock_ui.lb_alarm_text = MagicMock()
         self.mock_ui.lb_sound_wave_gif = MagicMock()
@@ -101,7 +101,7 @@ class TestMainWindow(unittest.TestCase):
         """Test on_bt_save_settings_clicked saves preferences and toggles view when no error.""" 
         self.main_window.on_bt_save_settings_clicked()
         self.mock_config.save_preferences.assert_called_once()
-        self.assertEqual(self.main_window.settings_are_hidden, True)
+        self.assertTrue(self.main_window.settings_are_hidden)
 
     def test_on_bt_save_settings_clicked_with_error(self):
         """Test on_bt_save_settings_clicked does not save preferences or toggle view when there's an error."""
@@ -110,7 +110,7 @@ class TestMainWindow(unittest.TestCase):
 
         self.main_window.on_bt_save_settings_clicked()
         self.mock_config.save_preferences.assert_not_called()
-        self.assertEqual(self.main_window.settings_are_hidden, False)
+        self.assertFalse(self.main_window.settings_are_hidden)
 
 
     @patch('PyQt5.QtCore.QTimer.singleShot')
@@ -265,13 +265,45 @@ class TestMainWindow(unittest.TestCase):
         self.main_window.set_alarm(alarm_time)
         self.mock_ui.lb_alarm_text.setText.assert_called_with(alarm_time)
 
-    @patch('PyQt5.QtWidgets.QApplication.quit')  # Mock QApplication.quit
+    @patch('PyQt5.QtWidgets.QApplication.quit')
     def test_closeEvent(self, mock_quit):
         """Test that closeEvent calls save_preferences and quits the application."""
         self.mock_config.save_preferences = MagicMock()
         self.main_window.closeEvent(self.mock_event)
         self.mock_config.save_preferences.assert_called_once()
         mock_quit.assert_called_once()
+
+    def test_on_hover_enter_settings(self):
+        """Test that the icon size of the settings button changes when hovering enters."""
+        self.mock_ui.bt_settings.size.return_value = QSize(40, 40)
+
+        self.main_window.on_hover_enter_settings()
+
+        expected_size = QSize(36, 36)  # 40 * 0.9 = 36
+        self.mock_ui.bt_settings.setIconSize.assert_called_once_with(expected_size)
+
+    def test_on_hover_leave_settings(self):
+        """Test that the icon size of the settings button changes when hovering leaves."""
+        self.mock_ui.bt_settings.size.return_value = QSize(40, 40)
+
+        self.main_window.on_hover_leave_settings()
+
+        expected_size = QSize(32, 32)  # 40 * 0.8 = 32
+        self.mock_ui.bt_settings.setIconSize.assert_called_once_with(expected_size)
+
+    def test_on_hover_enter_speech_to_text(self):
+        """Test that the icon size of the speech-to-text button changes when hovering enters."""
+        self.main_window.on_hover_enter_speech_to_text()
+
+        expected_size = QSize(38, 38)
+        self.mock_ui.bt_speech_to_text.setIconSize.assert_called_once_with(expected_size)
+
+    def test_on_hover_leave_speech_to_text(self):
+        """Test that the icon size of the speech-to-text button changes when hovering leaves."""
+        self.main_window.on_hover_leave_speech_to_text()
+
+        expected_size = QSize(35, 35)
+        self.mock_ui.bt_speech_to_text.setIconSize.assert_called_once_with(expected_size)
 
 if __name__ == '__main__':
     unittest.main()
