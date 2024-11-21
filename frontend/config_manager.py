@@ -156,11 +156,9 @@ class ConfigManager:
         Args:
             text (str): The text to convert to float.
         """
-        text = text.strip()  # Remove any leading or trailing whitespace
-        if text.endswith(" €"):
-            text = text[:-2].strip()
+        smoothed_text = text.replace("€", "").replace(",", ".").strip()
         try:
-            value = float(text.replace(",", "."))
+            value = float(smoothed_text)
             return value
         except ValueError:
             # conversion to float fails
@@ -196,11 +194,11 @@ class ConfigManager:
         If conversion to float is successful, updates the `fuel_demo_price` preference and slider. If not, calls an error function.
         """
 
-        self.view.remove_error_le_fuel_threshold()
+        self.view.remove_error_le_fuel_demo_price()
         value = self.convert_text_to_float(text)
 
         if value >= 0:
             self.update_preference('fuel_demo_price', value)
             self.view.set_le_fuel_demo_price(f"{value:.2f}")
         else:
-            self.view.show_error_le_fuel_threshold("Fuel threshold must be a number")
+            self.view.show_error_le_fuel_demo_price("Fuel demo price must be a number")

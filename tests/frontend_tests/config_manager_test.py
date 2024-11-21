@@ -17,7 +17,8 @@ class TestConfigManager(unittest.TestCase):
             'fuel_type': 'super-e10',
             'default_alarm_time': '08:00',
             'sleep_time': '22:00',
-            'fuel_threshold': 1.5
+            'fuel_threshold': 1.5,
+            'fuel_demo_price': 0.0,
         }
 
     @patch('builtins.open', new_callable=unittest.mock.mock_open)
@@ -105,7 +106,8 @@ class TestConfigManager(unittest.TestCase):
             "fuel_type": "super-e10",
             "default_alarm_time": "08:00",
             "sleep_time": "22:00",
-            "fuel_threshold": 1.5
+            "fuel_threshold": 1.5,
+            'fuel_demo_price': 0.0
         }
 
         self.assertEqual(written_json, expected_json)
@@ -205,6 +207,78 @@ class TestConfigManager(unittest.TestCase):
         # above maximum range
         self.config_manager.on_le_fuel_threshold_changed("2.01")
         self.mock_view.show_error_le_fuel_threshold.assert_called_with("Fuel threshold must be a number between 1.00 and 2.00")
+
+    @patch('frontend.config_manager.ConfigManager.update_preference')
+    def test_on_le_fuel_demo_price_changed_valid(self, mock_update):
+        """Test valid fuel threshold input handling."""
+        self.config_manager.on_le_fuel_demo_price_changed("1.75")
+
+        mock_update.assert_called_with('fuel_demo_price', 1.75)
+
+    @patch('frontend.config_manager.ConfigManager.update_preference')
+    def test_on_le_fuel_demo_price_changed_invalid(self, mock_update):
+        """Test invalid fuel threshold input handling."""
+        self.config_manager.on_le_fuel_demo_price_changed("abc")
+
+        self.mock_view.show_error_le_fuel_demo_price.assert_called_with("Fuel demo price must be a number")
+
+class TestConvertTextToFloat(unittest.TestCase):
+
+    def setUp(self):
+        # Create a mock view and initialize ConfigManager with it
+        self.mock_view = MagicMock()
+        self.mock_view.ui = MagicMock()
+        self.config_manager = ConfigManager(self.mock_view)
+
+    def test_convert_valid_float_with_dot(self):
+        """Test valid float input with dot notation."""
+        result = self.config_manager.convert_text_to_float("123.45")
+        self.assertEqual(result, 123.45)
+
+    def test_convert_valid_float_with_comma(self):
+        """Test valid float input with comma notation."""
+        result = self.config_manager.convert_text_to_float("123,45")
+        self.assertEqual(result, 123.45)
+
+    def test_convert_text_with_trailing_space(self):
+        """Test valid float input with leading/trailing spaces."""
+        result = self.config_manager.convert_text_to_float("  123.45  ")
+        self.assertEqual(result, 123.45)
+
+    def test_convert_text_with_trailing_euro_symbol(self):
+        """Test text with ' €' at the end of the number."""
+        result = self.config_manager.convert_text_to_float("123.45 €")
+        self.assertEqual(result, 123.45)
+
+    def test_convert_text_with_comma_and_euro_symbol(self):
+        """Test text with a comma and ' €' at the end."""
+        result = self.config_manager.convert_text_to_float("123,45 €")
+        self.assertEqual(result, 123.45)
+
+    def test_invalid_input_with_non_numeric_characters(self):
+        """Test invalid input that can't be converted to a float."""
+        result = self.config_manager.convert_text_to_float("abc")
+        self.assertEqual(result, -1)
+
+    def test_empty_input(self):
+        """Test empty input."""
+        result = self.config_manager.convert_text_to_float("")
+        self.assertEqual(result, -1)
+
+    def test_only_euro_symbol(self):
+        """Test input that only contains ' €'."""
+        result = self.config_manager.convert_text_to_float(" €")
+        self.assertEqual(result, -1)
+
+    def test_only_comma(self):
+        """Test input with just a comma."""
+        result = self.config_manager.convert_text_to_float(",")
+        self.assertEqual(result, -1)
+
+    def test_only_dot(self):
+        """Test input with just a dot."""
+        result = self.config_manager.convert_text_to_float(".")
+        self.assertEqual(result, -1)
 
 if __name__ == '__main__':
     unittest.main()
