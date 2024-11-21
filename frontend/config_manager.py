@@ -60,7 +60,10 @@ class ConfigManager:
         Args:
             preference (str): The name of the preference to retrieve. The available keys are:
                 - "fuel_type": str (e.g., "diesel")
-                - "fuel_threshold": float (e.g., 1.5)
+                - "fuel_threshold": float in € (e.g., 1.5)
+                - "fuel_step_size": float in € (e.g., 0.05)
+                - "fuel_radius": float in km (e.g., 5.0)
+                - "fuel_demo_price": float in €, 0 indicates to use the API
                 - "default_alarm_time": str (e.g., "08:00")
                 - "sleep_time": str (e.g., "22:00")
                 - "home_location": dict (see below for details)
@@ -105,6 +108,8 @@ class ConfigManager:
         self.view.set_sl_fuel_threshold(int(fuel_threshold * 100))
         self.view.set_le_fuel_threshold(f"{fuel_threshold:.2f}")
 
+        self.view.set_le_fuel_demo_price(f"{self.preferences['fuel_demo_price']:.2f}")
+
     def on_cb_fuel_type_changed(self, index: int) -> None:
         """Handles the change in the fuel type selection from the combo box.
 
@@ -144,6 +149,23 @@ class ConfigManager:
         self.update_preference('fuel_threshold', fuel_threshold)
         self.view.set_le_fuel_threshold(fuel_threshold_str)
 
+    def convert_text_to_float(self, text: str):
+        """Attempts to convert the text to a float, handling both comma and dot notation for decimal points.
+        If the conversion fails, -1 is returned.
+
+        Args:
+            text (str): The text to convert to float.
+        """
+        text = text.strip()  # Remove any leading or trailing whitespace
+        if text.endswith(" €"):
+            text = text[:-2].strip()
+        try:
+            value = float(text.replace(",", "."))
+            return value
+        except ValueError:
+            # conversion to float fails
+            return -1
+        
     def on_le_fuel_threshold_changed(self, text: str) -> None:
         """Handles the change in the fuel threshold input field.
 
@@ -154,18 +176,31 @@ class ConfigManager:
         If successful, updates the `fuel_threshold` preference and slider. If not, calls an error function.
         """
         self.view.remove_error_le_fuel_threshold()
-        text = text.strip()  # Remove any leading or trailing whitespace
-        if text.endswith(" €"):
-            text = text[:-2].strip()
-        try:
-            value = float(text.replace(",", "."))
+        value = self.convert_text_to_float(text)
 
-            if 100 <= value * 100 <= 200:
-                self.update_preference('fuel_threshold', value)
-                self.view.set_sl_fuel_threshold(int(value * 100))
-                self.view.set_le_fuel_threshold(f"{value:.2f}")
-            else:
-                self.view.show_error_le_fuel_threshold("Fuel threshold must be a number between 1.00 and 2.00")
-        except ValueError:
-            # conversion to float fails
+        if 100 <= value * 100 <= 200:
+            self.update_preference('fuel_threshold', value)
+            self.view.set_sl_fuel_threshold(int(value * 100))
+            self.view.set_le_fuel_threshold(f"{value:.2f}")
+        else:
             self.view.show_error_le_fuel_threshold("Fuel threshold must be a number between 1.00 and 2.00")
+
+
+    def on_le_fuel_demo_price_changed(self, text: str) -> None:
+        """Handles the change in the fuel demo price input field.
+
+        Args:
+            text (str): The text from the input field representing the fuel demo price.
+
+        Attempts to convert the text to a float, handling both comma and dot notation for decimal points.
+        If conversion to float is successful, updates the `fuel_demo_price` preference and slider. If not, calls an error function.
+        """
+
+        self.view.remove_error_le_fuel_threshold()
+        value = self.convert_text_to_float(text)
+
+        if value >= 0:
+            self.update_preference('fuel_demo_price', value)
+            self.view.set_le_fuel_demo_price(f"{value:.2f}")
+        else:
+            self.view.show_error_le_fuel_threshold("Fuel threshold must be a number")
