@@ -279,7 +279,7 @@ class TestMainWindow(unittest.TestCase):
 
         self.main_window.on_hover_enter_settings()
 
-        expected_size = QSize(36, 36)  # 40 * 0.9 = 36
+        expected_size = QSize(36, 36)  # 36 is 90% of original size (40)
         self.mock_ui.bt_settings.setIconSize.assert_called_once_with(expected_size)
 
     def test_on_hover_leave_settings(self):
@@ -288,7 +288,7 @@ class TestMainWindow(unittest.TestCase):
 
         self.main_window.on_hover_leave_settings()
 
-        expected_size = QSize(32, 32)  # 40 * 0.8 = 32
+        expected_size = QSize(32, 32)  # 32 is 80% of original size (40)
         self.mock_ui.bt_settings.setIconSize.assert_called_once_with(expected_size)
 
     def test_on_hover_enter_speech_to_text(self):
