@@ -1,7 +1,9 @@
 from loguru import logger
+from loguru import logger
 from transitions import Machine, State
 from config import CONFIG
 from frontend.config_manager import load_preferences_file
+from PyQt5.QtCore import QObject, pyqtSignal
 from PyQt5.QtCore import QObject, pyqtSignal
 from api.api_factory import APIFactory
 from .idle_state import IdleState
@@ -10,9 +12,12 @@ from .speach_state import SpeachState
 from .news_state import NewsState
 
 class StateMachine(QObject):
+class StateMachine(QObject):
     """
     State machine that controls the flow of the application.
     """
+    # Signal that is emitted when the state changes (used to inform the frontend)
+    state_changed = pyqtSignal(str)
     # Signal that is emitted when the state changes (used to inform the frontend)
     state_changed = pyqtSignal(str)
     
@@ -27,6 +32,9 @@ class StateMachine(QObject):
     ]
     
     def __init__(self):
+        super(StateMachine, self).__init__()  # Call the superclass __init__ method
+        
+        logger.info("StateMachine initialized")
         super(StateMachine, self).__init__()  # Call the superclass __init__ method
         
         logger.info("StateMachine initialized")
@@ -85,6 +93,7 @@ class StateMachine(QObject):
         It maps the current state to the corresponding state object and calls its on_enter method.
         """
         logger.info(f"Entering state: {self.state}")
+        logger.info(f"Entering state: {self.state}")
         # Get the current state and map it to the corresponding state object
         state_dict = {
             'idle': self.idle,
@@ -96,8 +105,14 @@ class StateMachine(QObject):
         }
         # Inform the frontend about the state change
         self.state_changed.emit(self.state)
+        # Inform the frontend about the state change
+        self.state_changed.emit(self.state)
         # Call the on_enter method of the state object
         state_dict[self.state].on_enter()
+        # Process queued transitions if the current state is idle
+        if self.state == 'idle' and self.transition_queue:
+            next_transition = self.transition_queue.pop(0)
+            getattr(self, next_transition)()
         # Process queued transitions if the current state is idle
         if self.state == 'idle' and self.transition_queue:
             next_transition = self.transition_queue.pop(0)

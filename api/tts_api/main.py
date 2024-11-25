@@ -1,9 +1,6 @@
 import pyttsx3
 import speech_recognition as sr
 from loguru import logger
-import threading
-import requests
-import pygame
 
 class TTSAPI:
     _instance = None
@@ -129,9 +126,10 @@ class TTSAPI:
         try:
             with sr.Microphone(device_index=self.mic_id) as source:
                 self.r.adjust_for_ambient_noise(source)
-                audio = self.r.listen(source)
+                audio = self.r.listen(source, timeout=timeout)
                 self.speak("Verarbeitung der Eingabe...")
 
+                logger.info("Listening for microphone input")
                 text = self.r.recognize_google(audio, language="de-DE")
                 logger.info(f"Recognized text: {text}")
                 return text

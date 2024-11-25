@@ -27,10 +27,6 @@ class IdleState:
             self.state_machine = state_machine
             logger.info("IdleState initialized")
             self.initialized = True
-        if not hasattr(self, 'initialized'):  # Ensure __init__ is only called once
-            self.state_machine = state_machine
-            logger.info("IdleState initialized")
-            self.initialized = True
         
     def on_enter(self):
         """
@@ -52,6 +48,10 @@ class IdleState:
         """
         Check if a trigger is activated.
         """
+        queue = self.state_machine.transition_queue
+        if len(queue) > 0:
+            trigger = queue.pop(0)
+            self.state_machine.transition(trigger)
         queue = self.state_machine.transition_queue
         if len(queue) > 0:
             trigger = queue.pop(0)
