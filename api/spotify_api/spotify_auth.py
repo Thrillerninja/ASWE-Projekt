@@ -4,6 +4,7 @@ import requests
 from urllib.parse import urlencode
 import base64
 import os
+from loguru import logger
 
 REDIRECT_URI = 'https://example.com/callback/'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
@@ -14,6 +15,7 @@ def generate_auth_url(client_id):
     Generates the Spotify authorization URL for user authentication.
     Instructs the user to open the URL and copy the authorization code.
     """
+    logger.info("Generating Spotify authorization URL")
     params = {
         'client_id': client_id,
         'response_type': 'code',
@@ -31,6 +33,7 @@ def get_initial_token(auth_code, client_id, client_secret):
 
     :param auth_code: The authorization code received from Spotify after user authentication.
     """
+    logger.info("Retrieving initial access token")
     # Base64-encoded Client ID and Secret
     auth_str = f"{client_id}:{client_secret}"
     b64_auth_str = base64.b64encode(auth_str.encode()).decode()
@@ -51,6 +54,7 @@ def get_initial_token(auth_code, client_id, client_secret):
         save_token(response_data)
         print("Token successfully retrieved and saved.")
     else:
+        logger.error(f"Error retrieving the token: {response.status_code}")
         print("Error retrieving the token:", response.status_code)
         print(response.json())
 
@@ -59,6 +63,7 @@ def refresh_token(client_id, client_secret):
     Refreshes the access token using the stored refresh token.
     Updates the local token file with the new access token.
     """
+    logger.info("Refreshing access token")
     with open(TOKEN_FILE, 'r') as f:
         token_data = json.load(f)
 
@@ -87,6 +92,7 @@ def refresh_token(client_id, client_secret):
 
         save_token(token_data)
     else:
+        logger.error(f"Failed to retrieve token: {response.status_code} - {response.text}")
         print(f'Failed to retrieve token: {response.status_code} - {response.text}')
         raise ConnectionRefusedError("Failed to refresh the token")
 
@@ -96,6 +102,7 @@ def save_token(data):
 
     :param data: The token data returned by the Spotify API.
     """
+    logger.info("Saving token data to file")
     with open(TOKEN_FILE, 'w') as f:
         json.dump(data, f)
 
@@ -106,6 +113,7 @@ def get_access_token(client_id, client_secret):
 
     :return: The current access token as a string.
     """
+    logger.info("Retrieving current access token")
     try:
         with open(TOKEN_FILE, 'r') as f:
             token_data = json.load(f)
@@ -117,4 +125,5 @@ def get_access_token(client_id, client_secret):
 
         return token_data['access_token']
     except FileNotFoundError:
+        logger.error("No token found. Please run 'generate_auth_url()' and 'get_initial_token(code)' first.")
         print("No token found. Please run 'generate_auth_url()' and 'get_initial_token(code)' first.")

@@ -276,8 +276,9 @@ class TestMainWindow(unittest.TestCase):
     def test_on_hover_enter_settings(self):
         """Test that the icon size of the settings button changes when hovering enters."""
         self.mock_ui.bt_settings.size.return_value = QSize(40, 40)
+        mock_event = MagicMock()
 
-        self.main_window.on_hover_enter_settings()
+        self.main_window.on_hover_enter_settings(mock_event)
 
         expected_size = QSize(36, 36)  # 36 is 90% of original size (40)
         self.mock_ui.bt_settings.setIconSize.assert_called_once_with(expected_size)
@@ -285,22 +286,25 @@ class TestMainWindow(unittest.TestCase):
     def test_on_hover_leave_settings(self):
         """Test that the icon size of the settings button changes when hovering leaves."""
         self.mock_ui.bt_settings.size.return_value = QSize(40, 40)
+        mock_event = MagicMock()
 
-        self.main_window.on_hover_leave_settings()
+        self.main_window.on_hover_leave_settings(mock_event)
 
         expected_size = QSize(32, 32)  # 32 is 80% of original size (40)
         self.mock_ui.bt_settings.setIconSize.assert_called_once_with(expected_size)
 
     def test_on_hover_enter_speech_to_text(self):
         """Test that the icon size of the speech-to-text button changes when hovering enters."""
-        self.main_window.on_hover_enter_speech_to_text()
+        mock_event = MagicMock()
+        self.main_window.on_hover_enter_speech_to_text(mock_event)
 
         expected_size = QSize(38, 38)
         self.mock_ui.bt_speech_to_text.setIconSize.assert_called_once_with(expected_size)
 
     def test_on_hover_leave_speech_to_text(self):
         """Test that the icon size of the speech-to-text button changes when hovering leaves."""
-        self.main_window.on_hover_leave_speech_to_text()
+        mock_event = MagicMock()
+        self.main_window.on_hover_leave_speech_to_text(mock_event)
 
         expected_size = QSize(35, 35)
         self.mock_ui.bt_speech_to_text.setIconSize.assert_called_once_with(expected_size)

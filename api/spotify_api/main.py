@@ -1,6 +1,7 @@
 from typing import Dict, Optional, List
 import json
 import requests
+from loguru import logger
 from api.spotify_api.spotify_auth import get_access_token
 from api.api_client import APIClient
 
@@ -31,6 +32,7 @@ class SpotifyAPI(APIClient):
         """
         Updates the access token and refreshes headers with the new token.
         """
+        logger.info("Updating access token")
         self.access_token = self.authenticate()
         self.headers = {"Authorization": f"Bearer {self.access_token}"}
 
@@ -40,6 +42,7 @@ class SpotifyAPI(APIClient):
         
         :return: List of playlists as dictionaries.
         """
+        logger.info("Retrieving user playlists")
         endpoint = "me/playlists"
         params = {
             "limit": 5,  # Maximum allowed by Spotify API is 50
@@ -55,6 +58,7 @@ class SpotifyAPI(APIClient):
         
         :return: List of devices as dictionaries.
         """
+        logger.info("Retrieving available devices")
         endpoint = "me/player/devices"
         response = self.get(endpoint)
         return response['devices']  # List of devices
@@ -66,6 +70,7 @@ class SpotifyAPI(APIClient):
         :param playlist_id: The ID of the playlist to play.
         :param device_id: Optional ID of the device to use for playback.
         """
+        logger.info(f"Starting playback for playlist: {playlist_id} on device: {device_id}")
         endpoint = "me/player/play"
         data = {
             "context_uri": f"spotify:playlist:{playlist_id}",
@@ -80,16 +85,17 @@ class SpotifyAPI(APIClient):
         try:
             response = super().put(endpoint, data=json_data)
         except requests.exceptions.HTTPError:
-            print(f"ERROR playing music: Device '{device_id}' is not active.")
+            logger.error(f"ERROR playing music: Device '{device_id}' is not active.")
             return
         
         if response.status_code == 204:
-            print("Playback started successfully!")
+            logger.info("Playback started successfully!")
         else:
             try:
                 response_json = response.json()
             except ValueError as e:
-                print(f"Error parsing response: {e}")
+                logger.error(f"Error parsing response: {e}")
                 response_json = None
 
+            logger.error(f"Failed to start playback: {response_json or 'No response content'}")
             raise Exception(f"Failed to start playback: {response_json or 'No response content'}")

@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import datetime
-
+from loguru import logger
 
 class Calendar:
     def __init__(self, appointments:list=[]) -> None:
@@ -81,7 +81,11 @@ def create_calendar_from_rapla(url:str):
     year = url.split("year=")[1].split("&")[0] if "year=" in url else str(datetime.datetime.now().year)
     
     cal = Calendar()
+    logger.info(f"Fetching data from URL: {url}")
     res = requests.get(url)
+    if res.status_code != 200:
+        logger.error(f"Failed to fetch data from URL: {url} with status code: {res.status_code}")
+        return None
     soup = BeautifulSoup(res.text, 'html.parser')
     
     # Kurs (<h2 class="title">)
@@ -133,10 +137,11 @@ def create_calendar_from_rapla(url:str):
                             lecturer = "-"
                         lecture = Lecture(vl, date, time_start, time_end, color, lecturer, room)
                         cal.appointments.append(lecture)
+                        logger.info(f"Added lecture: {lecture}")
                         td_index += 3
                     elif classes == seps_block_tail:
                         # Blockende
                         td_index += 2  # dont skip over last td cause its already from the next day
                 except Exception as e:
-                    print(e)
+                    logger.error(f"Error processing table row: {e}")
     return cal

@@ -59,47 +59,50 @@ class TestSpotifyAPI(unittest.TestCase):
 
     @patch.object(APIClient, 'put')
     @patch.object(SpotifyAPI, 'update_token')
-    def test_start_playback_successful(self, mock_update_token, mock_put):
+    @patch('loguru.logger.info')
+    def test_start_playback_successful(self, mock_logger_info, mock_update_token, mock_put):
         mock_put.return_value.status_code = 204
         
-        with patch('builtins.print') as mock_print:
-            self.spotify_api.start_playback("test_playlist_id", "test_device_id")
+        self.spotify_api.start_playback("test_playlist_id", "test_device_id")
         
-            mock_update_token.assert_called_once()
-            mock_put.assert_called_once_with(
-                "me/player/play",
-                data=json.dumps({"context_uri": "spotify:playlist:test_playlist_id", "position_ms": 0, "device_id": "test_device_id"})
-            )
-            mock_print.assert_called_once_with("Playback started successfully!")
+        mock_update_token.assert_called_once()
+        mock_put.assert_called_once_with(
+            "me/player/play",
+            data=json.dumps({"context_uri": "spotify:playlist:test_playlist_id", "position_ms": 0, "device_id": "test_device_id"})
+        )
+        mock_logger_info.assert_any_call("Playback started successfully!")
 
     @patch.object(APIClient, 'put')
     @patch.object(SpotifyAPI, 'update_token')
-    def test_start_playback_error(self, mock_update_token, mock_put):
+    @patch('loguru.logger.error')
+    def test_start_playback_error(self, mock_logger_error, mock_update_token, mock_put):
         mock_put.side_effect = requests.exceptions.HTTPError
         
-        with patch('builtins.print') as mock_print:
-            self.spotify_api.start_playback("test_playlist_id", "test_device_id")
+        self.spotify_api.start_playback("test_playlist_id", "test_device_id")
         
-            mock_update_token.assert_called_once()
-            mock_put.assert_called_once()
-            mock_print.assert_called_once_with("ERROR playing music: Device 'test_device_id' is not active.")
+        mock_update_token.assert_called_once()
+        mock_put.assert_called_once()
+        mock_logger_error.assert_called_once_with("ERROR playing music: Device 'test_device_id' is not active.")
 
     @patch.object(APIClient, 'put')
     @patch.object(SpotifyAPI, 'update_token')
-    def test_start_playback_failed_response(self, mock_update_token, mock_put):
+    @patch('loguru.logger.error')
+    def test_start_playback_failed_response(self, mock_logger_error, mock_update_token, mock_put):
         mock_response = MagicMock()
         mock_response.status_code = 400
         mock_response.json.return_value = {"error": "Something went wrong"}
         mock_put.return_value = mock_response
 
         with self.assertRaises(Exception) as context:
-            self.spotify_api.start_playback("test_playlist_id")
+            self.spotify_api.start_playback("test_playlist_id", "test_device_id")
 
         self.assertEqual(str(context.exception), "Failed to start playback: {'error': 'Something went wrong'}")
+        mock_logger_error.assert_called_once_with("Failed to start playback: {'error': 'Something went wrong'}")
 
     @patch.object(APIClient, 'put')
     @patch.object(SpotifyAPI, 'update_token')
-    def test_start_playback_failed_response_no_json(self, mock_update_token, mock_put):
+    @patch('loguru.logger.error')
+    def test_start_playback_failed_response_no_json(self, mock_logger_error, mock_update_token, mock_put):
         # Mock a failed response without JSON content
         mock_response = MagicMock()
         mock_response.status_code = 400
@@ -107,9 +110,11 @@ class TestSpotifyAPI(unittest.TestCase):
         mock_put.return_value = mock_response
 
         with self.assertRaises(Exception) as context:
-            self.spotify_api.start_playback("test_playlist_id")
+            self.spotify_api.start_playback("test_playlist_id", "test_device_id")
 
         self.assertEqual(str(context.exception), "Failed to start playback: No response content")
+        mock_logger_error.assert_any_call("Error parsing response: No JSON content")
+        mock_logger_error.assert_any_call("Failed to start playback: No response content")
 
 class TestSpotifyAuth(unittest.TestCase):
 

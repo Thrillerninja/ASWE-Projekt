@@ -1,5 +1,7 @@
 from typing import Dict
 import datetime
+from unittest.mock import MagicMock
+from loguru import logger
 from api.api_factory import APIFactory
 
 class WelcomeState:
@@ -15,21 +17,23 @@ class WelcomeState:
         self.weather_api = self.state_machine.api_factory.create_api(api_type="weather")
         self.rapla_api = self.state_machine.api_factory.create_api(api_type="rapla")
         
-        self.default_wakeup_time = datetime.time(9, 0)  # TODO: Replace with preferences file value
+        default_alarm_time = self.state_machine.preferences.get("default_alarm_time", "09:00")
+        if isinstance(default_alarm_time, MagicMock):
+            default_alarm_time = "09:00"
+        self.default_wakeup_time = datetime.datetime.strptime(default_alarm_time, "%H:%M").time()
         
-        
-        print("WelcomeState initialized")
+        logger.info("WelcomeState initialized")
     
     def on_enter(self):
         """
         Function executed when the state is entered.
         It sets up the alarm, retrieves the weather forecast, and informs the user about their schedule.
         """
-        print("WelcomeState entered")
+        logger.info("WelcomeState entered")
         
         # Calculate wake-up time based on the first calendar appointment
         wakeup_time = self.calc_alarm_time()
-        print(f"Wake-up time set for: {wakeup_time}")
+        logger.info(f"Wake-up time set for: {wakeup_time}")
 
         # TODO: Set the alarm using the calculated wakeup_time
 

@@ -78,8 +78,11 @@ class MainWindow(QtWidgets.QMainWindow):
     def on_bt_speech_to_text_clicked(self) -> None:
         """Handler for button click event to start showing the GIF."""
         self.ui.lb_sound_wave_gif.setVisible(True)
-        self.movie.start() 
-        QTimer.singleShot(3000, self.stop_recording)  #TODO Implement speech to text
+        self.movie.start()
+        QTimer.singleShot(3000, self.stop_recording)  # Schedule stop recording after 3 seconds
+        print("Speach to text button clicked")
+        # Queue the transition to the speach state
+        self.state_machine.queue_transition('to_speach')
 
     def stop_recording(self) -> None:
         """Stop the recording and hide the GIF."""
@@ -245,15 +248,24 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         self.ui.lb_alarm_text.setText(time)
 
-    def on_hover_enter_settings(self):
+    def on_hover_enter_settings(self, event):
         new_size = self.ui.bt_settings.size() * 0.9
         self.ui.bt_settings.setIconSize(new_size)
 
-    def on_hover_leave_settings(self):
+    def on_hover_leave_settings(self, event):
         self.ui.bt_settings.setIconSize(self.ui.bt_settings.size() * 0.8)
 
-    def on_hover_enter_speech_to_text(self):
+    def on_hover_enter_speech_to_text(self, event):
         self.ui.bt_speech_to_text.setIconSize(QSize(38, 38))
 
-    def on_hover_leave_speech_to_text(self):
+    def on_hover_leave_speech_to_text(self, event):
         self.ui.bt_speech_to_text.setIconSize(QSize(35, 35))
+
+    def set_mic_id(self, mic_id: int):
+        """
+        Sets the microphone ID for the TTSAPI instance.
+        
+        Args:
+            mic_id (int): The ID of the microphone to set.
+        """
+        self.state_machine.speach.mic_id = mic_id
