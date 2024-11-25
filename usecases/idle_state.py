@@ -14,8 +14,19 @@ class IdleState:
         if cls._instance is None:
             cls._instance = super(IdleState, cls).__new__(cls)
         return cls._instance
+    _instance = None
+    is_first_run = True
+    
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(IdleState, cls).__new__(cls)
+        return cls._instance
     
     def __init__(self, state_machine):
+        if not hasattr(self, 'initialized'):  # Ensure __init__ is only called once
+            self.state_machine = state_machine
+            logger.info("IdleState initialized")
+            self.initialized = True
         if not hasattr(self, 'initialized'):  # Ensure __init__ is only called once
             self.state_machine = state_machine
             logger.info("IdleState initialized")
