@@ -27,6 +27,7 @@ class TestWelcomeState(unittest.TestCase):
         state_machine = MagicMock()
         mock_config = MagicMock()  # Mock configuration
         state_machine.api_factory = APIFactory(mock_config)
+        state_machine.preferences = {"default_alarm_time": "09:00"}
         welcome_state = WelcomeState(state_machine)
         
         # Call on_enter
@@ -42,6 +43,7 @@ class TestAlarm(unittest.TestCase):
         # Mock the state machine and API factory
         self.state_machine = MagicMock()
         self.state_machine.api_factory = MagicMock()
+        self.state_machine.preferences = {"default_alarm_time": "09:00"}
         
         # Mock the create_api method to return a mock RaplaAPI instance
         self.mock_rapla_api = MagicMock()

@@ -1,6 +1,6 @@
 {
     "fuel_type": "super-e5",
-    "fuel_threshold": 1.85,
+    "fuel_threshold": 1.86,
     "fuel_step_size": 0.05,
     "fuel_radius": 5.0,
     "fuel_demo_price": 1.0,
