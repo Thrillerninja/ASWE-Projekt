@@ -3,6 +3,10 @@ import threading
 from loguru import logger
 from PyQt5 import QtWidgets
 from frontend.main_window import MainWindow
+import threading
+from loguru import logger
+from PyQt5 import QtWidgets
+from frontend.main_window import MainWindow
 from usecases.state_machine import StateMachine
 
 # Start the backend & state machine
@@ -12,6 +16,10 @@ sm = StateMachine()
 def run_state_machine():
     logger.info("Starting state machine")
     sm.to_idle()
+
+# Start the state machine in a separate thread
+state_machine_thread = threading.Thread(target=run_state_machine)
+state_machine_thread.start()
 
 # Start the state machine in a separate thread
 state_machine_thread = threading.Thread(target=run_state_machine)

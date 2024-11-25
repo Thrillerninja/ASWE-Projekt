@@ -30,9 +30,11 @@ class TTSAPI:
         german_voice = next((voice for voice in voices if "de" in voice.languages), None)
         if german_voice:
             self.engine.setProperty('voice', german_voice.id)
-
-        self.r = sr.Recognizer()
+            
+        # Set the microphone id
         self.mic_id = mic_id if mic_id is not None else self.get_first_active_mic_id()
+    
+        self.r = sr.Recognizer()
         self.engine_lock = threading.Lock()  # Add a lock for the engine
         
         self.toggle_elevenlabs = toggle_elevenlabs
@@ -126,8 +128,9 @@ class TTSAPI:
         try:
             with sr.Microphone(device_index=self.mic_id) as source:
                 self.r.adjust_for_ambient_noise(source)
-                audio = self.r.listen(source, timeout=timeout)
-                logger.info("Listening for microphone input")
+                audio = self.r.listen(source)
+                self.speak("Verarbeitung der Eingabe...")
+
                 text = self.r.recognize_google(audio, language="de-DE")
                 logger.info(f"Recognized text: {text}")
                 return text
