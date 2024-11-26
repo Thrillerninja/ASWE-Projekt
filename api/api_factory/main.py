@@ -12,13 +12,9 @@ class APIFactory:
     """
     Factory class to create instances of different API clients.
     """
+    _instances = {}
 
     def __init__(self, config: Dict):
-        """
-        Initializes the factory with configuration data.
-
-        :param config: Dictionary containing API keys and tokens.
-        """
         self.config = config
 
     def create_api(self, api_type: str) -> APIClient:
@@ -29,22 +25,24 @@ class APIFactory:
         :return: Instance of a subclass of APIClient.
         :raises ValueError: If the api_type is not supported.
         """
-        if api_type == 'weather':
-            return WeatherAPI(self.config['weather_api_key'])
-        elif api_type == 'finance':
-            return FinanceAPI(self.config['finance_api_key'])
-        elif api_type == 'spotify':
-            return SpotifyAPI(
-                client_id=self.config['spotify_client_id'],
-                client_secret=self.config['spotify_client_secret']
-            )
-        elif api_type == 'rapla':
-            return RaplaAPI(self.config['rapla_url'])
-        elif api_type == 'tts':
-            return TTSAPI()
-        elif api_type == 'news':
-            return NewsAPI()
-        elif api_type == 'vvs':
-            return VVSAPI()
-        else:
-            raise ValueError(f"API type '{api_type}' is not supported.")
+        if api_type not in self._instances:
+            if api_type == 'weather':
+                self._instances[api_type] = WeatherAPI(self.config['weather_api_key'])
+            elif api_type == 'finance':
+                self._instances[api_type] = FinanceAPI(self.config['finance_api_key'])
+            elif api_type == 'spotify':
+                self._instances[api_type] = SpotifyAPI(
+                    client_id=self.config['spotify_client_id'],
+                    client_secret=self.config['spotify_client_secret']
+                )
+            elif api_type == 'rapla':
+                self._instances[api_type] = RaplaAPI(self.config['rapla_url'])
+            elif api_type == 'tts':
+                self._instances[api_type] = TTSAPI()
+            elif api_type == 'vvs':
+                self._instances[api_type] = VVSAPI()
+            elif api_type == 'news':
+                self._instances[api_type] = NewsAPI()
+            else:
+                raise ValueError(f"API type '{api_type}' is not supported.")
+        return self._instances[api_type]
