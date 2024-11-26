@@ -14,7 +14,7 @@ class IdleState:
         Wait for a trigger to start the next usecase.
         """
         print("IdleState entered")
-        
+
         while not self.state_machine.testing:
             self.check_triggers()
             

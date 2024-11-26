@@ -6,6 +6,7 @@ from .idle_state import IdleState
 from .welcome_state import WelcomeState
 from .speach_state import SpeachState
 from .news_state import NewsState
+from.financetracker_state import FinanceState
 
 class StateMachine:
     """
@@ -37,11 +38,11 @@ class StateMachine:
         self.welcome = WelcomeState(self)
         self.speach = SpeachState(self)
         self.news =  NewsState(self)
-        self.finance = None
+        self.finance = FinanceState(self)
         self.activity = None
         
         # Setup transitions
-        self.machine.add_transition('start', 'idle', 'welcome')
+        self.machine.add_transition('start', 'idle', 'finance')
         self.machine.add_transition('exit', 'welcome', 'idle')
         
         self.machine.add_transition(trigger='news_interact', source="news", dest='speach')
@@ -56,6 +57,9 @@ class StateMachine:
         self.machine.add_transition(trigger='goto_activity', source='speach', dest='activity')
         self.machine.add_transition(trigger='goto_news', source='speach', dest='news')
 
+        self.machine.add_transition(trigger='goto_finance', source='idle', dest='finance')
+        self.machine.add_transition(trigger='exit_finance', source='finance', dest='dhfgguah')
+        #self.machine.to_finance()
         
     def on_enter(self):
         """
