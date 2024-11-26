@@ -20,7 +20,7 @@ class TestVoiceInterface(unittest.TestCase):
 
         vi = TTSAPI(self.api_key)
         mock_pyttsx3_init.assert_called_once()
-        self.assertIsNotNone(vi.r)
+        self.assertIsNotNone(vi.recogize)
 
     @patch('pyttsx3.init')
     def test_speak(self, mock_pyttsx3_init):
