@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
+
 class GasStation:
     def __init__(self, name:str, price:float):
         self.name = name
@@ -22,10 +23,6 @@ fuels  = {
     }
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 89fd07d6b3b89fd8528f3381ebf3dd11ae170c1e
 def get_soup(city, fuel_name, range_km):
     city = city.replace(" ", "+")
     fuel_type = fuels.get(fuel_name)
@@ -35,10 +32,7 @@ def get_soup(city, fuel_name, range_km):
     return BeautifulSoup(response.text, "html.parser")
 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 89fd07d6b3b89fd8528f3381ebf3dd11ae170c1e
 def get_average_price(city, fuel_name, range_km):
     '''
     Get average gas price for a city and fuel type
@@ -61,6 +55,8 @@ def get_average_price(city, fuel_name, range_km):
     avg_price = float(avg_price.replace(",", "."))
     # print(f"{avg_fuel} in {avg_city} is {avg_price}")
     return avg_city, avg_fuel, avg_price
+
+
 
 def get_gas_stations(city, fuel_name, range_km):
     '''
