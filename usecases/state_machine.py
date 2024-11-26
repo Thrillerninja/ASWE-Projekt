@@ -7,6 +7,8 @@ from .speach_state import SpeachState
 from frontend.config_manager import load_preferences_file
 from .financetracker_state import FinanceState
 from .news_state import NewsState
+from.financetracker_state import FinanceState
+
 class StateMachine:
     """
     State machine that controls the flow of the application.
@@ -38,10 +40,11 @@ class StateMachine:
         self.speach = SpeachState(self)
         self.news =  NewsState(self)
         self.finance = FinanceState(self)
+        self.finance = FinanceState(self)
         self.activity = None
         
         # Setup transitions
-        self.machine.add_transition('start', 'idle', 'welcome')
+        self.machine.add_transition('start', 'idle', 'finance')
         self.machine.add_transition('exit', 'welcome', 'idle')
         
         self.machine.add_transition(trigger='news_interact', source="news", dest='speach')
