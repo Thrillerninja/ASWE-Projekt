@@ -1,12 +1,14 @@
 from typing import Dict
 from api.api_client import APIClient
-from api.weather_api.main import WeatherAPI
+from api.news_api import NewsAPI
+from api.weather_api import WeatherAPI
 from api.finance_api import FinanceAPI
 from api.spotify_api import SpotifyAPI
 from api.fitbit_api import FitbitAPI
 
 from api.calendar_api import RaplaAPI
 from api.tts_api import TTSAPI
+from api.vvs_api import VVSAPI
 
 class APIFactory:
     """
@@ -46,5 +48,9 @@ class APIFactory:
             return RaplaAPI(self.config['rapla_url'])
         elif api_type == 'tts':
             return TTSAPI(self.config['elevenlabs_key'], self.toggle_elevenlabs)#TODO: toggle_elevenlabs aus preferences auslesen
+        elif api_type == 'news':
+            return NewsAPI()
+        elif api_type == 'vvs':
+            return VVSAPI()
         else:
             raise ValueError(f"API type '{api_type}' is not supported.")

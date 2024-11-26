@@ -21,7 +21,7 @@ class NewsState:
         self.state_machine = state_machine
         self.llm_api = LLMApi()
         self.tts_api = self.state_machine.api_factory.create_api(api_type="tts")
-        self.news_api = NewsAPI()
+        self.news_api = self.state_machine.api_factory.create_api(api_type="news")
         logger.info("NewsState initialized")
 
     def on_enter(self):

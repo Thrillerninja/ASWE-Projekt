@@ -32,7 +32,8 @@ class TTSAPI():
         if german_voice:
             self.engine.setProperty('voice', german_voice.id)
             
-        # Set the microphone id
+        # Set the active microphone id
+        self.recogize = sr.Recognizer()
         self.mic_id = mic_id if mic_id is not None else self.get_first_active_mic_id()
         
         self.toggle_elevenlabs = toggle_elevenlabs
@@ -96,34 +97,25 @@ class TTSAPI():
             self.engine.say(text)
             self.engine.runAndWait()
         
-    def list_mics(self):
-        """
-        Lists all available microphones and indicates which ones are active or hearing sound.
-        """
-        logger.info("Listing available microphones")
-        if hasattr(self, 'mics_listed') and self.mics_listed:
-            return self.active_mics
-
-        self.active_mics = []
+    def list_mics(self, timeout=1):
         mics = sr.Microphone.list_microphone_names()
-        print("Available microphones:")
+        active_mics = []
         for i, mic in enumerate(mics):
             try:
                 with sr.Microphone(device_index=i) as source:
-                    self.r.adjust_for_ambient_noise(source)
-                    audio = self.r.listen(source, timeout=1)
-                    print(f"{i}: {mic} (active)")
-                    self.active_mics.append(i)
-            except sr.WaitTimeoutError:
-                print(f"{i}: {mic} (inactive)")
-            except AttributeError:
-                print(f"{i}: {mic} (error: 'NoneType' object has no attribute 'close')")
+                    self.recogize.adjust_for_ambient_noise(source, duration=0.5)
+                    logger.info(f"Microphone {i}: {mic} is active")
+                    active_mics.append((i, mic))
             except Exception as e:
-                logger.error(f"{i}: {mic} (error: {e})")
+                logger.warning(f"Microphone {i} ({mic}) error: {e}")
                 
-        print(f"Active microphones: {self.active_mics}")
-        self.mics_listed = True
-        return self.active_mics
+        if not active_mics:
+            logger.error("No microphones found")
+            # Throw an error if no active microphones are found
+            raise Exception("No active microphones found")
+            
+        logger.success(f"Active microphones: {active_mics}")        
+        return active_mics
 
     def get_first_active_mic_id(self):
         """
@@ -146,12 +138,12 @@ class TTSAPI():
         """
         try:
             with sr.Microphone(device_index=self.mic_id) as source:
-                self.r.adjust_for_ambient_noise(source)
-                audio = self.r.listen(source, timeout=timeout)
+                self.recogize.adjust_for_ambient_noise(source)
+                audio = self.recogize.listen(source, timeout=timeout)
                 self.speak("Verarbeitung der Eingabe...")
 
                 logger.info("Listening for microphone input")
-                text = self.r.recognize_google(audio, language="de-DE")
+                text = self.recogize.recognize_google(audio, language="de-DE")
                 print(text)
                 return text
         except sr.UnknownValueError:
