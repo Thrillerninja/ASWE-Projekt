@@ -1,11 +1,13 @@
 import pyttsx3
 import speech_recognition as sr
+import requests
+import pygame
 
 class TTSAPI():
     """
     Class for text to speech and speech to text
     """
-    def __init__(self):
+    def __init__(self, api_key):
         """
         Initializes the Interface
         """
@@ -18,6 +20,15 @@ class TTSAPI():
             self.engine.setProperty('voice', german_voice.id)
         
         self.r = sr.Recognizer()
+        self.api_key = api_key
+        pygame.init()
+        self.CHUNK_SIZE = 1024
+        self.url = "https://api.elevenlabs.io/v1/text-to-speech/pqHfZKP75CvOlQylNhV4"
+        self.headers = {
+              "Accept": "audio/mpeg",
+              "Content-Type": "application/json",
+              "xi-api-key": self.api_key
+            }
         
     def authenticate(self):
         """
@@ -25,12 +36,34 @@ class TTSAPI():
         """
         pass
 
+
+    #TODO: Flag hinzufügen um Elevenlabs auszuwählen, ordentliche Stimme suchen lol
     def speak(self, text: str):
         """
         Converts the input text into a voice output
         """
-        if not isinstance(text, str) or not text.strip():
-            raise ValueError("Text input must be a non-empty string.")
+        elevenlabs = False
+        if elevenlabs:
+            data = {
+                "text": text,
+                "model_id": "eleven_multilingual_v2",
+                "voice_settings": {
+                  "stability": 0.5,
+                  "similarity_boost": 0.5
+                }
+            }
+            response = requests.post(self.url, json=data, headers=self.headers)
+            with open('output.mp3', 'wb') as f:
+                for chunk in response.iter_content(chunk_size=self.CHUNK_SIZE):
+                    if chunk:
+                        f.write(chunk)
+            pygame.mixer.music.load("output.mp3")
+            pygame.mixer.music.play()
+            while pygame.mixer.music.get_busy():
+                pass
+        else:    
+            if not isinstance(text, str) or not text.strip():
+                raise ValueError("Text input must be a non-empty string.")
         
         self.engine.say(text)
         self.engine.runAndWait()
