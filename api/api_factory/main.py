@@ -39,6 +39,6 @@ class APIFactory:
         elif api_type == 'rapla':
             return RaplaAPI(self.config['rapla_url'])
         elif api_type == 'tts':
-            return TTSAPI()
+            return TTSAPI(self.config['elevenlabs_key'], self.toggle_elevenlabs)#TODO: toggle_elevenlabs aus preferences auslesen
         else:
             raise ValueError(f"API type '{api_type}' is not supported.")
