@@ -3,11 +3,13 @@ import speech_recognition as sr
 from loguru import logger
 
 class TTSAPI:
+class TTSAPI:
     _instance = None
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
             cls._instance = super(TTSAPI, cls).__new__(cls)
+            cls._instance.__initialized = False
             cls._instance.__initialized = False
         return cls._instance
 
@@ -125,10 +127,8 @@ class TTSAPI:
     def listen(self, timeout=None):
         try:
             with sr.Microphone(device_index=self.mic_id) as source:
-                self.recogize.adjust_for_ambient_noise(source)
-                audio = self.recogize.listen(source, timeout=timeout)
-                self.speak("Verarbeitung der Eingabe...")
-
+                self.r.adjust_for_ambient_noise(source)
+                audio = self.r.listen(source, timeout=timeout)
                 logger.info("Listening for microphone input")
                 text = self.r.recognize_google(audio, language="de-DE")
                 logger.info(f"Recognized text: {text}")
@@ -187,6 +187,8 @@ class TTSAPI:
         """
         Plays a sound
         """
+        logger.debug(f"Playing sound: {sound}")
+        logger.error("Sound playing not implemented yet")
         logger.debug(f"Playing sound: {sound}")
         logger.error("Sound playing not implemented yet")
         #TODO: Implement sound playing

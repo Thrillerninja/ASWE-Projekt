@@ -18,6 +18,7 @@ class APIFactory:
     Factory class to create instances of different API clients.
     """
     _instances = {}
+    _instances = {}
 
     def __init__(self, config: Dict):
         self.config = config
