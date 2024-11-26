@@ -1,0 +1,39 @@
+{
+    "fuel_type": "super-e5",
+    "fuel_threshold": 1.85,
+    "fuel_step_size": 0.05,
+    "fuel_radius": 5.0,
+    "fuel_demo_price": 1.0,
+    "default_alarm_time": "08:00",
+    "sleep_time": "22:00",
+    "home_location": {
+        "name": "asperg",
+        "vvs_code": "de:08118:7400",
+        "address": {
+            "street": "Alleenstra\u00c3\u0178e",
+            "number": "1",
+            "zipcode": "71679",
+            "city": "Asperg",
+            "country": "Germany"
+        },
+        "coordinates": {
+            "latitude": 48.907256,
+            "longitude": 9.147977
+        }
+    },
+    "default_destination": {
+        "name": "dhbw",
+        "vvs_code": "de:08111:6072",
+        "address": {
+            "street": "Lerchenstra\u00c3\u0178e",
+            "number": "1",
+            "zipcode": "70174",
+            "city": "Stuttgart",
+            "country": "Germany"
+        },
+        "coordinates": {
+            "latitude": 48.7826,
+            "longitude": 9.167025
+        }
+    }
+}

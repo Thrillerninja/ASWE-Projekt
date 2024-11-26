@@ -6,286 +6,856 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>475</width>
+    <height>276</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>475</width>
+    <height>250</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>475</width>
+    <height>276</height>
+   </size>
+  </property>
+  <property name="cursor">
+   <cursorShape>ArrowCursor</cursorShape>
+  </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string/>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>p_logo.png</normaloff>p_logo.png</iconset>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>16</width>
+    <height>16</height>
+   </size>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="bt_exit">
+   <widget class="QLabel" name="lb_select_fuel_type">
     <property name="geometry">
      <rect>
-      <x>710</x>
-      <y>40</y>
-      <width>81</width>
-      <height>51</height>
+      <x>40</x>
+      <y>20</y>
+      <width>131</width>
+      <height>31</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <pointsize>-1</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
     <property name="styleSheet">
-     <string notr="true">/* General Exit Button Style */
-QPushButton {
-    background-color: #e74c3c;    /* Red background for the button */
-    color: white;                 /* White text color */
-    border: 2px solid #c0392b;    /* Darker red border */
-    border-radius: 8px;           /* Rounded corners for the button */
-    padding: 10px 20px;           /* Padding inside the button */
-    font-size: 16px;              /* Font size for the button text */
-    font-weight: bold;            /* Bold text for emphasis */
-    text-align: center;           /* Center the text inside the button */
+     <string notr="true">QLabel {
+    font-size: 18px;
+    font-weight: bold;
+    color: #3498db;
+    padding: 4px;
+    border: 1px solid transparent;
 }
 
-/* Hover State */
-QPushButton:hover {
-    background-color: #c0392b;    /* Darker red background on hover */
-    border: 2px solid #a93226;    /* Even darker red border on hover */
-    color: #ecf0f1;               /* Light text color on hover */
+QLabel.headline {
+    font-size: 24px;
+    font-weight: bold;
+    color: #3498db;
+    padding: 8px;
+    border: none;
+    background-color: #f0f8ff;
+    border-radius: 4px;
+    margin-bottom: 12px;
 }
 
-/* Pressed State */
-QPushButton:pressed {
-    background-color: #a93226;    /* Even darker red background when pressed */
-    border: 2px solid #922b21;    /* Dark border when pressed */
-    color: #bdc3c7;               /* Grey text color when pressed */
+QLabel.subheadline {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c3e50;
+    padding: 6px;
+    border: none;
+    margin-bottom: 8px;
 }
 
-/* Disabled State */
-QPushButton:disabled {
-    background-color: #bdc3c7;    /* Light grey background when disabled */
-    border: 2px solid #95a5a6;    /* Grey border when disabled */
-    color: #7f8c8d;               /* Grey text color when disabled */
+QLabel:disabled {
+    color: #7f8c8d;
 }
 </string>
     </property>
     <property name="text">
-     <string>Exit</string>
+     <string>Kraftstoffart</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QRadioButton" name="rb_diesel">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>50</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">/* General Radio Button Style */
-QRadioButton {
-    spacing: 8px;                /* Space between the radio button and its label */
-    font-size: 14px;             /* Font size for the label */
-    color: #2c3e50;              /* Label text color */
-}
-
-/* Radio Button Indicator (the circle) */
-QRadioButton::indicator {
-    width: 16px;                 /* Size of the indicator */
-    height: 16px;
-    border-radius: 8px;          /* Makes the indicator perfectly circular */
-    border: 2px solid #2980b9;   /* Blue border for the indicator */
-    background-color: #ecf0f1;   /* Light grey background when unchecked */
-}
-
-/* Checked State */
-QRadioButton::indicator:checked {
-    background-color: #3498db;   /* Blue background when checked */
-    border: 2px solid #2980b9;   /* Darker blue border when checked */
-}
-
-/* Disabled State */
-QRadioButton::indicator:disabled {
-    background-color: #ecf0f1;   /* Light grey background when disabled */
-    border: 2px solid #95a5a6;   /* Grey border when disabled */
-}
-
-/* Checked and Disabled State */
-QRadioButton::indicator:checked:disabled {
-    background-color: #95a5a6;   /* Darker grey background when checked and disabled */
-    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */
-}</string>
-    </property>
-    <property name="text">
-     <string>Diesel</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="rb_e10">
+   <widget class="QLabel" name="lb_default_alarm_time">
     <property name="geometry">
      <rect>
       <x>40</x>
       <y>110</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">/* General Radio Button Style */
-QRadioButton {
-    spacing: 8px;                /* Space between the radio button and its label */
-    font-size: 14px;             /* Font size for the label */
-    color: #2c3e50;              /* Label text color */
-}
-
-/* Radio Button Indicator (the circle) */
-QRadioButton::indicator {
-    width: 16px;                 /* Size of the indicator */
-    height: 16px;
-    border-radius: 8px;          /* Makes the indicator perfectly circular */
-    border: 2px solid #2980b9;   /* Blue border for the indicator */
-    background-color: #ecf0f1;   /* Light grey background when unchecked */
-}
-
-/* Checked State */
-QRadioButton::indicator:checked {
-    background-color: #3498db;   /* Blue background when checked */
-    border: 2px solid #2980b9;   /* Darker blue border when checked */
-}
-
-/* Disabled State */
-QRadioButton::indicator:disabled {
-    background-color: #ecf0f1;   /* Light grey background when disabled */
-    border: 2px solid #95a5a6;   /* Grey border when disabled */
-}
-
-/* Checked and Disabled State */
-QRadioButton::indicator:checked:disabled {
-    background-color: #95a5a6;   /* Darker grey background when checked and disabled */
-    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */
-}</string>
-    </property>
-    <property name="text">
-     <string>E10</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="rb_benzin">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>80</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">/* General Radio Button Style */
-QRadioButton {
-    spacing: 8px;                /* Space between the radio button and its label */
-    font-size: 14px;             /* Font size for the label */
-    color: #2c3e50;              /* Label text color */
-}
-
-/* Radio Button Indicator (the circle) */
-QRadioButton::indicator {
-    width: 16px;                 /* Size of the indicator */
-    height: 16px;
-    border-radius: 8px;          /* Makes the indicator perfectly circular */
-    border: 2px solid #2980b9;   /* Blue border for the indicator */
-    background-color: #ecf0f1;   /* Light grey background when unchecked */
-}
-
-/* Checked State */
-QRadioButton::indicator:checked {
-    background-color: #3498db;   /* Blue background when checked */
-    border: 2px solid #2980b9;   /* Darker blue border when checked */
-}
-
-/* Disabled State */
-QRadioButton::indicator:disabled {
-    background-color: #ecf0f1;   /* Light grey background when disabled */
-    border: 2px solid #95a5a6;   /* Grey border when disabled */
-}
-
-/* Checked and Disabled State */
-QRadioButton::indicator:checked:disabled {
-    background-color: #95a5a6;   /* Darker grey background when checked and disabled */
-    border: 2px solid #7f8c8d;   /* Even darker grey border when checked and disabled */
-}</string>
-    </property>
-    <property name="text">
-     <string>Benzin</string>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lb_select_fuel_type">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>20</y>
-      <width>161</width>
+      <width>131</width>
       <height>31</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">/* General Label Style */
-QLabel {
-    font-size: 18px;             /* Base font size for regular labels */
-    font-weight: bold;          /* Bold text for emphasis */
-    color: #3498db; ;              /* Dark grey text color */
-    padding: 4px;               /* Padding around the text */
-    border: 1px solid transparent; /* Optional border for spacing */
+     <string notr="true">QLabel {
+    font-size: 18px;
+    font-weight: bold;
+    color: #3498db;
+    padding: 4px;
+    border: 1px solid transparent;
 }
 
-/* Prominent Headline Style */
 QLabel.headline {
-    font-size: 24px;            /* Larger font size for prominent headlines */
-    font-weight: bold;          /* Bold text for emphasis */
-    color: #3498db;             /* Distinct blue color for headlines */
-    padding: 8px;               /* Increased padding for a more spacious look */
-    border: none;               /* No border for a cleaner look */
-    background-color: #f0f8ff;  /* Light blue background to make the headline stand out */
-    border-radius: 4px;         /* Slightly rounded corners for a modern appearance */
-    margin-bottom: 12px;        /* Space below the headline to separate from other elements */
+    font-size: 24px;
+    font-weight: bold;
+    color: #3498db;
+    padding: 8px;
+    border: none;
+    background-color: #f0f8ff;
+    border-radius: 4px;
+    margin-bottom: 12px;
 }
 
-/* Subheadline Style */
 QLabel.subheadline {
-    font-size: 18px;            /* Slightly smaller than headlines */
-    font-weight: bold;          /* Bold text for emphasis */
-    color: #2c3e50;             /* Dark grey color for subheadlines */
-    padding: 6px;               /* Padding around the text */
-    border: none;               /* No border for a cleaner look */
-    margin-bottom: 8px;         /* Space below the subheadline */
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c3e50;
+    padding: 6px;
+    border: none;
+    margin-bottom: 8px;
 }
 
-/* Disabled Label Style */
 QLabel:disabled {
-    color: #7f8c8d;             /* Grey text color for disabled state */
+    color: #7f8c8d;
 }
 </string>
     </property>
     <property name="text">
-     <string>Select Fuel Type</string>
+     <string>Weckzeit</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="cb_fuel_type">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>60</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QComboBox {
+    font-size: 14px;
+    color: #2c3e50;
+    padding: 4px;
+    border: 2px solid #2980b9;
+    border-radius: 4px;
+    background-color: #ecf0f1;
+}
+
+QComboBox::drop-down {
+    width: 20px;
+    border-left: 2px solid #2980b9;
+    background-color: #3498db;
+}
+
+QComboBox::down-arrow {
+    image: url(frontend/ui_templates/down_arrow.png);
+    width: 12px;
+    height: 12px;
+}
+
+QComboBox QAbstractItemView {
+    border: 2px solid #2980b9;
+    background-color: #ecf0f1;
+    selection-background-color: #3498db;
+    selection-color: white;
+}
+
+</string>
+    </property>
+    <item>
+     <property name="text">
+      <string comment="super_e10">Super E10</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Super E5</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Super Plus</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Diesel</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>LKW Diesel</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>LPG</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QTimeEdit" name="te_default_alarm_time">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>150</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QTimeEdit {
+    font-size: 14px;
+    color: #2c3e50;
+    padding: 4px;
+    border: 2px solid #2980b9;
+    border-radius: 4px;
+    background-color: #ecf0f1;
+}
+
+QTimeEdit::up-button, QTimeEdit::down-button {
+    width: 18px;
+    border: none;
+    background-color: #3498db;
+}
+
+QTimeEdit::up-arrow {
+    width: 10px;
+    height: 10px;
+    image: url(frontend/ui_templates/up_arrow.png);
+}
+
+QTimeEdit::down-arrow {
+    width: 10px;
+    height: 10px;
+    image: url(frontend/ui_templates/down_arrow.png);
+}
+
+QTimeEdit:hover {
+    border-color: #3498db;
+}
+</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QTimeEdit" name="te_sleep_time">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>150</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QTimeEdit {
+    font-size: 14px;
+    color: #2c3e50;
+    padding: 4px;
+    border: 2px solid #2980b9;
+    border-radius: 4px;
+    background-color: #ecf0f1;
+}
+
+QTimeEdit::up-button, QTimeEdit::down-button {
+    width: 18px;
+    border: none;
+    background-color: #3498db;
+}
+
+QTimeEdit::up-arrow {
+    width: 10px;
+    height: 10px;
+    image: url(frontend/ui_templates/up_arrow.png);
+}
+
+QTimeEdit::down-arrow {
+    width: 10px;
+    height: 10px;
+    image: url(frontend/ui_templates/down_arrow.png);
+}
+
+QTimeEdit:hover {
+    border-color: #3498db;
+}
+</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_sleep_time">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>110</y>
+      <width>151</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    font-size: 18px;
+    font-weight: bold;
+    color: #3498db;
+    padding: 4px;
+    border: 1px solid transparent;
+}
+
+QLabel.headline {
+    font-size: 24px;
+    font-weight: bold;
+    color: #3498db;
+    padding: 8px;
+    border: none;
+    background-color: #f0f8ff;
+    border-radius: 4px;
+    margin-bottom: 12px;
+}
+
+QLabel.subheadline {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c3e50;
+    padding: 6px;
+    border: none;
+    margin-bottom: 8px;
+}
+
+QLabel:disabled {
+    color: #7f8c8d;
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Schlafenszeit</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_alarm_text">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>30</y>
+      <width>471</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    font-size: 18px;
+    font-weight: bold;
+    color: #3498db;
+    padding: 4px;
+    border: 1px solid transparent;
+}
+
+QLabel.headline {
+    font-size: 24px;
+    font-weight: bold;
+    color: #3498db;
+    padding: 8px;
+    border: none;
+    background-color: #f0f8ff;
+    border-radius: 4px;
+    margin-bottom: 12px;
+}
+
+QLabel.subheadline {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c3e50;
+    padding: 6px;
+    border: none;
+    margin-bottom: 8px;
+}
+
+QLabel:disabled {
+    color: #7f8c8d;
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Alarm gesetzt für:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="bt_speech_to_text">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>130</y>
+      <width>91</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    font-size: 14px;
+    color: transparent;
+    padding: 8px 16px;
+    border: 2px solid #2980b9;
+    border-radius: 6px;
+    background-color: #3498db;
+    background-repeat: no-repeat;
+    background-position: center;
+    text-align: center;
+    min-width: 50px;
+    min-height: 50px;
+}
+
+QPushButton:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+}
+
+QPushButton:pressed {
+    background-color: #1f618d;
+    border-color: #1f618d;
+}
+</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>microphone.png</normaloff>microphone.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>35</width>
+      <height>35</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_alarm">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>70</y>
+      <width>471</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    font-size: 18px;
+    font-weight: bold;
+    color: #3498db;
+    padding: 4px;
+    border: 1px solid transparent;
+}
+
+QLabel.headline {
+    font-size: 24px;
+    font-weight: bold;
+    color: #3498db;
+    padding: 8px;
+    border: none;
+    background-color: #f0f8ff;
+    border-radius: 4px;
+    margin-bottom: 12px;
+}
+
+QLabel.subheadline {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c3e50;
+    padding: 6px;
+    border: none;
+    margin-bottom: 8px;
+}
+
+QLabel:disabled {
+    color: #7f8c8d;
+}
+</string>
+    </property>
+    <property name="text">
+     <string>00:00 Uhr</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="bt_settings">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>10</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background: transparent;
+    border: none;
+}
+QPushButton:hover {
+    background: transparent;
+    border: none;
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>setting.png</normaloff>setting.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>28</width>
+      <height>40</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QSlider" name="sl_fuel_threshold">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>60</y>
+      <width>160</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QSlider {
+    background: #ecf0f1;
+    border: 2px solid #2980b9;
+    border-radius: 4px;
+    height: 10px;
+}
+
+QSlider::handle:horizontal {
+    background: #3498db;
+    border: 2px solid #2980b9;
+    border-radius: 4px;
+    width: 20px;
+    height: 20px;
+    margin-top: -6px;
+    margin-bottom: -6px;
+}
+
+QSlider::groove:horizontal {
+    background: #ecf0f1;
+    border: none;
+    height: 6px;
+    border-radius: 4px;
+}
+
+QSlider::handle:horizontal:hover {
+    background: #2980b9;
+}
+
+QSlider::handle:horizontal:pressed {
+    background: #1abc9c;
+}</string>
+    </property>
+    <property name="minimum">
+     <number>100</number>
+    </property>
+    <property name="maximum">
+     <number>200</number>
+    </property>
+    <property name="singleStep">
+     <number>5</number>
+    </property>
+    <property name="pageStep">
+     <number>1</number>
+    </property>
+    <property name="value">
+     <number>105</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <property name="tickInterval">
+     <number>5</number>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="le_fuel_threshold">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>60</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLineEdit {
+    font-size: 14px;
+    color: #2c3e50;
+    padding: 4px;
+    border: 2px solid #2980b9;
+    border-radius: 4px;
+    background-color: #ecf0f1;
+}
+
+QLineEdit:focus {
+    border-color: #3498db;
+    background-color: #ffffff;
+}
+
+QLineEdit::placeholder {
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+QLineEdit {
+    color: #2c3e50;
+}
+
+.error {
+        border: 2px solid red;
+        background-color: #f8d7da;
+    }</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_select_fuel_threshold">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>20</y>
+      <width>231</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    font-size: 18px;
+    font-weight: bold;
+    color: #3498db;
+    padding: 4px;
+    border: 1px solid transparent;
+}
+
+QLabel.headline {
+    font-size: 24px;
+    font-weight: bold;
+    color: #3498db;
+    padding: 8px;
+    border: none;
+    background-color: #f0f8ff;
+    border-radius: 4px;
+    margin-bottom: 12px;
+}
+
+QLabel.subheadline {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c3e50;
+    padding: 6px;
+    border: none;
+    margin-bottom: 8px;
+}
+
+QLabel:disabled {
+    color: #7f8c8d;
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Kraftstoffschwelle</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="bt_save_settings">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>200</y>
+      <width>71</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background-color: #2ecc71;
+    color: white;
+    border: 2px solid #27ae60;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+
+QPushButton:hover {
+    background-color: #27ae60;
+    border: 2px solid #1e8449;
+    color: #ecf0f1;
+}
+
+QPushButton:pressed {
+    background-color: #1e8449;
+    border: 2px solid #1d6f43;
+    color: #bdc3c7;
+}
+
+QPushButton:disabled {
+    background-color: #bdc3c7;
+    border: 2px solid #95a5a6;
+    color: #7f8c8d;
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Ok</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_sound_wave_gif">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>210</y>
+      <width>151</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="le_fuel_demo_price">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>210</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLineEdit {
+    font-size: 14px;
+    color: #2c3e50;
+    padding: 4px;
+    border: 2px solid #2980b9;
+    border-radius: 4px;
+    background-color: #ecf0f1;
+}
+
+QLineEdit:focus {
+    border-color: #3498db;
+    background-color: #ffffff;
+}
+
+QLineEdit::placeholder {
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+QLineEdit {
+    color: #2c3e50;
+}
+
+.error {
+        border: 2px solid red;
+        background-color: #f8d7da;
+    }</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_fuel_demo_price">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>200</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    font-size: 18px;
+    font-weight: bold;
+    color: #3498db;
+    padding: 4px;
+    border: 1px solid transparent;
+}
+
+QLabel.headline {
+    font-size: 24px;
+    font-weight: bold;
+    color: #3498db;
+    padding: 8px;
+    border: none;
+    background-color: #f0f8ff;
+    border-radius: 4px;
+    margin-bottom: 12px;
+}
+
+QLabel.subheadline {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c3e50;
+    padding: 6px;
+    border: none;
+    margin-bottom: 8px;
+}
+
+QLabel:disabled {
+    color: #7f8c8d;
+}
+</string>
+    </property>
+    <property name="text">
+     <string>DEMO
+Sprit Preis</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
   </widget>
@@ -294,7 +864,7 @@ QLabel:disabled {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>475</width>
      <height>21</height>
     </rect>
    </property>

@@ -1,10 +1,12 @@
 from transitions import Machine, State
 from config import CONFIG
+from frontend.config_manager import load_preferences_file
 from api.api_factory import APIFactory
 from .idle_state import IdleState
 from .welcome_state import WelcomeState
 from .speach_state import SpeachState
-from .financetracker_state import FinanceState
+from .news_state import NewsState
+from.financetracker_state import FinanceState
 
 class StateMachine:
     """
@@ -24,6 +26,10 @@ class StateMachine:
     def __init__(self):
         print("StateMachine initialized")
         self.machine = Machine(model=self, states=self.states, initial='idle')
+        self.testing = False
+
+        # User preferences, hover over function to see details. This dictionary is kept up to date with the frontend.
+        self.preferences = load_preferences_file()
         
         self.api_factory = APIFactory(CONFIG)
         
@@ -31,31 +37,29 @@ class StateMachine:
         self.idle = IdleState(self)
         self.welcome = WelcomeState(self)
         self.speach = SpeachState(self)
-        self.news = None # TODO: Replace with NewsState object
+        self.news =  NewsState(self)
         self.finance = FinanceState(self)
         self.activity = None
         
         # Setup transitions
-        self.machine.add_transition('start', 'idle', 'welcome')
+        self.machine.add_transition('start', 'idle', 'finance')
         self.machine.add_transition('exit', 'welcome', 'idle')
         
+        self.machine.add_transition(trigger='news_interact', source="news", dest='speach')
+        self.machine.add_transition(trigger='news_idle', source="news", dest='idle')
         self.machine.add_transition(trigger='interact', source='idle', dest='speach')
         self.machine.add_transition(trigger='morning_news', source='welcome', dest='news')
         self.machine.add_transition(trigger='interaction', source="welcome", dest='speach')
         
-        self.machine.add_transition(trigger='exit', source='speach', dest='idle')
+        self.machine.add_transition(trigger='goto_idle', source='speach', dest='idle')
         self.machine.add_transition(trigger='goto_welcome', source='speach', dest='welcome')
         self.machine.add_transition(trigger='goto_finance', source='speach', dest='finance')
         self.machine.add_transition(trigger='goto_activity', source='speach', dest='activity')
         self.machine.add_transition(trigger='goto_news', source='speach', dest='news')
-        
-        self.machine.add_transition(trigger='goto_finance', source='speach', dest='finance')
-        self.machine.add_transition(trigger='exit_finance', source='finance', dest='idle')
 
-        
-        # Transition to initial state
-        # to_ is a method provided by transitions to call the transition appended
-        self.to_idle()
+        self.machine.add_transition(trigger='goto_finance', source='idle', dest='finance')
+        self.machine.add_transition(trigger='exit_finance', source='finance', dest='dhfgguah')
+        #self.machine.to_finance()
         
     def on_enter(self):
         """

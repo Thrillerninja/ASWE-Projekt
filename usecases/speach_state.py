@@ -9,7 +9,8 @@ class SpeachState:
     def __init__(self, state_machine):
         self.state_machine = state_machine
         self.voice_interface = state_machine.api_factory.create_api(api_type="tts")
-        self._running = True  # Add a flag to control the loop
+        self.running = True
+        self.testing = False
         print("SpeachState initialized")
 
     def on_enter(self):
@@ -20,7 +21,7 @@ class SpeachState:
         self.voice_interface.speak("Bitte sprechen Sie einen Befehl.")
         
         start_time = datetime.datetime.now().timestamp()
-        while self._running and datetime.datetime.now().timestamp() - start_time < 10:
+        while self.running and datetime.datetime.now().timestamp() - start_time < 10:
             self.check_triggers()
         
         self.voice_interface.play_sound("idle")
@@ -36,6 +37,8 @@ class SpeachState:
             return
         
         print(f"User said: {user_input}")
+        if self.testing:
+            self.running = False            
         
         # Interpret the user's input and trigger the appropriate state transition
         if "beenden" in user_input.lower() or "exit" in user_input.lower():
@@ -60,9 +63,3 @@ class SpeachState:
         
         else:
             self.voice_interface.speak("Befehl nicht erkannt. Bitte versuchen Sie es erneut.")
-    
-    def stop(self):
-        """
-        Stop the speech recognition loop.
-        """
-        self._running = False
