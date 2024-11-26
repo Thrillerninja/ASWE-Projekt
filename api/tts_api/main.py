@@ -57,13 +57,22 @@ class TTSAPI():
         for i, mic in enumerate(mics):
             print(f"{i}: {mic}")
         return mics
+    
+
+    def get_specific_micindex_by_name(self, mic_name_part:str):
+        mics = sr.Microphone.list_microphone_names()
+        for i, mic in enumerate(mics):
+            if mic_name_part.lower() in mic.lower():
+                return i
+
 
     def listen(self):
         """
         Listens for microphone input and returns a string of the speech input
         """
         try:
-            with sr.Microphone() as source:
+            mic_index = self.get_specific_micindex_by_name("jabra") or 1
+            with sr.Microphone(device_index=mic_index) as source:
                 self.speak("Ich höre zu...")
                 self.r.adjust_for_ambient_noise(source)
                 audio = self.r.listen(source)
