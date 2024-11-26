@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import re
 import datetime
 
-from api.calendar_api.cal import Calendar, Lecture
+from api.calendar_api.cal import Calendar, Lecture, Appointment
 
 
 def create_calendar_from_rapla(url:str, cal:Calendar=Calendar()):

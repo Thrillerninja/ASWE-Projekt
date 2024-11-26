@@ -3,7 +3,6 @@ import datetime
 from typing import Dict, List
 import json
 
-from api.api_client import APIClient
 import api.calendar_api.rapla as rapla
 
 
