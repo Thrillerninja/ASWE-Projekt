@@ -125,8 +125,8 @@ class TTSAPI:
     def listen(self, timeout=None):
         try:
             with sr.Microphone(device_index=self.mic_id) as source:
-                self.r.adjust_for_ambient_noise(source)
-                audio = self.r.listen(source, timeout=timeout)
+                self.recogize.adjust_for_ambient_noise(source)
+                audio = self.recogize.listen(source, timeout=timeout)
                 self.speak("Verarbeitung der Eingabe...")
 
                 logger.info("Listening for microphone input")
