@@ -30,9 +30,8 @@ class TTSAPI:
         german_voice = next((voice for voice in voices if "de" in voice.languages), None)
         if german_voice:
             self.engine.setProperty('voice', german_voice.id)
-            
-        # Set the active microphone id
-        self.recogize = sr.Recognizer()
+
+        self.r = sr.Recognizer()
         self.mic_id = mic_id if mic_id is not None else self.get_first_active_mic_id()
     
         self.r = sr.Recognizer()
