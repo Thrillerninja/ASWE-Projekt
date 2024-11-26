@@ -79,7 +79,7 @@ class TTSAPI():
                 self.speak("Verarbeitung der Eingabe...")
 
                 text = self.r.recognize_google(audio, language="de-DE")
-                print(text)
+                print("Recognized text:", text)
                 return text
         except sr.UnknownValueError:
             return "Google konnte das Audio nicht verstehen"
