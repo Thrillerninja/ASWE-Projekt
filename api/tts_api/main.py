@@ -1,6 +1,7 @@
 import pyttsx3
 import speech_recognition as sr
 from loguru import logger
+import threading
 
 class TTSAPI:
     _instance = None
@@ -30,8 +31,8 @@ class TTSAPI:
 
         self.r = sr.Recognizer()
         self.mic_id = mic_id if mic_id is not None else self.get_first_active_mic_id()
-    
-        
+        self.engine_lock = threading.Lock()  # Add a lock for the engine
+
     def authenticate(self):
         """
         No authentication required
@@ -46,8 +47,9 @@ class TTSAPI:
             raise ValueError("Text input must be a non-empty string.")
         
         logger.debug(f"Speaking text: {text}")
-        self.engine.say(text)
-        self.engine.runAndWait()
+        with self.engine_lock:  # Use the lock to ensure only one thread accesses the engine at a time
+            self.engine.say(text)
+            self.engine.runAndWait()
         
     def list_mics(self, timeout=1):
         mics = sr.Microphone.list_microphone_names()
@@ -62,7 +64,7 @@ class TTSAPI:
             except sr.WaitTimeoutError:
                 logger.info(f"{i}: {mic} (inactive)")
             except Exception as e:
-                logger.error(f"{i}: {mic} (error: {e})")
+                logger.warning(f"{i}: {mic} (error: {e})")
         logger.info(f"Active microphones: {active_mics}")
         return active_mics
 
@@ -91,6 +93,32 @@ class TTSAPI:
         except Exception as e:
             logger.error(f"Error during listening: {e}")
             return f"Ein Fehler ist aufgetreten: {e}"
+
+    def listen_continuous(self, callback, timeout=5):
+        """
+        Continuously listen for user input and call the callback function with the recognized text.
+        """
+        def listen_loop():
+            while True:
+                try:
+                    with sr.Microphone(device_index=self.mic_id) as source:
+                        self.r.adjust_for_ambient_noise(source)
+                        logger.info("Listening for microphone input")
+                        audio = self.r.listen(source, timeout=timeout)
+                        text = self.r.recognize_google(audio, language="de-DE")
+                        logger.info(f"Recognized text: {text}")
+                        callback(text)
+                except sr.UnknownValueError:
+                    callback("Google konnte das Audio nicht verstehen")
+                except sr.RequestError as e:
+                    callback(f"Fehler bei der Anfrage an Google Speech Recognition; {e}")
+                except Exception as e:
+                    logger.error(f"Error during listening: {e}")
+                    callback(f"Ein Fehler ist aufgetreten: {e}")
+
+        listener_thread = threading.Thread(target=listen_loop)
+        listener_thread.daemon = True
+        listener_thread.start()
         
     def ask_yes_no(self, text, retries=3, timeout=5):
         """
