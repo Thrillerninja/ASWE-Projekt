@@ -4,7 +4,7 @@ from unittest.mock import patch, MagicMock
 from api.weather_api.main import WeatherAPI
 from config.config import CONFIG
 
-CLEAR_SKY = 'clear sky'
+CLEAR_SKY = 'Klarer Himmel'
 
 class TestWeatherAPI(unittest.TestCase):
 
@@ -91,7 +91,7 @@ class TestWeatherAPI(unittest.TestCase):
                         'temp_max': 20,
                         'temp': 15
                     },
-                    'weather': [{'description': CLEAR_SKY}]
+                    'weather': [{'description': CLEAR_SKY, 'icon': '01d', 'id': 800}]
                 }
             ]
         }

@@ -43,8 +43,21 @@ class WelcomeState:
         
         # Build a string with the populated elements and provide the user with the information
         good_morning_message = f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M')}. "
-        weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {min_temp}°C und {max_temp}°C liegen." if min_temp is not None and max_temp is not None else f"und es wird {condition}." if condition is not None else ""
-        current_weather_info = f"Im Moment sind es {current_weather['main']['temp']}°C." if current_weather else ""
+        
+        weather_info = ""
+        if min_temp is not None and max_temp is not None:
+            weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {int(min_temp)}°C und {int(max_temp)}°C liegen."
+            if condition is not None:
+                # remove lst character from condition string
+                weather_info = weather_info[:-1]
+                weather_info += f" und es wird {condition.lower()}."
+        
+        if current_weather:
+            current_weather_info = f" Im Moment sind es {int(current_weather['main']['temp'])}°C."
+        else:
+            current_weather_info = ""
+            
+        print(good_morning_message + weather_info + current_weather_info)
         self.tts_api.speak(good_morning_message + weather_info + current_weather_info)
         
         # TODO: Check for delays in the public transport
