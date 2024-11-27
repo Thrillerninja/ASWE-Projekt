@@ -75,9 +75,9 @@ class TestWeatherAPI(unittest.TestCase):
 
         # Call the method under test
         response = self.api.get_formatted_forecast('London', 'metric')
-        self.assertEqual(response, f'Aktuelles Wetter10°C to 20°C, {CLEAR_SKY} Heute Mittag10°C to 20°C, {CLEAR_SKY}')
+        self.assertEqual(response, f'Aktuelles Wetter mit Temperaturen von 10°C bis 20°C, {CLEAR_SKY}')
         # Assert the response matches the expected format
-        self.assertEqual(response, 'Aktuelles Wetter10°C to 20°C, clear sky Heute Mittag10°C to 20°C, clear sky')
+        self.assertEqual(response, 'Aktuelles Wetter mit Temperaturen von 10°C bis 20°C, Klarer Himmel')
 
     @patch('api.weather_api.main.WeatherAPI.get_forecast')
     def test_get_daily_forecast(self, mock_get_forecast):

@@ -87,9 +87,9 @@ class WeatherAPI(APIClient):
             
         formatted_forecast = []
         for date, data in daily_forecast.items():
-            formatted_forecast.append(f"{data['temp_min']}°C to {data['temp_max']}°C, {data['description']}")
+            formatted_forecast.append(f"{data['temp_min']}°C bis {data['temp_max']}°C, {data['description']}")
         
-        return "Aktuelles Wetter" + formatted_forecast[0] + " Heute Mittag" + formatted_forecast[len(formatted_forecast)//2]
+        return "Aktuelles Wetter mit Temperaturen von " + formatted_forecast[0]
 
     def get_daily_forecast(self, city: str, date: datetime.date = datetime.datetime.today(), units: str = 'metric') -> Dict:
         """
