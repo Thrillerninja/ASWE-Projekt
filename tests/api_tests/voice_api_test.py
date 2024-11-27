@@ -1,12 +1,14 @@
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, mock_open
 from api.tts_api import TTSAPI
 import pyttsx3
 import speech_recognition as sr
+from config import CONFIG
 
 class TestVoiceInterface(unittest.TestCase):
     def setUp(self):
-        self.voice_interface = TTSAPI()
+        self.api_key = CONFIG['elevenlabs_key']
+        self.voice_interface = TTSAPI(self.api_key)
         self.voice_interface.engine = MagicMock()
 
     @patch('pyttsx3.init')
@@ -16,19 +18,19 @@ class TestVoiceInterface(unittest.TestCase):
         """
         mock_pyttsx3_init.return_value = self.voice_interface.engine
 
-        vi = TTSAPI()
+        vi = TTSAPI(self.api_key)
         mock_pyttsx3_init.assert_called_once()
         self.assertIsNotNone(vi.r)
 
     @patch('pyttsx3.init')
     def test_speak(self, mock_pyttsx3_init):
         """
-        Test speak functionality with valid and invalid inputs
+        Test speak functionality of the system with valid and invalid inputs
         """
         mock_engine = MagicMock()
         mock_pyttsx3_init.return_value = mock_engine
 
-        vi = TTSAPI()
+        vi = TTSAPI(self.api_key)
         vi.speak("Hello")
         mock_engine.say.assert_called_with("Hello")
         mock_engine.runAndWait.assert_called_once()
@@ -40,6 +42,51 @@ class TestVoiceInterface(unittest.TestCase):
         # Test non-string input
         with self.assertRaises(ValueError):
             vi.speak(123)
+
+    @patch("builtins.open", new_callable=mock_open)
+    @patch('pyttsx3.init')
+    @patch("requests.post")
+    @patch("pygame.mixer.music.load")
+    @patch("pygame.mixer.music.play")
+    @patch("pygame.mixer.music.get_busy", return_value=False)  # Mock get_busy() to return False immediately
+    def test_speak_elevenlabs(self, mock_get_busy, mock_play, mock_load, mock_requests_post, mock_pyttsx3_init, mock_open):
+        """
+        Test speak functionality of ElevenLabs with valid and invalid inputs
+        """
+        # Mock response from ElevenLabs API
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.iter_content.return_value = [b"chunk1", b"chunk2"]
+        mock_requests_post.return_value = mock_response
+
+        vi = TTSAPI(self.api_key, True)
+        
+        # Test ElevenLabs API call
+        vi.speak("Hello, ElevenLabs!")
+
+        # Check if the ElevenLabs API was called
+        mock_requests_post.assert_called_once_with(
+            vi.url,
+            json={
+                "text": "Hello, ElevenLabs!",
+                "model_id": "eleven_multilingual_v2",
+                "voice_settings": {"stability": 0.5, "similarity_boost": 0.5},
+            },
+            headers=vi.headers,
+        )
+
+        # Check if the file was opened correctly and written to
+        mock_open.assert_called_once_with("output.mp3", "wb")
+        mock_open().write.assert_any_call(b"chunk1")
+        mock_open().write.assert_any_call(b"chunk2")
+
+        # Ensure pygame mixer methods are called
+        mock_load.assert_called_once_with("output.mp3")
+        mock_play.assert_called_once()
+
+        # Check that get_busy() was called and it returned False (avoiding the blocking loop)
+        mock_get_busy.assert_called_once()
+
 
     @patch('speech_recognition.Recognizer.recognize_google')
     @patch('speech_recognition.Recognizer.listen')
