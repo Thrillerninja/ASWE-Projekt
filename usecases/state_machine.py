@@ -1,9 +1,11 @@
 from transitions import Machine, State
 from config import CONFIG
+from frontend.config_manager import load_preferences_file
 from api.api_factory import APIFactory
 from .idle_state import IdleState
 from .welcome_state import WelcomeState
 from .speach_state import SpeachState
+from .news_state import NewsState
 
 class StateMachine:
     """
@@ -24,6 +26,9 @@ class StateMachine:
         print("StateMachine initialized")
         self.machine = Machine(model=self, states=self.states, initial='idle')
         self.testing = False
+
+        # User preferences, hover over function to see details. This dictionary is kept up to date with the frontend.
+        self.preferences = load_preferences_file()
         
         self.api_factory = APIFactory(CONFIG)
         
@@ -31,7 +36,7 @@ class StateMachine:
         self.idle = IdleState(self)
         self.welcome = WelcomeState(self)
         self.speach = SpeachState(self)
-        self.news = None # TODO: Replace with NewsState object
+        self.news =  NewsState(self)
         self.finance = None
         self.activity = None
         
@@ -39,6 +44,8 @@ class StateMachine:
         self.machine.add_transition('start', 'idle', 'welcome')
         self.machine.add_transition('exit', 'welcome', 'idle')
         
+        self.machine.add_transition(trigger='news_interact', source="news", dest='speach')
+        self.machine.add_transition(trigger='news_idle', source="news", dest='idle')
         self.machine.add_transition(trigger='interact', source='idle', dest='speach')
         self.machine.add_transition(trigger='morning_news', source='welcome', dest='news')
         self.machine.add_transition(trigger='interaction', source="welcome", dest='speach')
@@ -48,6 +55,7 @@ class StateMachine:
         self.machine.add_transition(trigger='goto_finance', source='speach', dest='finance')
         self.machine.add_transition(trigger='goto_activity', source='speach', dest='activity')
         self.machine.add_transition(trigger='goto_news', source='speach', dest='news')
+
         
     def on_enter(self):
         """

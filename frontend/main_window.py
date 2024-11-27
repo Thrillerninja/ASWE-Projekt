@@ -1,11 +1,11 @@
-import sys
+from PyQt5.QtWidgets import QApplication, QPushButton
+from PyQt5.QtCore import QTime, QTimer, QSize
+from PyQt5.QtGui import QMovie, QIcon
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QTime, QTimer
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtGui import QMovie
+import sys
 
-from ui_templates.main_window import Ui_MainWindow
-from config_manager import ConfigManager
+from frontend.ui_templates.main_window import Ui_MainWindow
+from frontend.config_manager import ConfigManager
 from usecases.state_machine import StateMachine
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -20,6 +20,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.movie = QMovie("frontend/ui_templates/sound_wave.gif")
         self.ui.lb_sound_wave_gif.setMovie(self.movie)
         self.ui.lb_sound_wave_gif.setVisible(False)
+
+        settings_icon = QIcon("frontend/ui_templates/settings.png")
+        self.ui.bt_settings.setIcon(settings_icon)
+        self.ui.bt_settings.setIconSize(self.ui.bt_settings.size() * 0.8)
+
+        self.ui.bt_settings.enterEvent = self.on_hover_enter_settings
+        self.ui.bt_settings.leaveEvent = self.on_hover_leave_settings
+
+        mic_icon = QIcon("frontend/ui_templates/microphone.png")
+        self.ui.bt_speech_to_text.setIcon(mic_icon)
+        self.ui.bt_speech_to_text.setIconSize(QSize(35, 35))
+
+        self.ui.bt_speech_to_text.enterEvent = self.on_hover_enter_speech_to_text
+        self.ui.bt_speech_to_text.leaveEvent = self.on_hover_leave_speech_to_text
 
         self.settings_are_hidden = True
         self.toggle_view()
@@ -43,11 +57,21 @@ class MainWindow(QtWidgets.QMainWindow):
             lambda: self.config_manager.on_le_fuel_threshold_changed(self.ui.le_fuel_threshold.text())
         )
 
+        self.ui.le_fuel_demo_price.editingFinished.connect(
+            lambda: self.config_manager.on_le_fuel_demo_price_changed(self.ui.le_fuel_demo_price.text())
+        )
+
+        self.error_fuel_threshold = False
+        self.error_fuel_demo_price = False
+
     def on_bt_save_settings_clicked(self) -> None:
         """Saves preferences and toggles the view.
 
         This method saves the current settings and switches the UI view between settings and non-settings.
         """
+        if self.error_fuel_threshold or self.error_fuel_demo_price:
+            return
+        
         self.config_manager.save_preferences()
         self.toggle_view()
 
@@ -83,7 +107,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.sl_fuel_threshold,
             self.ui.te_default_alarm_time,
             self.ui.te_sleep_time,
-            self.ui.bt_save_settings
+            self.ui.bt_save_settings,
+            self.ui.lb_fuel_demo_price,
+            self.ui.le_fuel_demo_price
         ]
         
         not_settings_elements = [
@@ -112,24 +138,37 @@ class MainWindow(QtWidgets.QMainWindow):
         Args:
             message (str): The error message to show.
         """
+        self.error_fuel_threshold = True
         self.ui.le_fuel_threshold.setProperty("class", "error")
         self.ui.le_fuel_threshold.style().unpolish(self.ui.le_fuel_threshold)  # Re-apply the style
         self.ui.le_fuel_threshold.style().polish(self.ui.le_fuel_threshold)
         self.ui.le_fuel_threshold.setToolTip(message)
 
-        # Show a message box with the error message
-        # error_box = QMessageBox()
-        # error_box.setIcon(QMessageBox.Critical)
-        # error_box.setWindowTitle("Error")
-        # error_box.setText("Invalid input for fuel threshold.")
-        # error_box.setInformativeText(message)
-        # error_box.exec_()
+    def show_error_le_fuel_demo_price(self, message: str) -> None:
+        """Displays an error message for the fuel demo price input field and shows a message box.
+
+        Args:
+            message (str): The error message to show.
+        """
+        self.error_fuel_demo_price = True
+        self.ui.le_fuel_demo_price.setProperty("class", "error")
+        self.ui.le_fuel_demo_price.style().unpolish(self.ui.le_fuel_demo_price)  # Re-apply the style
+        self.ui.le_fuel_demo_price.style().polish(self.ui.le_fuel_demo_price)
+        self.ui.le_fuel_demo_price.setToolTip(message)
 
     def remove_error_le_fuel_threshold(self) -> None:
         """Removes error indication from the fuel threshold input."""
+        self.error_fuel_threshold = False
         self.ui.le_fuel_threshold.setProperty("class", "")
         self.ui.le_fuel_threshold.style().unpolish(self.ui.le_fuel_threshold)
         self.ui.le_fuel_threshold.style().polish(self.ui.le_fuel_threshold)
+
+    def remove_error_le_fuel_demo_price(self) -> None:
+        """Removes error indication from the fuel demo price input."""
+        self.error_fuel_demo_price = False
+        self.ui.le_fuel_demo_price.setProperty("class", "")
+        self.ui.le_fuel_demo_price.style().unpolish(self.ui.le_fuel_demo_price)
+        self.ui.le_fuel_demo_price.style().polish(self.ui.le_fuel_demo_price)
 
     def set_cb_fuel_type(self, value: int) -> None:
         """
@@ -187,6 +226,16 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         self.ui.le_fuel_threshold.setText(f'{text} €')
 
+    def set_le_fuel_demo_price(self, text: str) -> None:
+        """
+        Sets the text of the fuel demo price line edit.
+
+        Args:
+            text (str): The text to display in the line edit.
+                        It should represent a float value as a string.
+        """
+        self.ui.le_fuel_demo_price.setText(f'{text} €')
+
     def set_alarm(self, time: str):
         """
         Set the alarm text display with the specified time.
@@ -196,8 +245,15 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         self.ui.lb_alarm_text.setText(time)
 
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
+    def on_hover_enter_settings(self):
+        new_size = self.ui.bt_settings.size() * 0.9
+        self.ui.bt_settings.setIconSize(new_size)
+
+    def on_hover_leave_settings(self):
+        self.ui.bt_settings.setIconSize(self.ui.bt_settings.size() * 0.8)
+
+    def on_hover_enter_speech_to_text(self):
+        self.ui.bt_speech_to_text.setIconSize(QSize(38, 38))
+
+    def on_hover_leave_speech_to_text(self):
+        self.ui.bt_speech_to_text.setIconSize(QSize(35, 35))

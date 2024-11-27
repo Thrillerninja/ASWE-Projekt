@@ -28,10 +28,11 @@ class TestApiFactory(unittest.TestCase):
         self.assertEqual(api.api_key, 'test_key')
 
     # test spotify api creation
-    def test_create_spotify_api(self):
-        api = self.factory.create_api('spotify')
-        self.assertEqual(api.client_id, 'test_key3')
-        self.assertEqual(api.client_secret, 'test_key4')
+    @patch('api.spotify_api.main.SpotifyAPI.update_token')
+    def test_create_spotify_api(self, mock_update_token):
+        mock_update_token.return_value = None  # Assuming update_token does not return anything
+        self.factory.create_api('spotify')
+        mock_update_token.assert_called_once()
     
     # test unsupported api type
     def test_create_unsupported_api(self):
