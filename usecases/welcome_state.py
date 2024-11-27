@@ -78,6 +78,7 @@ class WelcomeState:
             self.state_machine.morning_news()
         else:
             self.tts_api.speak("Okay, lassen Sie mich wissen wenn ich Ihnen helfen kann!")
+            self.tts_api.speak("Okay, lassen Sie mich wissen wenn ich Ihnen helfen kann!")
             self.state_machine.interaction()
         
     def calc_alarm_time(self):
