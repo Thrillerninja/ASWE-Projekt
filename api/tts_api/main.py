@@ -1,6 +1,10 @@
 
 import pyttsx3
 import speech_recognition as sr
+import requests
+import pygame
+import requests
+import pygame
 
 class TTSAPI():
     """
@@ -13,7 +17,7 @@ class TTSAPI():
             cls._instance = super(TTSAPI, cls).__new__(cls)
         return cls._instance
     
-    def __init__(self):
+    def __init__(self, api_key, toggle_elevenlabs: bool = False):
         """
         Initializes the Interface
         """
@@ -29,8 +33,26 @@ class TTSAPI():
         german_voice = next((voice for voice in voices if "de" in voice.languages), None)
         if german_voice:
             self.engine.setProperty('voice', german_voice.id)
-        
+        self.toggle_elevenlabs = toggle_elevenlabs
         self.r = sr.Recognizer()
+        self.api_key = api_key
+        pygame.init()
+        self.CHUNK_SIZE = 1024
+        self.url = "https://api.elevenlabs.io/v1/text-to-speech/pqHfZKP75CvOlQylNhV4"
+        self.headers = {
+              "Accept": "audio/mpeg",
+              "Content-Type": "application/json",
+              "xi-api-key": self.api_key
+            }
+        self.api_key = api_key
+        pygame.init()
+        self.CHUNK_SIZE = 1024
+        self.url = "https://api.elevenlabs.io/v1/text-to-speech/pqHfZKP75CvOlQylNhV4"
+        self.headers = {
+              "Accept": "audio/mpeg",
+              "Content-Type": "application/json",
+              "xi-api-key": self.api_key
+            }
         
     def authenticate(self):
         """
@@ -38,15 +60,34 @@ class TTSAPI():
         """
         pass
 
+
     def speak(self, text: str):
         """
         Converts the input text into a voice output
         """
         if not isinstance(text, str) or not text.strip():
             raise ValueError("Text input must be a non-empty string.")
-        
-        self.engine.say(text)
-        self.engine.runAndWait()
+        if self.toggle_elevenlabs:
+            data = {
+                "text": text,
+                "model_id": "eleven_multilingual_v2",
+                "voice_settings": {
+                  "stability": 0.5,
+                  "similarity_boost": 0.5
+                }
+            }
+            response = requests.post(self.url, json=data, headers=self.headers)
+            with open('output.mp3', 'wb') as f:
+                for chunk in response.iter_content(chunk_size=self.CHUNK_SIZE):
+                    if chunk:
+                        f.write(chunk)
+            pygame.mixer.music.load("output.mp3")
+            pygame.mixer.music.play()
+            while pygame.mixer.music.get_busy():
+                pass
+        else:    
+            self.engine.say(text)
+            self.engine.runAndWait()
         
     def list_mics(self):
         """

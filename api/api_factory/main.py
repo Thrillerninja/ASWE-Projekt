@@ -18,6 +18,7 @@ class APIFactory:
         :param config: Dictionary containing API keys and tokens.
         """
         self.config = config
+        self.toggle_elevenlabs = False
 
     def create_api(self, api_type: str) -> APIClient:
         """
@@ -39,6 +40,6 @@ class APIFactory:
         elif api_type == 'rapla':
             return RaplaAPI(self.config['rapla_url'])
         elif api_type == 'tts':
-            return TTSAPI()
+            return TTSAPI(self.config['elevenlabs_key'], self.toggle_elevenlabs)#TODO: toggle_elevenlabs aus preferences auslesen
         else:
             raise ValueError(f"API type '{api_type}' is not supported.")
