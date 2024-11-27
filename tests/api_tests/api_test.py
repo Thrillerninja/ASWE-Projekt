@@ -11,9 +11,9 @@ class TestApiFactory(unittest.TestCase):
     def setUp(self):
         config = {
             'weather_api_key': 'test_key',
-            'finance_api_key': 'test_key2',
-            'fitbit_client_id': 'test_id1',
-            'fitbit_client_secret': 'test_secret1'
+            'finance_api_key': 'test_key',
+            'spotify_client_id': 'test_key3',
+            'spotify_client_secret': 'test_key4'
             }
         self.factory = APIFactory(config)
 
@@ -39,18 +39,13 @@ class TestApiFactory(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.factory.create_api('maps')
             
-    # test fitbit api creation
-    def test_create_fitbit_api(self):
-        api = self.factory.create_api('fitbit')
-        self.assertEqual(api.client_id, 'test_id1')
-        self.assertEqual(api.client_secret, 'test_secret1')
-             
 
 class TestableAPIClient(APIClient):
     def authenticate(self):
         pass  # No authentication needed for testing
 
 class TestApiClient(unittest.TestCase):
+
     def setUp(self):
         self.base_url = 'https://api.example.com'
         self.headers = {'Authorization': 'Bearer test_token'}
