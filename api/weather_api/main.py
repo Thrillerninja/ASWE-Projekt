@@ -1,6 +1,7 @@
 import datetime
 from typing import Dict
 from api.api_client import APIClient
+from .weather_conditions import weather_conditions
 
 class WeatherAPI(APIClient):
     """
@@ -86,9 +87,9 @@ class WeatherAPI(APIClient):
             
         formatted_forecast = []
         for date, data in daily_forecast.items():
-            formatted_forecast.append(f"{data['temp_min']}°C to {data['temp_max']}°C, {data['description']}")
+            formatted_forecast.append(f"{data['temp_min']}°C bis {data['temp_max']}°C, {data['description']}")
         
-        return "Aktuelles Wetter" + formatted_forecast[0] + " Heute Mittag" + formatted_forecast[len(formatted_forecast)//2]
+        return "Aktuelles Wetter mit Temperaturen von " + formatted_forecast[0]
 
     def get_daily_forecast(self, city: str, date: datetime.date = datetime.datetime.today(), units: str = 'metric') -> Dict:
         """
@@ -131,13 +132,38 @@ class WeatherAPI(APIClient):
                 conditions[condition] = 1
 
         day_avg_temp /= len(weather)
-        avg_condition = max(conditions, key=conditions.get)
+        
+        # Richtige Condition finden
+        condition_icon_string_map = {
+            "01": "klarer Himmel",
+            "02": "ein paar Wolken",
+            "03": "vereinzelte Wolken",
+            "04": "bewölkt",
+            "09": "Regenschauer",
+            "10": "Regen",
+            "11": "Gewitter",
+            "13": "Schnee",
+            "50": "Nebel"
+        }
+        
+        if weather:
+            iconname = weather[0]['weather'][0]['icon']
+            wetterid = iconname[:-1]
+            wetterbeschreibung = condition_icon_string_map[wetterid]
+        else:
+            wetterbeschreibung = "No data available"
+            
+        if weather:
+            id = weather[0]['weather'][0]['id']
+            wetterbeschreibung = weather_conditions[id]['description']
+        
+        
 
         daily_forecast_data = {
             'min_temp': day_min_temp,
             'max_temp': day_max_temp,
             'avg_temp': day_avg_temp,
-            'avg_condition': avg_condition
+            'avg_condition': wetterbeschreibung
         }
         return daily_forecast_data
 
