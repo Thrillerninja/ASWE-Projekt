@@ -29,4 +29,6 @@ typing==3.7.4.3
 typing_extensions==4.12.2
 urllib3==2.2.3
 vvspy==2.2.0
+oauthlib==3.2.2
+requests-oauthlib==2.0.0
 pygame==2.6.1
