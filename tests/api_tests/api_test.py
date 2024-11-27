@@ -13,7 +13,9 @@ class TestApiFactory(unittest.TestCase):
             'weather_api_key': 'test_key',
             'finance_api_key': 'test_key',
             'spotify_client_id': 'test_key3',
-            'spotify_client_secret': 'test_key4'
+            'spotify_client_secret': 'test_key4',
+            'fitbit_client_id': 'test_key5',
+            'fitbit_client_secret': 'test_key6'
             }
         self.factory = APIFactory(config)
 
@@ -38,6 +40,12 @@ class TestApiFactory(unittest.TestCase):
     def test_create_unsupported_api(self):
         with self.assertRaises(ValueError):
             self.factory.create_api('maps')
+    
+    # test fitbit api creation
+    def test_create_fitbit_api(self):
+        api = self.factory.create_api('fitbit')
+        self.assertEqual(api.client_id, 'test_key5')
+        self.assertEqual(api.client_secret, 'test_key6')
             
 
 class TestableAPIClient(APIClient):

@@ -3,6 +3,8 @@ from api.api_client import APIClient
 from api.weather_api.main import WeatherAPI
 from api.finance_api import FinanceAPI
 from api.spotify_api import SpotifyAPI
+from api.fitbit_api import FitbitAPI
+
 from api.calendar_api import RaplaAPI
 from api.tts_api import TTSAPI
 
@@ -36,6 +38,9 @@ class APIFactory:
                 client_id=self.config['spotify_client_id'],
                 client_secret=self.config['spotify_client_secret']
             )
+        elif api_type == 'fitbit':
+            return FitbitAPI(self.config['fitbit_client_id'], 
+                             self.config['fitbit_client_secret'])
         elif api_type == 'rapla':
             return RaplaAPI(self.config['rapla_url'])
         elif api_type == 'tts':
