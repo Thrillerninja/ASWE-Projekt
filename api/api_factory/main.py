@@ -18,6 +18,7 @@ class APIFactory:
         :param config: Dictionary containing API keys and tokens.
         """
         self.config = config
+        self.toggle_elevenlabs = False
 
     def create_api(self, api_type: str) -> APIClient:
         """
