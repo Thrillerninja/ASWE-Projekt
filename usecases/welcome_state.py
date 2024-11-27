@@ -57,7 +57,7 @@ class WelcomeState:
         appointments = self.rapla_api.get_todays_appointments()
         if appointments:
             first_appointment = appointments[0]
-            self.tts_api.speak(f"Ihr erster Termin ist um {first_appointment.start} in {first_appointment.room}.")
+            self.tts_api.speak(f" Ihr erster Termin ist um {first_appointment.start} in {first_appointment.room}.")
         else:
             self.tts_api.speak("Sie haben heute keine Termine.")
         
@@ -66,7 +66,7 @@ class WelcomeState:
         if user_response:
             self.state_machine.morning_news()
         else:
-            self.tts_api.speak("Okay, lassen Sie mich wissen, wenn ich Ihnen helfen kann!")
+            self.tts_api.speak("Okay, lassen Sie mich wissen wenn ich Ihnen helfen kann!")
             self.state_machine.interaction()
         
     def calc_alarm_time(self):
