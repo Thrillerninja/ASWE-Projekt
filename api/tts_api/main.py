@@ -3,6 +3,8 @@ import pyttsx3
 import speech_recognition as sr
 import requests
 import pygame
+import requests
+import pygame
 
 class TTSAPI():
     """
@@ -33,6 +35,15 @@ class TTSAPI():
             self.engine.setProperty('voice', german_voice.id)
         self.toggle_elevenlabs = toggle_elevenlabs
         self.r = sr.Recognizer()
+        self.api_key = api_key
+        pygame.init()
+        self.CHUNK_SIZE = 1024
+        self.url = "https://api.elevenlabs.io/v1/text-to-speech/pqHfZKP75CvOlQylNhV4"
+        self.headers = {
+              "Accept": "audio/mpeg",
+              "Content-Type": "application/json",
+              "xi-api-key": self.api_key
+            }
         self.api_key = api_key
         pygame.init()
         self.CHUNK_SIZE = 1024
