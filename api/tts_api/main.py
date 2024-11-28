@@ -6,20 +6,20 @@ import requests
 import pygame
 
 class TTSAPI:
-class TTSAPI:
     _instance = None
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
             cls._instance = super(TTSAPI, cls).__new__(cls)
             cls._instance.__initialized = False
-            cls._instance.__initialized = False
         return cls._instance
 
     def __init__(self, api_key, toggle_elevenlabs: bool = False):
         if self.__initialized:
             return
+        
         self.__initialized = True
+        self.mic_id = None
 
         try:
             self.engine = pyttsx3.init(driverName='sapi5')
@@ -37,7 +37,8 @@ class TTSAPI:
 
 
         self.r = sr.Recognizer()
-        self.mic_id = mic_id if mic_id is not None else self.get_first_active_mic_id()
+        self.mic_id = self.mic_id if self.mic_id is not None else self.get_first_active_mic_id()
+        
         self.engine_lock = threading.Lock()  # Add a lock for the engine
         
         self.toggle_elevenlabs = toggle_elevenlabs
@@ -102,8 +103,7 @@ class TTSAPI:
                 self.engine.say(text)
             self.engine.runAndWait()
         
-    def list_mics(self, timeout=0.2):
-    def list_mics(self, timeout=0.2):
+    def list_mics(self):
         mics = sr.Microphone.list_microphone_names()
         active_mics = []
         active_mics = []
@@ -119,30 +119,7 @@ class TTSAPI:
                 logger.warning(f"{i}: {mic} (error: {e})")
         logger.info(f"Active microphones: {active_mics}")
         return active_mics
-            try:
-                with sr.Microphone(device_index=i) as source:
-                    self.r.adjust_for_ambient_noise(source)
-                    logger.info(f"{i}: {mic} (active)")
-                    active_mics.append(i)
-            except sr.WaitTimeoutError:
-                logger.info(f"{i}: {mic} (inactive)")
-            except Exception as e:
-                logger.warning(f"{i}: {mic} (error: {e})")
-        logger.info(f"Active microphones: {active_mics}")
-        return active_mics
 
-    def get_first_active_mic_id(self):
-        active_mics = self.list_mics()
-        if active_mics:
-            return active_mics[0]  # Return the index of the first active mic
-        return 0  # Default to the first mic if no active mic is found
-
-    def set_mic_id(self, mic_id: int):
-        self.mic_id = mic_id
-
-    def listen(self, timeout=None):
-        try:
-            with sr.Microphone(device_index=self.mic_id) as source:
     def get_first_active_mic_id(self):
         active_mics = self.list_mics()
         if active_mics:
