@@ -50,11 +50,12 @@ class StateMachine:
         self.machine.add_transition(trigger='interact', source='idle', dest='speach')
         self.machine.add_transition(trigger='morning_news', source='welcome', dest='news')
         self.machine.add_transition(trigger='interaction', source="welcome", dest='speach')
-        
+        self.machine.add_transition(trigger='activity_idle', source="activity", dest='idle')
+
         self.machine.add_transition(trigger='goto_idle', source='speach', dest='idle')
         self.machine.add_transition(trigger='goto_welcome', source='speach', dest='welcome')
         self.machine.add_transition(trigger='goto_finance', source='speach', dest='finance')
-        self.machine.add_transition(trigger='goto_activity', source='speach', dest='activity')
+        self.machine.add_transition(trigger='goto_activity', source='idle', dest='activity')
         self.machine.add_transition(trigger='goto_news', source='speach', dest='news')
 
         

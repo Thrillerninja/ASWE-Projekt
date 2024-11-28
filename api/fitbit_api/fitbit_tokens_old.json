@@ -1,0 +1,9 @@
+{
+    "access_token": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM1BRTlQiLCJzdWIiOiI3M0c4SE0iLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyYWN0IHJsb2MgcndlaSByaHIgcnBybyByc2xlIiwiZXhwIjoxNzMyODQxNjc1LCJpYXQiOjE3MzI4MTI4NzV9.IRyt25cNO3s4At6lwqaIKjD0l1DGv5v5H03_5vdazAQ",
+    "expires_in": 28800,
+    "refresh_token": "b9a3876d8942d697b5799c482afecb072d7e4cf6c1724158d6d8348aff5df1b1",
+    "scope": "profile activity sleep heartrate location weight",
+    "token_type": "Bearer",
+    "user_id": "73G8HM",
+    "expires_at": 1732841675.0994813
+}

@@ -1,74 +1,74 @@
 import datetime
-
+import os
 from loguru import logger
-from api.fitbit_api.main import FitbitAPI  
+from api.fitbit_api.main import FitbitAPI
 import pandas as pd
 from api.spotify_api.main import SpotifyAPI
 
-
 class ActivityState:
     """
-    State that represents the activity/health use case.
+    Represents the activity/health use case.
     """
 
     def __init__(self, state_machine):
-        """
-        Initializes the ActivityState object.
-
-        Args:
-            state_machine: The state machine object.
-        """
+        # Initialize the state and required APIs
         self.running = True
         self.state_machine = state_machine
-        
-        self.fitbit_api= self.state_machine.api_factory.create_api(api_type="fitbit")
+        self.fitbit_api = self.state_machine.api_factory.create_api(api_type="fitbit")
         self.tts_api = self.state_machine.api_factory.create_api(api_type="tts")
-        self.spotify_api = self.state_machine.api_factory.create_api(api_type="spotify") 
+        self.spotify_api = self.state_machine.api_factory.create_api(api_type="spotify")
         logger.info("ActivityState initialized")
 
     def on_enter(self):
-        """
-        Function executed when the state is entered.
-        It calculates the stress level and logs actions based on the result.
-        """
+        # Entry point for the activity state
         logger.info("ActivityState entered")
         
-        # Berechnung des Stresslevels
-        stress_level = self.calculate_daily_stress_level(date=str(datetime.date.today()))
+        date = str(datetime.date.today())
+        
+        # Calculate the user's stress level based on Fitbit data
+        stress_level = self.calculate_daily_stress_level(date)
         logger.debug(f"Calculated stress level: {stress_level}")
         
-        if stress_level is not None:
-            # TTS deaktiviert
-            # self.tts_api.speak(f"Dein Stresslevel ist {stress_level} von 100.")
-            logger.info(f"Dein Stresslevel ist {stress_level} von 100.")
+        if stress_level:
+            # Fetch resting heart rate data for additional feedback
+            resting_heart_rate = self.fitbit_api.get_heart_data(date)['activities-heart'][0]['value']['restingHeartRate']
+            self.tts_api.speak(
+                f"Dein Stresslevel wurde heute anhand deiner Herzfrequenz und Aktivitätsdaten analysiert. "
+                f"Deine Ruheherzfrequenz betrug {resting_heart_rate} Schläge pro Minute."
+            )
+            logger.info(f"Stress level: {stress_level}")
             
-            logger.debug("About to suggest music based on stress level.")
+            # Suggest music based on the stress level
             self.suggest_music(stress_level)
         else:
-            # TTS deaktiviert
-            # self.tts_api.speak("Es tut mir leid, ich konnte dein Stresslevel nicht messen.")
+            self.tts_api.speak("Entschuldigung, ich konnte dein Stresslevel nicht messen.")
             logger.error("Stress level calculation failed.")
 
+        # Analyze and provide feedback on sleep data for the last 'days' days
+        days = 2
+        avg_sleep_time = self.trigger_activity_state(days)
+        if avg_sleep_time:
+            self.tts_api.speak(f"Deine durchschnittliche Schlafzeit der letzten {days} Tage beträgt {avg_sleep_time}.")
+        else:
+            self.tts_api.speak(f"Entschuldigung, ich konnte keine Schlafdaten der letzten {days} Tage finden.")
+
         logger.debug("Exiting ActivityState.")
-        self.state_machine.transition_to_idle()  # Zurück in den Idle-Zustand
+        
+        # Transition back to an idle state
+        self.state_machine.activity_idle()
 
     def calculate_daily_stress_level(self, date: str) -> str:
         """
-        Calculates the stress category (very relaxed, normal, stress) 
-        based on the average heart rate during inactive phases.
-
-        Args:
-            date (str): The date for which the data should be analyzed (in 'YYYY-MM-DD' format).
-
-        Returns:
-            str: The stress category ('sehr entspannt', 'normal', 'stress'), or None if calculation fails.
+        Calculate the user's daily stress level based on Fitbit heart and step data.
         """
         try:
-            # Fetch heart rate and steps data
+            # Fetch heart rate and step data from Fitbit API
             heart_data = self.fitbit_api.get_heart_data(date)
             steps_data = self.fitbit_api.get_steps_data(date)
+            resting_heart_rate = heart_data['activities-heart'][0]['value']['restingHeartRate']
+            logger.debug(f"Resting Heart Rate: {resting_heart_rate} bpm")
 
-            # Process data
+            # Combine heart rate data with step count for context
             records = []
             step_data = {step['time']: step['value'] for step in steps_data['activities-steps-intraday']['dataset']}
 
@@ -76,104 +76,151 @@ class ActivityState:
                 heart_time = heart_point['time']
                 heart_rate = heart_point['value']
                 step_count = step_data.get(heart_time, 0)
-
-                # Determine activity phase based on step count
                 phase = 'Inactive' if step_count < 60 else 'Active'
+                records.append({'Time': heart_time, 'Heart Rate': heart_rate, 'Steps': step_count, 'Phase': phase})
 
-                # Add entry to records
-                records.append({
-                    'Time': heart_time,
-                    'Heart Rate': heart_rate,
-                    'Steps': step_count,
-                    'Phase': phase
-                })
-
-            # Create DataFrame
+            # Save processed data to a CSV file for further analysis or debugging
             df = pd.DataFrame(records)
-
-            # Calculate average heart rate during inactive phases
+            project_dir = os.path.dirname(os.path.abspath(__file__))
+            output_dir = os.path.join(project_dir, "..", "api", "fitbit_api", "data")            
+            os.makedirs(output_dir, exist_ok=True) 
+            output_file = os.path.join(output_dir, f"activity_data_{date}.csv")
+            df.to_csv(output_file, index=False)
+            logger.info(f"Activity data saved to {output_file}")
+            
+            # Analyze inactive phases to determine stress level
             inactive_rates = df[df['Phase'] == 'Inactive']['Heart Rate']
             if not inactive_rates.empty:
                 average_heart_rate = inactive_rates.mean()
                 logger.debug(f"Average heart rate during inactive phases: {average_heart_rate:.2f} bpm")
 
-                # Categorize stress level
-                if average_heart_rate < 60:
-                    return "sehr entspannt"  # Very relaxed
-                elif 60 <= average_heart_rate <= 75:
-                    return "normal"  # Normal
+                if average_heart_rate < resting_heart_rate - 10:
+                    return "sehr entspannt"
+                elif resting_heart_rate - 10 <= average_heart_rate <= resting_heart_rate + 10:
+                    return "entspannt"
                 else:
-                    return "stress"  # Stress
+                    return "gestresst"
 
-            logger.warning("Keine inaktiven Phasen gefunden.")
+            # Log warning if no inactive phases are detected
+            logger.warning("No inactive phases found.")
             return None
-
         except Exception as e:
+            # Handle and log any errors during data processing
             logger.error(f"Error calculating stress level: {e}")
             return None
 
     def suggest_music(self, stress_category):
         """
-        Suggests and logs actions based on the stress category.
-
-        Args:
-            stress_category (str): The calculated stress category ('sehr entspannt', 'normal', 'stress').
+        Suggest music based on stress category and optionally play it.
         """
-        # Playlist-IDs für jeden Mood
+        # Map stress categories to Spotify playlists
         playlist_map = {
-            "sehr entspannt": "37i9dQZF1DWZd79rJ6a7lp",  # Example: Relaxing playlist
-            "normal": "37i9dQZF1DX4sWSpwq3LiO",        # Example: Calm playlist
-            "stress": "37i9dQZF1DX9XIFQuFvzM4"         # Example: Happy playlist
+            "sehr entspannt": "37i9dQZF1DWZd79rJ6a7lp",
+            "entspannt": "37i9dQZF1DX4sWSpwq3LiO",
+            "gestresst": "37i9dQZF1DX9XIFQuFvzM4"
         }
-
-        # Playlist-ID basierend auf dem Mood auswählen
         playlist_id = playlist_map.get(stress_category)
         if not playlist_id:
-            # self.tts_api.speak("Es tut mir leid, ich konnte keine passende Playlist finden.")
+            self.tts_api.speak("Entschuldigung, ich konnte keine passende Playlist finden.")
             logger.error(f"No playlist found for stress category: {stress_category}")
             return
 
-        # TTS deaktiviert
-        mood_text = {
-            "sehr entspannt": "entspannende Musik",
-            "normal": "ruhige Musik",
-            "stress": "fröhliche Musik"
-        }.get(stress_category, "ruhige Musik")
+        # Provide a recommendation message based on the stress level
+        recommendations = {
+            "sehr entspannt": "Du warst heute sehr entspannt. Wie wäre es mit Musik, um diese Stimmung zu halten?",
+            "entspannt": "Du warst heute in einem guten, entspannten Zustand. Musik könnte den Abend noch besser machen.",
+            "gestresst": "Du scheinst heute gestresst gewesen zu sein. Entspannende Musik könnte helfen, vor dem Schlafen abzuschalten."
+        }
 
-        # self.tts_api.speak(f"Ich werde {mood_text} für dich abspielen.")
-        logger.info(f"Attempting to play playlist {playlist_id} for mood: {stress_category}")
+        self.tts_api.speak(recommendations.get(stress_category, ""))
+        
+        # Ask the user if they want to play the recommended playlist
+        user_response = self.tts_api.ask_yes_no("Möchtest du die Musik abspielen?")
+        if user_response:
+            try:
+                # Use Spotify API to start music playback on a specific device
+                device_id = "1234567"  
+                logger.info(f"Would start playback of playlist {playlist_id} on device {device_id}.")
+                #self.spotify_api.start_playback(playlist_id=playlist_id, device_id=device_id)
+                logger.info(f"Playback of playlist {playlist_id} successfully started.")
+            except Exception as e:
+                # Handle playback errors
+                logger.error(f"Error playing music: {e}")
+                self.tts_api.speak("Es gab ein Problem beim Abspielen der Musik.")
+        else:
+            self.tts_api.speak("Okay, gute Nacht!")
 
+
+        
+    def trigger_activity_state(self, days=1): 
+        """
+        Calculates the average sleep start time over the last 'days' days.
+        :param days: Number of days to calculate the average sleep start time for (including today).
+        :return: The average sleep start time in 'HH:MM' format, or None if no data is available.
+        """
+        today = datetime.date.today()
+        sleep_start_times = []
+
+        for i in range(days):
+            date = (today - datetime.timedelta(days=i)).strftime('%Y-%m-%d')
+            sleep_start_time = self.get_sleep_start_time(date)
+
+            if sleep_start_time:
+                # Convert sleep start time into minutes since midnight
+                try:
+                    sleep_start = datetime.datetime.strptime(sleep_start_time, '%H:%M')
+                    sleep_minutes = sleep_start.hour * 60 + sleep_start.minute
+                    sleep_start_times.append(sleep_minutes)
+                except ValueError:
+                    logger.error(f"Error converting sleep start time for {date}: {sleep_start_time}")
+                    continue
+
+        if not sleep_start_times:
+            logger.warning("No sleep start times found for the specified days.")
+            return None
+
+        # Calculate the average sleep start time (in minutes)
+        avg_sleep_minutes = sum(sleep_start_times) / len(sleep_start_times)
+        
+        # Convert the average time back to hours and minutes
+        avg_sleep_hours = int(avg_sleep_minutes // 60)
+        avg_sleep_minutes = int(avg_sleep_minutes % 60)
+
+        # Return the result in HH:MM format
+        avg_sleep_time = f"{avg_sleep_hours:02}:{avg_sleep_minutes:02}"
+        logger.info(f"Average sleep start time over the last {days} days: {avg_sleep_time}")
+        return avg_sleep_time
+
+
+    def get_sleep_start_time(self, date: str) -> str:
+        """
+        Retrieves the user's sleep start time (primarily at night).
+        :param date: The date for which to retrieve the sleep start time, in 'YYYY-MM-DD' format.
+        :return: Sleep start time as a string, or None if no data is available.
+        """
         try:
-            # Geräte abrufen und das erste verfügbare Gerät verwenden
-            devices = self.spotify_api.get_available_devices()
-            if not devices:
-                raise Exception("No available devices for playback.")
+            # Fetch sleep data from the Fitbit API
+            sleep_data = self.fitbit_api.get_sleep_data(date)
             
-            active_device = devices[0]  # Wähle das erste verfügbare Gerät
-            device_id = active_device['id']
+            if not sleep_data or 'sleep' not in sleep_data:
+                logger.error(f"No sleep data found for date {date}")
+                return None
 
-            # Log Wiedergabe
-            logger.info(f"Would start playback of playlist {playlist_id} on device {device_id} (mocked).")
-            # self.spotify_api.start_playback(playlist_id=playlist_id, device_id=device_id)
-            logger.info(f"Playback of playlist {playlist_id} successfully logged.")
+            # Iterate through sleep periods to find the main sleep phase
+            for sleep_period in sleep_data['sleep']:
+                if sleep_period['isMainSleep']:
+                    first_sleep_start_time = sleep_period['startTime']
+
+                    sleep_start = datetime.datetime.strptime(first_sleep_start_time.split('.')[0], '%Y-%m-%dT%H:%M:%S')
+                    
+                    # Return the sleep start time in HH:MM format
+                    sleep_start_time = sleep_start.strftime("%H:%M")
+                    logger.info(f"User went to sleep at {sleep_start_time}.")
+                    return sleep_start_time
+
+            logger.warning(f"No main sleep phase found for date {date}.")
+            return None
 
         except Exception as e:
-            logger.error(f"Error playing music: {e}")
-            # self.tts_api.speak("Es gab ein Problem beim Abspielen der Musik.")
-
-    def on_exit(self):
-        """
-        Cleans up resources or actions when exiting the state.
-        """
-        logger.info("Exiting ActivityState.")
-        # self.music_api.stop()  # Stop any playing music
-
-
-# if __name__ == "__main__":
-#     class MockStateMachine:
-#         def transition_to_idle(self):
-#             logger.info("Transitioning to idle state.")
-
-#     state_machine = MockStateMachine()
-#     activity_state = ActivityState(state_machine)
-#     activity_state.on_enter()
+            logger.error(f"Error retrieving sleep start time for {date}: {e}")
+            return None
