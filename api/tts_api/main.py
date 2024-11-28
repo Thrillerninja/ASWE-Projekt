@@ -4,13 +4,11 @@ from loguru import logger
 import threading
 
 class TTSAPI:
-class TTSAPI:
     _instance = None
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
             cls._instance = super(TTSAPI, cls).__new__(cls)
-            cls._instance.__initialized = False
             cls._instance.__initialized = False
         return cls._instance
 
