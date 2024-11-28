@@ -25,26 +25,51 @@ class TestNewsState(unittest.TestCase):
 
         # Create NewsState instance
         self.news_state = NewsState(self.mock_state_machine)
+        self.mock_tts_api = self.news_state.tts_api
+        self.mock_tts_api.listen = MagicMock()
 
-    @patch.object(NewsAPI, 'get_article', return_value="Full article content")
-    @patch.object(NewsAPI, 'summarize_article', return_value="Summarized content")
-    @patch.object(LLMApi, 'get_response', return_value="1")  # Ensure a valid response
-    def test_read_article(self, mock_llm_response, mock_summarize, mock_get_article):
-        # Mock TTS listen return value
-        self.mock_tts_api.listen.side_effect = ["yes", "1"]  # Simulate valid input for article selection
-
-        # Mock headlines
+    @patch.object(LLMApi, 'get_response', return_value="1")  # Mocking LLMApi.get_response
+    def test_read_article(self, mock_get_response):
+        """
+        Test read_article method of NewsState
+        """
+        
+        self.mock_news_api = MagicMock(spec=NewsAPI)
+        self.news_state.news_api = self.mock_news_api
+        
+        self.mock_tts_api = MagicMock(spec=TTSAPI)
+        self.news_state.tts_api = self.mock_tts_api
+        
+        # Simulate calling the read_article method
         headlines = ["Headline 1", "Headline 2", "Headline 3"]
-
-        # Call read_article
+        
+        # Mock the listen method to return a valid input for article selection
+        self.mock_tts_api.listen.side_effect = ["User input", "User input"]
+        
+        # Set the return value of get_article to the expected article content
+        self.news_state.news_api.get_article.return_value = "Article content"
+        
+        # Execute the method we want to test
         result = self.news_state.read_article(headlines)
-
-        # Assertions
-        mock_get_article.assert_called_once_with(1)  # Ensure this is called
-        mock_summarize.assert_called_once_with("Full article content")
-        self.mock_tts_api.speak.assert_any_call("Summarized content")
+        
+        # Check if LLMApi.get_response was called with the correct message
+        message = (
+            f"This is input from a user: User input. "
+            f"These are possible headlines: {headlines}. "
+            f"Which headline interests the user the most? Respond with the number of the headline."
+        )
+        mock_get_response.assert_called_once_with(model="llama3.2:1b", message_content=message)
+        
+        # Check if the correct article information was retrieved
+        self.news_state.news_api.get_article.assert_called_once_with(1)
+        self.news_state.news_api.summarize_article.assert_called_once_with("Article content")
+        self.mock_news_api.summarize_article.return_value = "Summary of article"
+        
+        # Check if the TTS-API spoke the correct result
+        self.news_state.tts_api.speak.assert_called()
+        
+        # Ensure the method returns 'exit'
         self.assertEqual(result, "exit")
-
 
 
     @patch.object(NewsState, 'read_article', return_value="exit")

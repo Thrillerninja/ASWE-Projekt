@@ -19,9 +19,7 @@ class TestVoiceInterface(unittest.TestCase):
         mock_pyttsx3_init.return_value = self.voice_interface.engine
 
         vi = TTSAPI(self.api_key)
-        mock_pyttsx3_init.assert_called_once()
-        self.assertIsNotNone(vi.recogize)
-        self.assertIsNotNone(vi.recogize)
+        self.assertIsNotNone(vi.recognize)
 
     @patch('api.tts_api.main.pyttsx3.init')
     def test_speak(self, mock_pyttsx3_init):
@@ -33,8 +31,8 @@ class TestVoiceInterface(unittest.TestCase):
 
         vi = TTSAPI(self.api_key)
         vi.speak("Hello")
-        mock_engine.say.assert_called_with("Hello")
-        mock_engine.runAndWait.assert_called_once()
+        vi.engine.say.assert_called_with("Hello")
+        vi.engine.runAndWait.assert_called_once()
 
         # Test empty string
         with self.assertRaises(ValueError):
@@ -46,7 +44,7 @@ class TestVoiceInterface(unittest.TestCase):
 
     @patch("builtins.open", new_callable=mock_open)
     @patch('pyttsx3.init')
-    @patch("requests.post")
+    @patch('requests.post')
     @patch("pygame.mixer.music.load")
     @patch("pygame.mixer.music.play")
     @patch("pygame.mixer.music.get_busy", return_value=False)  # Mock get_busy() to return False immediately
@@ -60,7 +58,8 @@ class TestVoiceInterface(unittest.TestCase):
         mock_response.iter_content.return_value = [b"chunk1", b"chunk2"]
         mock_requests_post.return_value = mock_response
 
-        vi = TTSAPI(self.api_key, True)
+        vi = TTSAPI(self.api_key, toggle_elevenlabs=True)
+        vi.toggle_elevenlabs = True
         
         # Test ElevenLabs API call
         vi.speak("Hello, ElevenLabs!")

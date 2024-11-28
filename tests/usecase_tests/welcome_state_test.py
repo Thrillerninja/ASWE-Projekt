@@ -27,14 +27,13 @@ class TestWelcomeState(unittest.TestCase):
         state_machine = MagicMock()
         mock_config = MagicMock()  # Mock configuration
         state_machine.api_factory = APIFactory(mock_config)
-        state_machine.preferences = {"default_alarm_time": "09:00"}
         welcome_state = WelcomeState(state_machine)
         
         # Call on_enter
         welcome_state.on_enter()
 
         # Check if TTS API was called with the correct message
-        mock_tts_api.speak.assert_any_call(f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M')}. Die Wettervorhersage für heute: Die Temperatur wird zwischen 10°C und 20°C liegen und es wird sunny. Im Moment sind es 15°C.")
+        mock_tts_api.speak.assert_any_call(f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M')}. Die Wettervorhersage für heute: Die Temperatur wird zwischen 10°C und 20°C liegen und es wird sunny geben. Im Moment sind es 15°C.")
         mock_tts_api.speak.assert_any_call("Sie haben heute keine Termine.")
         
 class TestAlarm(unittest.TestCase):

@@ -33,7 +33,7 @@ class TTSAPI:
         if german_voice:
             self.engine.setProperty('voice', german_voice.id)
 
-        self.r = sr.Recognizer()
+        self.recognize = sr.Recognizer()
         self.mic_id = self.mic_id if self.mic_id is not None else self.get_first_active_mic_id()
         
         self.engine_lock = threading.Lock()  # Add a lock for the engine
@@ -95,7 +95,7 @@ class TTSAPI:
         for i, mic in enumerate(mics):
             try:
                 with sr.Microphone(device_index=i) as source:
-                    self.r.adjust_for_ambient_noise(source)
+                    self.recognize.adjust_for_ambient_noise(source)
                     logger.info(f"{i}: {mic} (active)")
                     active_mics.append(i)
             except sr.WaitTimeoutError:
@@ -117,10 +117,10 @@ class TTSAPI:
     def listen(self, timeout=None):
         try:
             with sr.Microphone(device_index=self.mic_id) as source:
-                self.r.adjust_for_ambient_noise(source)
-                audio = self.r.listen(source, timeout=timeout)
+                self.recognize.adjust_for_ambient_noise(source)
+                audio = self.recognize.listen(source, timeout=timeout)
                 logger.info("Listening for microphone input")
-                text = self.r.recognize_google(audio, language="de-DE")
+                text = self.recognize.recognize_google(audio, language="de-DE")
                 logger.info(f"Recognized text: {text}")
                 return text
         except sr.UnknownValueError:
@@ -139,10 +139,10 @@ class TTSAPI:
             while True:
                 try:
                     with sr.Microphone(device_index=self.mic_id) as source:
-                        self.r.adjust_for_ambient_noise(source)
+                        self.recognize.adjust_for_ambient_noise(source)
                         logger.info("Listening for microphone input")
-                        audio = self.r.listen(source, timeout=timeout)
-                        text = self.r.recognize_google(audio, language="de-DE")
+                        audio = self.recognize.listen(source, timeout=timeout)
+                        text = self.recognize.recognize_google(audio, language="de-DE")
                         logger.info(f"Recognized text: {text}")
                         callback(text)
                 except sr.UnknownValueError:

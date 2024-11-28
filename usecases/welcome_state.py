@@ -52,11 +52,10 @@ class WelcomeState:
         
         weather_info = ""
         if min_temp is not None and max_temp is not None:
-            weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {str(min_temp).replace('.', ',')}°C und {str(max_temp).replace('.', ',')}°C liegen"
             if condition is not None:
-                weather_info += f" und es wird {condition} geben."
+                weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {str(min_temp).replace('.', ',')}°C und {str(max_temp).replace('.', ',')}°C liegen und es wird {condition} geben."
             else:
-                weather_info += "."
+                weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {str(min_temp).replace('.', ',')}°C und {str(max_temp).replace('.', ',')}°C liegen."
         
         current_weather_info = ""
         if current_weather:
