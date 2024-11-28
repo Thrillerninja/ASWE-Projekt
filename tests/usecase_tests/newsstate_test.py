@@ -22,8 +22,6 @@ class TestNewsState(unittest.TestCase):
             lambda api_type: self.mock_news_api if api_type == "news" else self.mock_tts_api
         )
         self.mock_state_machine.api_factory = self.mock_api_factory
-        self.mock_api_factory.create_api.return_value = self.mock_tts_api
-        self.mock_api_factory.create_api.side_effect = lambda api_type: self.mock_news_api if api_type == "news" else self.mock_tts_api
 
         # Create NewsState instance
         self.news_state = NewsState(self.mock_state_machine)
