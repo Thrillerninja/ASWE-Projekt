@@ -47,8 +47,19 @@ class WelcomeState:
         
         # Build a string with the populated elements and provide the user with the information
         good_morning_message = f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M')}. "
-        weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {min_temp}°C und {max_temp}°C liegen." if min_temp is not None and max_temp is not None else f"und es wird {condition}." if condition is not None else ""
-        current_weather_info = f"Im Moment sind es {current_weather['main']['temp']}°C." if current_weather else ""
+        
+        weather_info = ""
+        if min_temp is not None and max_temp is not None:
+            weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {str(min_temp).replace('.', ',')}°C und {str(max_temp).replace('.', ',')}°C liegen"
+            if condition is not None:
+                weather_info += f" und es wird {condition}."
+            else:
+                weather_info += "."
+        
+        current_weather_info = ""
+        if current_weather:
+            current_weather_info = f" Im Moment sind es {int(current_weather['main']['temp'])}°C."
+        
         self.tts_api.speak(good_morning_message + weather_info + current_weather_info)
         
         # TODO: Check for delays in the public transport
@@ -57,7 +68,7 @@ class WelcomeState:
         appointments = self.rapla_api.get_todays_appointments()
         if appointments:
             first_appointment = appointments[0]
-            self.tts_api.speak(f" Ihr erster Termin ist um {first_appointment.start} in {first_appointment.room}.")
+            self.tts_api.speak(f" Ihr erster Termin ist um {first_appointment.start} im {first_appointment.room}.")
         else:
             self.tts_api.speak("Sie haben heute keine Termine.")
         

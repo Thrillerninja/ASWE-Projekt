@@ -32,6 +32,7 @@ class StateMachine(QObject):
         logger.info("StateMachine initialized")
         self.machine = Machine(model=self, states=self.states, initial='idle')
         self.testing = False
+        self.running = True
         self.transition_queue = []
 
         # User preferences, hover over function to see details. This dictionary is kept up to date with the frontend.
@@ -63,6 +64,12 @@ class StateMachine(QObject):
         self.machine.add_transition(trigger='goto_activity', source='speach', dest='activity')
         self.machine.add_transition(trigger='goto_news', source='speach', dest='news')
 
+    def stop(self):
+        """
+        Stop the state machine.
+        """
+        self.running = False
+        print("State machine stopped")
         
     def queue_transition(self, transition: str):
         """Queue a transition to be executed when the current state is idle."""

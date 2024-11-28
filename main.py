@@ -21,5 +21,13 @@ state_machine_thread.start()
 app = QtWidgets.QApplication(sys.argv)
 window = MainWindow(sm)
 window.show()
+
+# Bring the window to the foreground
+window.raise_()
+window.activateWindow()
+
+# Connect the aboutToQuit signal to the stop method
+app.aboutToQuit.connect(sm.stop)
+
 logger.info("Starting UI")
 sys.exit(app.exec_())
