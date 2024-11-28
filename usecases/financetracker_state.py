@@ -72,11 +72,11 @@ class FinanceState:
                         data = json.load(file)
                         print("laden2")
         
-        data = self.round_numbers_for_speech(data)
-
         with open(file_path, "w") as file:
             json.dump(data, file, indent=4)
             print("data dumped")
+
+        data = self.round_numbers_for_speech(data)
 
         self.tts_api.speak(f"Die drei Meistgehandelten Aktien heute sind {data[0]["name"]}, {data[1]["name"]} und {data[2]["name"]}.")
         for stock in data:

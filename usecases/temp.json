@@ -1,23 +1,23 @@
 [
   {
-    "name": "FOXO Technologies Inc.",
-    "price": 0.78,
-    "change_amount": 0.65,
-    "change_percentage": 474.7,
-    "volume": "918.6 Mio."
+    "name": "AAPL",
+    "price": "150",
+    "change_amount": "2",
+    "change_percentage": "1.35%",
+    "volume": "3000000"
   },
   {
-    "name": "ELAB",
-    "price": 0.02,
-    "change_amount": -0.0,
-    "change_percentage": -18.2,
-    "volume": "291.7 Mio."
+    "name": "GOOGL",
+    "price": "2800",
+    "change_amount": "10",
+    "change_percentage": "0.36%",
+    "volume": "2500000"
   },
   {
-    "name": "ARBB",
-    "price": 0.77,
-    "change_amount": 0.21,
-    "change_percentage": 37.2,
-    "volume": "226.7 Mio."
+    "name": "TSLA",
+    "price": "700",
+    "change_amount": "5",
+    "change_percentage": "0.72%",
+    "volume": "2200000"
   }
 ]
