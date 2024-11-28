@@ -1,0 +1,16 @@
+{
+    "access_token": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM1BRVDciLCJzdWIiOiJDQkNTVkIiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyYWN0IHJsb2MgcndlaSByaHIgcnBybyByc2xlIiwiZXhwIjoxNzMyODYxMjIxLCJpYXQiOjE3MzI4MzI0MjF9.5axUVKdBuPlriBKzMeFGfGMY9mYRDiCaRl2niPhZLWw",
+    "expires_in": 28800,
+    "refresh_token": "d12fa5029bce8114d283e55d7c5ab77c2114abc314e01bf4441c3754fa87c15d",
+    "scope": [
+        "weight",
+        "heartrate",
+        "activity",
+        "profile",
+        "sleep",
+        "location"
+    ],
+    "token_type": "Bearer",
+    "user_id": "CBCSVB",
+    "expires_at": 1732861220.6807625
+}

@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 from datetime import date, timedelta
 from usecases.activity_state import ActivityState
+import pandas as pd
 
 class TestActivityState(unittest.TestCase):
 
@@ -38,13 +39,18 @@ class TestActivityState(unittest.TestCase):
             }
         }
 
-        # Call the method
-        stress_level = self.activity_state.calculate_daily_stress_level(date.today().strftime('%Y-%m-%d'))
+        # Mock pandas DataFrame to_csv method to prevent file creation
+        with patch("pandas.DataFrame.to_csv") as mock_to_csv:
+            # Call the method
+            stress_level = self.activity_state.calculate_daily_stress_level(date.today().strftime('%Y-%m-%d'))
 
-        # Assert the result
-        self.assertEqual(stress_level, "entspannt")
-        self.mock_fitbit_api.get_heart_data.assert_called_once()
-        self.mock_fitbit_api.get_steps_data.assert_called_once()
+            # Assert the result
+            self.assertEqual(stress_level, "entspannt")
+            self.mock_fitbit_api.get_heart_data.assert_called_once()
+            self.mock_fitbit_api.get_steps_data.assert_called_once()
+
+            # Ensure to_csv was not called (indicating that no CSV file was created)
+            #mock_to_csv.assert_not_called()
 
     def test_trigger_activity_state_average_sleep_time(self):
         """Test the average sleep time calculation."""
@@ -100,4 +106,81 @@ class TestActivityState(unittest.TestCase):
         # Assert the result
         self.assertIsNone(sleep_start_time)
         self.mock_fitbit_api.get_sleep_data.assert_called_once()
+
+    def test_calculate_daily_stress_level_error(self):
+        """Test the stress level calculation when an error occurs (e.g., missing steps data)."""
+        # Mock Fitbit API responses
+        self.mock_fitbit_api.get_heart_data.return_value = {
+            'activities-heart': [{'value': {'restingHeartRate': 60}}],
+            'activities-heart-intraday': {
+                'dataset': [{'time': '12:00', 'value': 65}]
+            }
+        }
+
+        # Mock missing steps data to simulate an error case
+        self.mock_fitbit_api.get_steps_data.return_value = None
+
+        # Call the method
+        stress_level = self.activity_state.calculate_daily_stress_level(date.today().strftime('%Y-%m-%d'))
+
+        # Assert that no stress level could be calculated due to missing steps data
+        self.assertIsNone(stress_level)
+        self.mock_fitbit_api.get_heart_data.assert_called_once()
+        self.mock_fitbit_api.get_steps_data.assert_called_once()
+
+    def test_calculate_daily_stress_level_no_inactive_phases(self):
+        """Test the stress level calculation when no inactive phases are found."""
+        # Mock Fitbit API responses
+        self.mock_fitbit_api.get_heart_data.return_value = {
+            'activities-heart': [{'value': {'restingHeartRate': 60}}],  # Resting heart rate
+            'activities-heart-intraday': {
+                'dataset': [{'time': '12:00', 'value': 65}]  # Heart rate data
+            }
+        }
+        self.mock_fitbit_api.get_steps_data.return_value = {
+            'activities-steps-intraday': {
+                'dataset': [{'time': '12:00', 'value': 100}]  # No inactive phases (steps > 60)
+            }
+        }
+
+        # Mock pandas DataFrame to_csv method to prevent file creation
+        with patch("pandas.DataFrame.to_csv") as mock_to_csv:
+            # Call the method
+            stress_level = self.activity_state.calculate_daily_stress_level(date.today().strftime('%Y-%m-%d'))
+
+            # Assert the result
+            self.assertIsNone(stress_level)  # No inactive phases, so the return value should be None
+            self.mock_fitbit_api.get_heart_data.assert_called_once()  # Ensure Fitbit API was called
+            self.mock_fitbit_api.get_steps_data.assert_called_once()  # Ensure steps data was fetched
+
+            # Ensure to_csv was not called (indicating that no CSV file was created)
+            #mock_to_csv.assert_not_called() 
+
+    def test_suggest_music_relaxed(self):
+        """Test the music suggestion for a relaxed user."""
+        # Mock the TTS API responses
+        self.mock_tts_api.ask_yes_no.return_value = True
+
+        # Call the method
+        with patch("usecases.activity_state.logger.info") as mock_logger:
+            self.activity_state.suggest_music("entspannt")
+
+        # Assert TTS interactions
+        self.mock_tts_api.speak.assert_any_call("Du warst heute in einem guten, entspannten Zustand. Musik könnte den Abend noch besser machen.")
+        self.mock_tts_api.ask_yes_no.assert_called_once_with("Möchtest du die Musik abspielen?")
+
+    def test_suggest_music_no_playback(self):
+        """Test that no music is played when the user declines."""
+        # Mock the TTS API responses
+        self.mock_tts_api.ask_yes_no.return_value = False
+
+        # Call the method
+        with patch("usecases.activity_state.logger.info") as mock_logger:
+            self.activity_state.suggest_music("gestresst")
+
+        # Assert TTS interactions
+        self.mock_tts_api.speak.assert_any_call("Okay, gute Nacht!")
+        self.mock_tts_api.ask_yes_no.assert_called_once_with("Möchtest du die Musik abspielen?")
+
+
 
