@@ -27,6 +27,20 @@ class SpeachState:
         self.voice_interface.play_sound("idle")
         self.voice_interface.speak("Spracherkennung beendet.")
 
+    def check_triggers(self):
+        """
+        Check for specific voice commands and trigger corresponding state transitions.
+        """
+        user_input = self.voice_interface.listen()
+        self.process_input(user_input)
+
+    def process_input(self, user_input):
+        """
+        Check for specific voice commands and trigger corresponding state transitions.
+        """
+        user_input = self.voice_interface.listen()
+        self.process_input(user_input)
+
     def process_input(self, user_input):
         """
         Process the user input and determine the next action.

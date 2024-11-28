@@ -1,3 +1,5 @@
+import time
+
 from loguru import logger
 from typing import Dict
 
@@ -27,6 +29,8 @@ class IdleState:
         
         # Start Welcome Usecase on system startup
         if self.is_first_run and not self.state_machine.testing:
+            # sleep for a second to lett the app start
+            time.sleep(1)
             self.is_first_run = False
             self.state_machine.start()
         

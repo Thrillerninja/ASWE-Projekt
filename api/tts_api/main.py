@@ -49,16 +49,15 @@ class TTSAPI:
         logger.debug(f"Speaking text: {text}")
         with self.engine_lock:  # Use the lock to ensure only one thread accesses the engine at a time
             self.engine.say(text)
-            self.engine.runAndWait()
+        self.engine.runAndWait()
         
-    def list_mics(self, timeout=1):
+    def list_mics(self, timeout=0.2):
         mics = sr.Microphone.list_microphone_names()
         active_mics = []
         for i, mic in enumerate(mics):
             try:
                 with sr.Microphone(device_index=i) as source:
                     self.r.adjust_for_ambient_noise(source)
-                    audio = self.r.listen(source, timeout=1)
                     logger.info(f"{i}: {mic} (active)")
                     active_mics.append(i)
             except sr.WaitTimeoutError:
