@@ -20,25 +20,6 @@ class IdleState:
     _instance = None
     is_first_run = True
     
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super(IdleState, cls).__new__(cls)
-        return cls._instance
-    _instance = None
-    is_first_run = True
-    
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super(IdleState, cls).__new__(cls)
-        return cls._instance
-    _instance = None
-    is_first_run = True
-    
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super(IdleState, cls).__new__(cls)
-        return cls._instance
-    
     def __init__(self, state_machine):
         if not hasattr(self, 'initialized'):  # Ensure __init__ is only called once
             self.state_machine = state_machine
@@ -58,13 +39,6 @@ class IdleState:
             self.is_first_run = False
             self.state_machine.start()
         logger.info("IdleState entered")
-        
-        # Start Welcome Usecase on system startup
-        if self.is_first_run and not self.state_machine.testing:
-            # sleep for a second to lett the app start
-            time.sleep(1)
-            self.is_first_run = False
-            self.state_machine.start()
         
         while not self.state_machine.testing:
             self.check_triggers()

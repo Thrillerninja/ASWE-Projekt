@@ -23,12 +23,7 @@ class WelcomeState:
         if isinstance(default_alarm_time, MagicMock):
             default_alarm_time = "09:00"
         self.default_wakeup_time = datetime.datetime.strptime(default_alarm_time, "%H:%M").time()
-        default_alarm_time = self.state_machine.preferences.get("default_alarm_time", "09:00")
-        if isinstance(default_alarm_time, MagicMock):
-            default_alarm_time = "09:00"
-        self.default_wakeup_time = datetime.datetime.strptime(default_alarm_time, "%H:%M").time()
         
-        logger.info("WelcomeState initialized")
         logger.info("WelcomeState initialized")
     
     def on_enter(self):
@@ -37,19 +32,17 @@ class WelcomeState:
         It sets up the alarm, retrieves the weather forecast, and informs the user about their schedule.
         """
         logger.info("WelcomeState entered")
-        logger.info("WelcomeState entered")
         
         # Calculate wake-up time based on the first calendar appointment
         wakeup_time = self.calc_alarm_time()
-        logger.info(f"Wake-up time set for: {wakeup_time}")
         logger.info(f"Wake-up time set for: {wakeup_time}")
 
         # TODO: Set the alarm using the calculated wakeup_time
 
         # Retrieve and provide the current weather forecast
         weather_forecast = self.weather_api.get_daily_forecast("Stuttgart", datetime.datetime.today()) # Using tomorrow's date
-        min_temp = weather_forecast.get('min_temp', None)
-        max_temp = weather_forecast.get('max_temp', None)
+        min_temp = round(weather_forecast.get('min_temp', None), 1) if weather_forecast.get('min_temp', None) is not None else None
+        max_temp = round(weather_forecast.get('max_temp', None), 1) if weather_forecast.get('max_temp', None) is not None else None
         condition = weather_forecast.get('avg_condition', None)
         
         current_weather = self.weather_api.get_weather("Stuttgart")
@@ -61,20 +54,7 @@ class WelcomeState:
         if min_temp is not None and max_temp is not None:
             weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {str(min_temp).replace('.', ',')}°C und {str(max_temp).replace('.', ',')}°C liegen"
             if condition is not None:
-                weather_info += f" und es wird {condition}."
-            else:
-                weather_info += "."
-        
-        current_weather_info = ""
-        if current_weather:
-            current_weather_info = f" Im Moment sind es {int(current_weather['main']['temp'])}°C."
-        
-        
-        weather_info = ""
-        if min_temp is not None and max_temp is not None:
-            weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {str(min_temp).replace('.', ',')}°C und {str(max_temp).replace('.', ',')}°C liegen"
-            if condition is not None:
-                weather_info += f" und es wird {condition}."
+                weather_info += f" und es wird {condition} geben."
             else:
                 weather_info += "."
         
@@ -90,7 +70,6 @@ class WelcomeState:
         appointments = self.rapla_api.get_todays_appointments()
         if appointments:
             first_appointment = appointments[0]
-            self.tts_api.speak(f" Ihr erster Termin ist um {first_appointment.start} im {first_appointment.room}.")
             self.tts_api.speak(f" Ihr erster Termin ist um {first_appointment.start} im {first_appointment.room}.")
         else:
             self.tts_api.speak("Sie haben heute keine Termine.")

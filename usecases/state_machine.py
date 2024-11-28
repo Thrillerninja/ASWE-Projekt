@@ -31,10 +31,10 @@ class StateMachine(QObject):
         
         logger.info("StateMachine initialized")
         self.machine = Machine(model=self, states=self.states, initial='idle')
+        
         self.testing = False
         self.running = True
-        self.transition_queue = []
-        self.running = True
+        
         self.transition_queue = []
 
         # User preferences, hover over function to see details. This dictionary is kept up to date with the frontend.
