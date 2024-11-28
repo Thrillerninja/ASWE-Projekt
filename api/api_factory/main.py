@@ -2,6 +2,8 @@ from typing import Dict
 from api.api_client import APIClient
 from api.news_api import NewsAPI
 from api.weather_api import WeatherAPI
+from api.news_api import NewsAPI
+from api.weather_api import WeatherAPI
 from api.finance_api import FinanceAPI
 from api.spotify_api import SpotifyAPI
 from api.fitbit_api import FitbitAPI
@@ -9,11 +11,13 @@ from api.fitbit_api import FitbitAPI
 from api.calendar_api import RaplaAPI
 from api.tts_api import TTSAPI
 from api.vvs_api import VVSAPI
+from api.vvs_api import VVSAPI
 
 class APIFactory:
     """
     Factory class to create instances of different API clients.
     """
+    _instances = {}
     _instances = {}
 
     def __init__(self, config: Dict):
