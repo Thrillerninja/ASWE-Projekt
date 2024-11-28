@@ -2,6 +2,7 @@ from transitions import Machine, State
 from config import CONFIG
 from frontend.config_manager import load_preferences_file
 from api.api_factory import APIFactory
+from usecases.activity_state import ActivityState
 from .idle_state import IdleState
 from .welcome_state import WelcomeState
 from .speach_state import SpeachState
@@ -38,7 +39,7 @@ class StateMachine:
         self.speach = SpeachState(self)
         self.news =  NewsState(self)
         self.finance = None
-        self.activity = None
+        self.activity = ActivityState(self)
         
         # Setup transitions
         self.machine.add_transition('start', 'idle', 'welcome')

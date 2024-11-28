@@ -5,8 +5,7 @@
 
 # import pandas as pd
 # import requests
-# from main import FitbitAPI
-# from dotenv import load_dotenv
+# from api.fitbit_api.main import FitbitAPI
 
 # class FitbitDataProcessor:
 #     def __init__(self, fitbit_api: FitbitAPI):
@@ -123,17 +122,16 @@
 #         except requests.RequestException as e:
 #             print("Error fetching sleep data:", e)
 #             return None
-# load_dotenv()
 
 # if __name__ == "__main__":
-#     fitbit_client_id = os.getenv("FITBIT_CLIENT_ID")
-#     fitbit_client_secret = os.getenv("FITBIT_CLIENT_SECRET")
+#     fitbit_client_id = "23PQNT"
+#     fitbit_client_secret = "db957a4b0cbbcedfecf8a384631dd514"
 
 #     fitbit_api = FitbitAPI(client_id=fitbit_client_id, client_secret=fitbit_client_secret)
 
 #     fitbit_data_processor = FitbitDataProcessor(fitbit_api=fitbit_api)
 
 #     today = datetime.now().strftime("%Y-%m-%d")
-#     fitbit_data_processor.calculate_daily_stress_level(today)
+#     fitbit_data_processor.calculate_daily_stress_level("2024-11-26")
 #     fitbit_data_processor.get_sleep_start_time(today)
 
