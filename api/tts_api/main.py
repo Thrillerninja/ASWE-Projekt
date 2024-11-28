@@ -72,6 +72,7 @@ class TTSAPI:
                 }
             }
             response = requests.post(self.url, json=data, headers=self.headers)
+            response.raise_for_status()
             with open('output.mp3', 'wb') as f:
                 for chunk in response.iter_content(chunk_size=self.CHUNK_SIZE):
                     if chunk:
