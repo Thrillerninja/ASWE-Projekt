@@ -24,6 +24,105 @@ class TestActivityState(unittest.TestCase):
         # Create the ActivityState instance
         self.activity_state = ActivityState(self.mock_state_machine)
 
+    @patch('usecases.activity_state.ActivityState.calculate_daily_stress_level')
+    def test_on_enter_with_stress_level(self, mock_calculate_stress_level):
+        """Test the on_enter method when a valid stress level is calculated."""
+
+        # Mock the calculate_daily_stress_level return value
+        mock_calculate_stress_level.return_value = "entspannt"
+        
+        # Mock the Fitbit API response for heart rate data
+        self.mock_fitbit_api.get_heart_data.return_value = {
+            'activities-heart': [{'value': {'restingHeartRate': 60}}]
+        }
+
+        # Mock the TTS API speak method to prevent actual speech
+        self.mock_tts_api.speak = MagicMock()
+
+        # Call the on_enter method
+        self.activity_state.on_enter()
+
+        # Assert the expected behavior
+        self.mock_fitbit_api.get_heart_data.assert_called_once_with(str(date.today()))
+        self.mock_tts_api.speak.assert_any_call(
+            "Dein Stresslevel wurde heute anhand deiner Herzfrequenz und Aktivitätsdaten analysiert. "
+            "Deine Ruheherzfrequenz betrug 60 Schläge pro Minute."
+        )
+        self.mock_state_machine.activity_idle.assert_called_once()
+
+    @patch('usecases.activity_state.ActivityState.calculate_daily_stress_level')
+    def test_on_enter_with_no_stress_level(self, mock_calculate_stress_level):
+        """Test the on_enter method when no stress level is found."""
+
+        # Mock the calculate_daily_stress_level return value as None
+        mock_calculate_stress_level.return_value = None
+
+        # Mock the TTS API speak method to prevent actual speech
+        self.mock_tts_api.speak = MagicMock()
+
+        # Mock missing sleep data (this simulates no sleep data for the last two days)
+        self.mock_fitbit_api.get_sleep_data.return_value = {'sleep': []}
+
+        # Call the on_enter method
+        self.activity_state.on_enter()
+
+        # Assert that both error messages were spoken
+        self.mock_tts_api.speak.assert_any_call("Entschuldigung, ich konnte dein Stresslevel nicht messen.")
+        self.mock_tts_api.speak.assert_any_call("Entschuldigung, ich konnte keine Schlafdaten der letzten 2 Tage finden.")
+        self.mock_state_machine.activity_idle.assert_called_once()
+
+    @patch('usecases.activity_state.ActivityState.calculate_daily_stress_level')
+    @patch('usecases.activity_state.ActivityState.trigger_activity_state')
+    def test_on_enter_with_sleep_data(self, mock_trigger_activity_state, mock_calculate_stress_level):
+        """Test the on_enter method when sleep data is available."""
+
+        # Mock the calculate_daily_stress_level return value
+        mock_calculate_stress_level.return_value = "entspannt"
+
+        # Mock the Fitbit API response for heart rate data
+        self.mock_fitbit_api.get_heart_data.return_value = {
+            'activities-heart': [{'value': {'restingHeartRate': 60}}]
+        }
+
+        # Mock the trigger_activity_state return value
+        mock_trigger_activity_state.return_value = 7.5  # Average sleep time in hours
+
+        # Mock the TTS API speak method to prevent actual speech
+        self.mock_tts_api.speak = MagicMock()
+
+        # Call the on_enter method
+        self.activity_state.on_enter()
+
+        # Assert the expected behavior for sleep data
+        mock_trigger_activity_state.assert_called_once_with(2)  # 2 days of sleep data
+        self.mock_tts_api.speak.assert_any_call("Deine durchschnittliche Schlafzeit der letzten 2 Tage beträgt 7.5.")
+        self.mock_state_machine.activity_idle.assert_called_once()
+
+    @patch('usecases.activity_state.ActivityState.calculate_daily_stress_level')
+    def test_on_enter_with_no_sleep_data(self, mock_calculate_stress_level):
+        """Test the on_enter method when no sleep data is available."""
+
+        # Mock the calculate_daily_stress_level return value
+        mock_calculate_stress_level.return_value = "entspannt"
+
+        # Mock the Fitbit API response for heart rate data
+        self.mock_fitbit_api.get_heart_data.return_value = {
+            'activities-heart': [{'value': {'restingHeartRate': 60}}]
+        }
+
+        # Mock the trigger_activity_state return value to None (no sleep data)
+        self.mock_state_machine.trigger_activity_state.return_value = None
+
+        # Mock the TTS API speak method to prevent actual speech
+        self.mock_tts_api.speak = MagicMock()
+
+        # Call the on_enter method
+        self.activity_state.on_enter()
+
+        # Assert the expected behavior for no sleep data
+        self.mock_tts_api.speak.assert_any_call("Entschuldigung, ich konnte keine Schlafdaten der letzten 2 Tage finden.")
+        self.mock_state_machine.activity_idle.assert_called_once()
+
     def test_calculate_daily_stress_level_relaxed(self):
         """Test the stress level calculation when the user is relaxed."""
         # Mock Fitbit API responses
@@ -49,6 +148,58 @@ class TestActivityState(unittest.TestCase):
             self.mock_fitbit_api.get_heart_data.assert_called_once()
             self.mock_fitbit_api.get_steps_data.assert_called_once()
 
+            # Ensure to_csv was not called (indicating that no CSV file was created)
+            #mock_to_csv.assert_not_called()
+
+    def test_calculate_daily_stress_level_very_relaxed(self):
+        """Test the stress level calculation when the user is very relaxed."""
+        # Mock Fitbit API responses for very relaxed state
+        self.mock_fitbit_api.get_heart_data.return_value = {
+            'activities-heart': [{'value': {'restingHeartRate': 60}}],  
+            'activities-heart-intraday': {
+                'dataset': [{'time': '12:00', 'value': 45}]  # Niedrigere Herzfrequenz
+            }
+        }
+        self.mock_fitbit_api.get_steps_data.return_value = {
+            'activities-steps-intraday': {
+                'dataset': [{'time': '12:00', 'value': 20}]  # Sehr niedrige Schritte (zeigt Entspannung)
+            }
+        }
+
+        with patch("pandas.DataFrame.to_csv") as mock_to_csv:
+            # Call the method
+            stress_level = self.activity_state.calculate_daily_stress_level(date.today().strftime('%Y-%m-%d'))
+
+            # Assert the result
+            self.assertEqual(stress_level, "sehr entspannt")
+            self.mock_fitbit_api.get_heart_data.assert_called_once()
+            self.mock_fitbit_api.get_steps_data.assert_called_once()
+            # Ensure to_csv was not called (indicating that no CSV file was created)
+            #mock_to_csv.assert_not_called()
+
+    def test_calculate_daily_stress_level_stressed(self):
+        """Test the stress level calculation when the user is stressed."""
+        # Mock Fitbit API responses for stressed state
+        self.mock_fitbit_api.get_heart_data.return_value = {
+            'activities-heart': [{'value': {'restingHeartRate': 60}}],  
+            'activities-heart-intraday': {
+                'dataset': [{'time': '12:00', 'value': 85}]  # High heart rate
+            }
+        }
+        self.mock_fitbit_api.get_steps_data.return_value = {
+            'activities-steps-intraday': {
+                'dataset': [{'time': '12:00', 'value': 20}]  
+            }
+        }
+
+        with patch("pandas.DataFrame.to_csv") as mock_to_csv:
+            # Call the method
+            stress_level = self.activity_state.calculate_daily_stress_level(date.today().strftime('%Y-%m-%d'))
+
+            # Assert the result
+            self.assertEqual(stress_level, "gestresst")
+            self.mock_fitbit_api.get_heart_data.assert_called_once()
+            self.mock_fitbit_api.get_steps_data.assert_called_once()
             # Ensure to_csv was not called (indicating that no CSV file was created)
             #mock_to_csv.assert_not_called()
 
@@ -182,5 +333,18 @@ class TestActivityState(unittest.TestCase):
         self.mock_tts_api.speak.assert_any_call("Okay, gute Nacht!")
         self.mock_tts_api.ask_yes_no.assert_called_once_with("Möchtest du die Musik abspielen?")
 
-
-
+    def test_no_playlist_found(self):
+        """Test the case when no playlist is found for the stress category."""
+        
+        # Setze einen ungültigen Stresskategorie-Wert, der keine Playlist zugeordnet hat
+        stress_category = "unbekannt"  # Ein Wert, der keine Playlist zugeordnet hat
+        
+        # Rufe die Methode suggest_music auf
+        self.activity_state.suggest_music(stress_category)
+        
+        # Überprüfe, dass die TTS-API die entsprechende Fehlermeldung ausgesprochen hat
+        self.mock_tts_api.speak.assert_called_once_with("Entschuldigung, ich konnte keine passende Playlist finden.")
+        
+        # Sicherstellen, dass keine Musik-Wiedergabe gestartet wurde
+        # (Du solltest sicherstellen, dass der Spotify API-Aufruf nicht gemacht wurde)
+        self.mock_tts_api.ask_yes_no.assert_not_called()
