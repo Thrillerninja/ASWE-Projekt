@@ -17,7 +17,9 @@ class TTSAPI:
     def __init__(self, api_key, toggle_elevenlabs: bool = False):
         if self.__initialized:
             return
+        
         self.__initialized = True
+        self.mic_id = None
 
         try:
             self.engine = pyttsx3.init(driverName='sapi5')
@@ -32,9 +34,8 @@ class TTSAPI:
             self.engine.setProperty('voice', german_voice.id)
 
         self.r = sr.Recognizer()
-        self.mic_id = mic_id if mic_id is not None else self.get_first_active_mic_id()
-    
-        self.r = sr.Recognizer()
+        self.mic_id = self.mic_id if self.mic_id is not None else self.get_first_active_mic_id()
+        
         self.engine_lock = threading.Lock()  # Add a lock for the engine
         
         self.toggle_elevenlabs = toggle_elevenlabs
@@ -99,7 +100,7 @@ class TTSAPI:
                 self.engine.say(text)
             self.engine.runAndWait()
         
-    def list_mics(self, timeout=0.2):
+    def list_mics(self):
         mics = sr.Microphone.list_microphone_names()
         active_mics = []
         for i, mic in enumerate(mics):
