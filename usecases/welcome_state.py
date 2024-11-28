@@ -2,6 +2,8 @@ from typing import Dict
 import datetime
 from unittest.mock import MagicMock
 from loguru import logger
+from unittest.mock import MagicMock
+from loguru import logger
 from api.api_factory import APIFactory
 
 class WelcomeState:
@@ -21,7 +23,12 @@ class WelcomeState:
         if isinstance(default_alarm_time, MagicMock):
             default_alarm_time = "09:00"
         self.default_wakeup_time = datetime.datetime.strptime(default_alarm_time, "%H:%M").time()
+        default_alarm_time = self.state_machine.preferences.get("default_alarm_time", "09:00")
+        if isinstance(default_alarm_time, MagicMock):
+            default_alarm_time = "09:00"
+        self.default_wakeup_time = datetime.datetime.strptime(default_alarm_time, "%H:%M").time()
         
+        logger.info("WelcomeState initialized")
         logger.info("WelcomeState initialized")
     
     def on_enter(self):
@@ -30,9 +37,11 @@ class WelcomeState:
         It sets up the alarm, retrieves the weather forecast, and informs the user about their schedule.
         """
         logger.info("WelcomeState entered")
+        logger.info("WelcomeState entered")
         
         # Calculate wake-up time based on the first calendar appointment
         wakeup_time = self.calc_alarm_time()
+        logger.info(f"Wake-up time set for: {wakeup_time}")
         logger.info(f"Wake-up time set for: {wakeup_time}")
 
         # TODO: Set the alarm using the calculated wakeup_time
@@ -60,6 +69,19 @@ class WelcomeState:
         if current_weather:
             current_weather_info = f" Im Moment sind es {int(current_weather['main']['temp'])}°C."
         
+        
+        weather_info = ""
+        if min_temp is not None and max_temp is not None:
+            weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {str(min_temp).replace('.', ',')}°C und {str(max_temp).replace('.', ',')}°C liegen"
+            if condition is not None:
+                weather_info += f" und es wird {condition}."
+            else:
+                weather_info += "."
+        
+        current_weather_info = ""
+        if current_weather:
+            current_weather_info = f" Im Moment sind es {int(current_weather['main']['temp'])}°C."
+        
         self.tts_api.speak(good_morning_message + weather_info + current_weather_info)
         
         # TODO: Check for delays in the public transport
@@ -69,6 +91,7 @@ class WelcomeState:
         if appointments:
             first_appointment = appointments[0]
             self.tts_api.speak(f" Ihr erster Termin ist um {first_appointment.start} im {first_appointment.room}.")
+            self.tts_api.speak(f" Ihr erster Termin ist um {first_appointment.start} im {first_appointment.room}.")
         else:
             self.tts_api.speak("Sie haben heute keine Termine.")
         
@@ -77,7 +100,6 @@ class WelcomeState:
         if user_response:
             self.state_machine.morning_news()
         else:
-            self.tts_api.speak("Okay, lassen Sie mich wissen wenn ich Ihnen helfen kann!")
             self.tts_api.speak("Okay, lassen Sie mich wissen wenn ich Ihnen helfen kann!")
             self.state_machine.interaction()
         
