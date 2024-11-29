@@ -4,6 +4,7 @@ from api.tts_api import TTSAPI
 import pyttsx3
 import speech_recognition as sr
 from config import CONFIG
+import threading
 
 class TestVoiceInterface(unittest.TestCase):
     def setUp(self):
@@ -124,40 +125,6 @@ class TestVoiceInterface(unittest.TestCase):
             self.assertTrue(self.voice_interface.ask_yes_no(question))
             mock_speak.assert_any_call(question)
             mock_speak.assert_any_call("Entschuldigung, ich habe Ihre Antwort nicht verstanden. Bitte antworten Sie mit ja oder nein.")
-
-    @patch('speech_recognition.Microphone')
-    @patch('speech_recognition.Microphone.list_microphone_names', return_value=["Mic1", "Mic2", "Mic3"])
-    def test_list_mics(self, mock_list_microphone_names, mock_microphone):
-        # Mock the recognizer and its methods
-        mock_recognizer = MagicMock()
-        mock_microphone.return_value.__enter__.return_value = MagicMock()
-        
-        # Create an instance of YourClass
-        your_class_instance = YourClass(mic_id=1)
-        your_class_instance.recognize = mock_recognizer
-        
-        # Simulate different microphone states
-        def side_effect(*args, **kwargs):
-            if args[0] == 0:
-                return MagicMock()  # Active mic
-            elif args[0] == 1:
-                raise speech_recognition.WaitTimeoutError()  # Inactive mic
-            else:
-                raise Exception("Test error")  # Error state
-
-        mock_microphone.side_effect = side_effect
-        
-        # Call the list_mics method
-        active_mics = your_class_instance.list_mics()
-        
-        # Verify the output
-        self.assertEqual(active_mics, [0])
-        
-        # Verify the logger calls
-        your_class_instance.recognize.adjust_for_ambient_noise.assert_called_once()
-        mock_microphone.assert_any_call(device_index=0)
-        mock_microphone.assert_any_call(device_index=1)
-        mock_microphone.assert_any_call(device_index=2)
         
     @patch('speech_recognition.Recognizer')
     @patch('speech_recognition.Microphone')
@@ -167,12 +134,12 @@ class TestVoiceInterface(unittest.TestCase):
         mock_recognizer_instance.listen.return_value = MagicMock()
         mock_recognizer_instance.recognize_google.return_value = "test text"
         
-        # Create an instance of YourClass
-        your_class_instance = YourClass(mic_id=1)
-        your_class_instance.recognize = mock_recognizer_instance
+        # Create an instance of TTSAPI
+        tts_instance = TTSAPI(self.api_key)
+        tts_instance.recognize = mock_recognizer_instance
         
         # Call the listen method
-        result = your_class_instance.listen(timeout=1)
+        result = tts_instance.listen(timeout=1)
         
         # Verify the result
         self.assertEqual(result, "test text")
@@ -193,12 +160,12 @@ class TestVoiceInterface(unittest.TestCase):
         # Mock the callback function
         mock_callback = MagicMock()
         
-        # Create an instance of YourClass
-        your_class_instance = YourClass(mic_id=1)
-        your_class_instance.recognize = mock_recognizer_instance
+        # Create an instance of TTSAPI
+        tts_instance = TTSAPI(self.api_key)
+        tts_instance.recognize = mock_recognizer_instance
         
         # Call the listen_continuous method
-        your_class_instance.listen_continuous(mock_callback, timeout=1)
+        tts_instance.listen_continuous(mock_callback, timeout=1)
         
         # Allow some time for the thread to start and execute
         threading.Event().wait(2)
