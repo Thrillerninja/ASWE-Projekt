@@ -119,9 +119,9 @@ class ActivityState:
         """
         # Map stress categories to Spotify playlists
         playlist_map = {
-            "sehr entspannt": "37i9dQZF1DWZd79rJ6a7lp", # TODO replace with actual playlist IDs
-            "entspannt": "37i9dQZF1DX4sWSpwq3LiO",
-            "gestresst": "37i9dQZF1DX9XIFQuFvzM4"
+            "sehr entspannt": "37i9dQZF1DX4WYpdgoIcn6", # Chill Hits: https://open.spotify.com/playlist/37i9dQZF1DX4WYpdgoIcn6?si=fa361545cf794360
+            "entspannt": "37i9dQZF1DWU0ScTcjJBdj", # Relax & Unwind: https://open.spotify.com/playlist/37i9dQZF1DWU0ScTcjJBdj?si=fa361545cf794360
+            "gestresst": "37i9dQZF1DWXe9gFZP0gtP" # Stress Relief: https://open.spotify.com/playlist/37i9dQZF1DWXe9gFZP0gtP?si=fa361545cf794360
         }
         playlist_id = playlist_map.get(stress_category)
         if not playlist_id:
