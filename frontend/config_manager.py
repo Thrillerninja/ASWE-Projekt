@@ -14,6 +14,7 @@ def load_preferences_file() -> dict:
     If the file is not found, or if the JSON is invalid, it returns an empty dictionary.
 
     The dictionary returned contains the following possible keys and their corresponding types:
+        - "enable_elevenlabs" (bool): (0 / 1) Enable or disable the Elevenlabs API for text-to-speech.
         - "fuel_type" (str): Type of fuel (e.g., "diesel").
         - "fuel_threshold" (float): Fuel threshold in € (e.g., 1.5).
         - "fuel_step_size" (float): Step size for fuel threshold in € (e.g., 0.05).

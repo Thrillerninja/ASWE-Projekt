@@ -1,4 +1,5 @@
 {
+  "enable_elevenlabs": 0,
   "fuel_type": "super-e5",
   "fuel_threshold": 1.85,
   "fuel_step_size": 0.05,
@@ -6,7 +7,6 @@
   "fuel_demo_price": 1.0,
   "default_alarm_time": "08:00",
   "sleep_time": "22:00",
-  "enable_elevenlabs": 1,
   "home_location": {
     "name": "asperg",
     "vvs_code": "de:08118:7400",

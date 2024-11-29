@@ -116,7 +116,7 @@ class ActivityState:
         """
         # Map stress categories to Spotify playlists
         playlist_map = {
-            "sehr entspannt": "37i9dQZF1DWZd79rJ6a7lp",
+            "sehr entspannt": "37i9dQZF1DWZd79rJ6a7lp", # TODO replace with actual playlist IDs
             "entspannt": "37i9dQZF1DX4sWSpwq3LiO",
             "gestresst": "37i9dQZF1DX9XIFQuFvzM4"
         }
@@ -142,7 +142,7 @@ class ActivityState:
                 # Use Spotify API to start music playback on a specific device
                 device_id = "1234567"  
                 logger.info(f"Would start playback of playlist {playlist_id} on device {device_id}.")
-                #self.spotify_api.start_playback(playlist_id=playlist_id, device_id=device_id)
+                #self.spotify_api.start_playback(playlist_id=playlist_id, device_id=device_id) # TODO Start spotify
                 logger.info(f"Playback of playlist {playlist_id} successfully started.")
             except Exception as e:
                 # Handle playback errors
