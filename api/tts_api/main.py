@@ -7,6 +7,7 @@ import pygame
 
 class TTSAPI:
     _instance = None
+    toggle_elevenlabs = False
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
