@@ -1,10 +1,8 @@
-
 import pyttsx3
 import speech_recognition as sr
 import requests
 import pygame
-import requests
-import pygame
+import json
 
 class TTSAPI():
     """
@@ -17,7 +15,7 @@ class TTSAPI():
             cls._instance = super(TTSAPI, cls).__new__(cls)
         return cls._instance
     
-    def __init__(self, api_key, toggle_elevenlabs: bool = False):
+    def __init__(self, api_key):
         """
         Initializes the Interface
         """
@@ -33,7 +31,7 @@ class TTSAPI():
         german_voice = next((voice for voice in voices if "de" in voice.languages), None)
         if german_voice:
             self.engine.setProperty('voice', german_voice.id)
-        self.toggle_elevenlabs = toggle_elevenlabs
+        self.toggle_elevenlabs = self.get_elevenlabs_preference()
         self.r = sr.Recognizer()
         self.api_key = api_key
         pygame.init()
@@ -54,6 +52,21 @@ class TTSAPI():
               "xi-api-key": self.api_key
             }
         
+    def get_elevenlabs_preference(self):
+        """
+        Reads the preferences.json file and returns the value for elevenlabs as a boolean
+        """
+        try:
+            with open('./config/preferences.json', 'r') as f:
+                preferences = json.load(f)
+                return bool(preferences.get('enable_elevenlabs', 0))
+        except FileNotFoundError:
+            print("preferences.json file not found.")
+            return False
+        except json.JSONDecodeError:
+            print("Error decoding preferences.json.")
+            return False
+
     def authenticate(self):
         """
         No authentication required
