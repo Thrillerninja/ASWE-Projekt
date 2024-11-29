@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from usecases.activity_state import ActivityState
 import pandas as pd
 
@@ -26,6 +26,9 @@ class TestActivityState(unittest.TestCase):
         self.activity_state = ActivityState(self.mock_state_machine)
         self.pd_to_csv = "pandas.DataFrame.to_csv"
         self.activity_logger_info = "usecases.activity_state.logger.info"
+
+        self.logger_patch = patch('usecases.activity_state.logger')
+        self.mock_logger = self.logger_patch.start()
 
     @patch('usecases.activity_state.ActivityState.calculate_daily_stress_level')
     def test_on_enter_with_stress_level(self, mock_calculate_stress_level):
@@ -348,28 +351,68 @@ class TestActivityState(unittest.TestCase):
         
         self.mock_tts_api.ask_yes_no.assert_not_called()
 
-    @patch('usecases.activity_state.datetime')
-    def test_check_trigger_activity_time_matches(self, mock_datetime):
-        """Test that goto_activity is called when current time matches the sleep time and last_activated_at is different."""
-        mock_now = MagicMock()
-        mock_now.strftime.return_value = "2024-11-29 22:00"
-        mock_datetime.datetime.now.return_value = mock_now
+    def test_pause_spotify_playback_success(self):
+        """Test that Spotify playback is paused successfully and logs success."""
+        
+        self.activity_state.pause_spotify_playback()
 
-        self.activity_state.last_activated_at = "2024-11-29 21:00"
+        self.mock_spotify_api.pause_playback.assert_called_once()
 
+        self.mock_logger.info.assert_called_with("Spotify playback paused successfully.")
+
+    def test_pause_spotify_playback_error(self):
+        """Test that an error is logged when pausing playback fails."""
+        
+        # Simulate an exception being raised by pause_playback
+        self.mock_spotify_api.pause_playback.side_effect = Exception("Spotify API error")
+        
+        # Call the function under test
+        self.activity_state.pause_spotify_playback()
+
+        # Assert that pause_playback was called
+        self.mock_spotify_api.pause_playback.assert_called_once()
+
+        # Assert that the error log message was called with the expected exception message
+        self.mock_logger.warning.assert_called_with("Error pausing Spotify playback: Spotify API error")
+
+    @patch('datetime.datetime')
+    def test_get_one_hour_after_sleep_time(self, mock_datetime):
+        """Test the get_one_hour_after_sleep_time function."""
+        mock_datetime.strptime = datetime.strptime
+        
+        result = self.activity_state.get_one_hour_after_sleep_time("22:00")
+        self.assertEqual(result, "23:00")
+        
+        result = self.activity_state.get_one_hour_after_sleep_time("23:59")
+        self.assertEqual(result, "00:59")
+        
+        result = self.activity_state.get_one_hour_after_sleep_time("00:00")
+        self.assertEqual(result, "01:00")
+
+    @patch('datetime.datetime')
+    def test_check_trigger_activity_when_current_time_is_sleep_time(self, mock_datetime):
+        """Test if 'goto_activity' is called when current time matches default sleep time."""
+        # Mock the current time as exactly 22:00 (sleep time)
+        mock_datetime.now.return_value = datetime(2024, 11, 29, 22, 0)  # Current time is 22:00
+        self.activity_state.last_activated_at = "2024-11-29 21:59"  # Last activation time is different
+
+        # Call the method
         self.activity_state.check_trigger_activity()
+
+        # Assert goto_activity is called
         self.mock_state_machine.goto_activity.assert_called_once()
 
+    @patch('datetime.datetime')
+    def test_check_trigger_activity_when_current_time_is_neither_sleep_time_nor_one_hour_after(self, mock_datetime):
+        """Test that no action is taken when current time is neither sleep time nor one hour after."""
+        # Mock the current time as 21:30 (neither 22:00 nor 23:00)
+        mock_datetime.now.return_value = datetime(2024, 11, 29, 21, 30)  # Current time is 21:30
+        self.activity_state.last_activated_at = "2024-11-29 21:59"  # Last activation time is different
+        self.activity_state.last_playback_stop_activated_at = "2024-11-29 22:59"  # Last playback stop time is different
 
-    @patch('usecases.activity_state.datetime')
-    def test_check_trigger_activity_does_not_enter_if(self, mock_datetime):
-        """Test that goto_activity is NOT called when current time does not match or last_activated_at is the same."""
-        mock_now = MagicMock()
-        mock_now.strftime.return_value = "2024-11-29 20:00"
-        mock_datetime.datetime.now.return_value = mock_now
-
-        self.activity_state.last_activated_at = "2024-11-29 20:00"
-
+        # Call the method
         self.activity_state.check_trigger_activity()
-        self.mock_state_machine.goto_activity.assert_not_called()
 
+        # Assert neither method is called
+        self.mock_state_machine.goto_activity.assert_not_called()
+        self.mock_spotify_api.pause_spotify_playback.assert_not_called()

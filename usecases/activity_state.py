@@ -19,6 +19,7 @@ class ActivityState:
         self.tts_api = self.state_machine.api_factory.create_api(api_type="tts")
         self.spotify_api = self.state_machine.api_factory.create_api(api_type="spotify")
         self.last_activated_at = datetime.datetime.min.strftime('%Y-%m-%d %H:%M')
+        self.last_playback_stop_activated_at = datetime.datetime.min.strftime('%Y-%m-%d %H:%M')
         logger.info("ActivityState initialized")
 
     def on_enter(self):
@@ -139,7 +140,6 @@ class ActivityState:
         
         # Ask the user if they want to play the recommended playlist
         user_response = self.tts_api.ask_yes_no("Möchtest du die Musik abspielen?")
-        # user_response = True
         if user_response:
             try:
                 # Use Spotify API to start music playback on a specific device
@@ -227,6 +227,22 @@ class ActivityState:
         except Exception as e:
             logger.error(f"Error retrieving sleep start time for {date}: {e}")
             return None
+        
+    def pause_spotify_playback(self):
+        """Tries to stop spotify playback."""
+        self.last_playback_stop_activated_at = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+        try:
+            self.spotify_api.pause_playback()
+            logger.info("Spotify playback paused successfully.")
+        except Exception as e:
+            logger.warning(f"Error pausing Spotify playback: {e}")
+
+    def get_one_hour_after_sleep_time(self, default_sleep_time: str) -> str:
+        """Calculates the time that is exactly one hour after the given sleep time."""
+        default_sleep_time_obj = datetime.datetime.strptime(default_sleep_time, '%H:%M')
+        one_hour_after_sleep_time = (default_sleep_time_obj + datetime.timedelta(hours=1)).strftime('%H:%M')
+        return one_hour_after_sleep_time
+
 
     def check_trigger_activity(self):
         #trigger Activity Use Case
@@ -236,5 +252,16 @@ class ActivityState:
         current_day_and_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
         current_time = current_day_and_time.split(" ")[1]
 
+        one_hour_after_sleep_time = self.get_one_hour_after_sleep_time(default_sleep_time)
+
+        print(f"current_day_and_time: {current_day_and_time}")
+        print(f"current_time: {current_time}")
+        print(f"default_sleep_time: {default_sleep_time}")
+        print(f"one_hour_after_sleep_time: {one_hour_after_sleep_time}")
+        print(f"last_activated_at: {self.last_activated_at}")
+        print(f"last_playback_stop_activated_at: {self.last_playback_stop_activated_at}")
+
         if current_time == default_sleep_time and current_day_and_time != self.last_activated_at:
             self.state_machine.goto_activity()
+        elif current_time == one_hour_after_sleep_time and current_day_and_time != self.last_playback_stop_activated_at:
+            self.pause_spotify_playback()
