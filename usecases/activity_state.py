@@ -1,6 +1,7 @@
 import datetime
 import os
 from loguru import logger
+from typing import Optional
 from api.fitbit_api.main import FitbitAPI
 import pandas as pd
 from api.spotify_api.main import SpotifyAPI
@@ -57,7 +58,7 @@ class ActivityState:
         # Transition back to an idle state
         self.state_machine.activity_idle()
 
-    def calculate_daily_stress_level(self, date: str) -> str | None:
+    def calculate_daily_stress_level(self, date: str) -> Optional[str]:
         """
         Calculate the user's daily stress level based on Fitbit heart and step data.
         """
@@ -192,7 +193,7 @@ class ActivityState:
         return avg_sleep_time
 
 
-    def get_sleep_start_time(self, date: str) -> str | None:
+    def get_sleep_start_time(self, date: str) -> Optional[str]:
         """
         Retrieves the user's sleep start time (primarily at night).
         :param date: The date for which to retrieve the sleep start time, in 'YYYY-MM-DD' format.
