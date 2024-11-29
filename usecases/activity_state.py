@@ -46,7 +46,7 @@ class ActivityState:
 
         # Analyze and provide feedback on sleep data for the last 'days' days
         days = 2
-        avg_sleep_time = self.trigger_activity_state(days)
+        avg_sleep_time = self.average_sleep_time(days)
         if avg_sleep_time:
             self.tts_api.speak(f"Deine durchschnittliche Schlafzeit der letzten {days} Tage beträgt {avg_sleep_time}.")
         else:
@@ -152,7 +152,7 @@ class ActivityState:
 
 
         
-    def trigger_activity_state(self, days=1): 
+    def average_sleep_time(self, days=1): 
         """
         Calculates the average sleep start time over the last 'days' days.
         :param days: Number of days to calculate the average sleep start time for (including today).
@@ -224,3 +224,12 @@ class ActivityState:
         except Exception as e:
             logger.error(f"Error retrieving sleep start time for {date}: {e}")
             return None
+
+    def check_trigger_activity(self):
+        #trigger Activity Use Case
+        calculated_sleep_time = self.average_sleep_time(days=2) 
+        default_sleep_time = self.state_machine.preferences.get("sleep_time")  
+        current_time = datetime.now().strftime('%H:%M')
+
+        if current_time == default_sleep_time:
+            self.state_machine.goto_activity()

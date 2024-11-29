@@ -23,3 +23,5 @@ class IdleState:
         Check if a trigger is activated.
         """
         self.state_machine.start()
+
+        self.state_machine.activity.check_trigger_activity()
