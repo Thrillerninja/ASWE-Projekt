@@ -183,7 +183,7 @@ class TestVoiceInterface(unittest.TestCase):
         mock_list_microphone_names.assert_called_once()
 
 
- class TestGetElevenlabsPreference(unittest.TestCase):
+class TestGetElevenlabsPreference(unittest.TestCase):
 
     def setUp(self):
         """Set up the mocks and the instance of TTSAPI."""
