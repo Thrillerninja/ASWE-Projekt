@@ -3,6 +3,8 @@ import speech_recognition as sr
 import requests
 import pygame
 import json
+import os
+import time
 
 class TTSAPI():
     """
@@ -34,16 +36,6 @@ class TTSAPI():
         self.toggle_elevenlabs = self.get_elevenlabs_preference()
         self.r = sr.Recognizer()
         self.api_key = api_key
-        pygame.init()
-        self.CHUNK_SIZE = 1024
-        self.url = "https://api.elevenlabs.io/v1/text-to-speech/pqHfZKP75CvOlQylNhV4"
-        self.headers = {
-              "Accept": "audio/mpeg",
-              "Content-Type": "application/json",
-              "xi-api-key": self.api_key
-            }
-        self.api_key = api_key
-        pygame.init()
         self.CHUNK_SIZE = 1024
         self.url = "https://api.elevenlabs.io/v1/text-to-speech/pqHfZKP75CvOlQylNhV4"
         self.headers = {
@@ -81,6 +73,7 @@ class TTSAPI():
         if not isinstance(text, str) or not text.strip():
             raise ValueError("Text input must be a non-empty string.")
         if self.toggle_elevenlabs:
+            pygame.init()
             data = {
                 "text": text,
                 "model_id": "eleven_multilingual_v2",
@@ -98,6 +91,8 @@ class TTSAPI():
             pygame.mixer.music.play()
             while pygame.mixer.music.get_busy():
                 pass
+            pygame.mixer.music.stop()
+            pygame.mixer.quit()
         else:    
             self.engine.say(text)
             self.engine.runAndWait()
