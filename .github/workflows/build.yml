@@ -141,6 +141,13 @@ jobs:
       - name: Install eSpeak
         run: sudo apt-get install espeak -y
 
+        
+      # Install system dependencies including PortAudio
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y espeak portaudio19-dev libasound2-dev
+
       # Install dependencies
       - name: Install dependencies
         run: |

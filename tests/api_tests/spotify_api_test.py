@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch, MagicMock, ANY
+from unittest.mock import patch, MagicMock, ANY, mock_open
 import json
 import time
 import requests
@@ -17,9 +17,19 @@ class TestSpotifyAPI(unittest.TestCase):
         
         self.client_id = "test_client_id"
         self.client_secret = "test_client_secret"
-        self.spotify_api = SpotifyAPI(self.client_id, self.client_secret)
+        
+        # Mock the token file handling
+        self.mock_token_data = {
+            'access_token': 'test_access_token',
+            'refresh_token': 'test_refresh_token',
+            'expires_in': 3600,
+            'expires_at': time.time() + 3600
+        }
+        self.mock_open = mock_open(read_data=json.dumps(self.mock_token_data))
+        with patch('builtins.open', self.mock_open):
+            self.spotify_api = SpotifyAPI(self.client_id, self.client_secret)
 
-    @patch('api.spotify_api.main.get_access_token')
+    @patch('api.spotify_api.spotify_auth.get_access_token')
     def test_authenticate(self, mock_get_access_token):
         mock_get_access_token.return_value = "test_access_token"
         
@@ -28,7 +38,7 @@ class TestSpotifyAPI(unittest.TestCase):
         mock_get_access_token.assert_called_once_with(self.client_id, self.client_secret)
         self.assertEqual(token, "test_access_token")
 
-    @patch('api.spotify_api.main.get_access_token')
+    @patch('api.spotify_api.spotify_auth.get_access_token')
     def test_update_token(self, mock_get_access_token):
         mock_get_access_token.return_value = "test_access_token"
         
