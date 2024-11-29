@@ -82,6 +82,49 @@ class TestVoiceInterface(unittest.TestCase):
             mock_speak.assert_any_call(question)
             mock_speak.assert_any_call("Entschuldigung, ich habe Ihre Antwort nicht verstanden. Bitte antworten Sie mit ja oder nein.")
 
+    @patch('speech_recognition.Microphone.list_microphone_names', return_value=['Microphone 1', 'Microphone 2'])
+    def test_list_mics(self, mock_list_microphone_names):
+        """Test the list_mics function to check available microphones."""
+
+        # Call the list_mics method
+        mics = self.voice_interface.list_mics()
+
+        # Assert the mocked list of microphones was returned
+        self.assertEqual(mics, ['Microphone 1', 'Microphone 2'])
+
+        # Ensure the list_microphone_names function was called once
+        mock_list_microphone_names.assert_called_once()
+
+    @patch('speech_recognition.Microphone.list_microphone_names', return_value=[])
+    def test_list_mics_no_mics(self, mock_list_microphone_names):
+        """Test the list_mics function when no microphones are available."""
+
+        # Call the list_mics method
+        mics = self.voice_interface.list_mics()
+
+        # Assert the list is empty when no mics are available
+        self.assertEqual(mics, [])
+
+        # Ensure the list_microphone_names function was called once
+        mock_list_microphone_names.assert_called_once()
+
+    @patch('speech_recognition.Microphone.list_microphone_names', return_value=['Mic 1', 'Mic 2', 'Mic 3'])
+    @patch('builtins.print')  # Mock print to test that it was called
+    def test_list_mics_prints_output(self, mock_print, mock_list_microphone_names):
+        """Test that the list_mics function prints out the microphone names."""
+
+        # Call the list_mics method
+        self.voice_interface.list_mics()
+
+        # Assert that the print function was called for each microphone
+        mock_print.assert_any_call("Available microphones:")
+        mock_print.assert_any_call("0: Mic 1")
+        mock_print.assert_any_call("1: Mic 2")
+        mock_print.assert_any_call("2: Mic 3")
+        
+        # Ensure the list_microphone_names function was called once
+        mock_list_microphone_names.assert_called_once()
+
 class TestVoiceInterfaceElevenLabs(unittest.TestCase):
     def setUp(self):
         patch('api.tts_api.TTSAPI.get_elevenlabs_preference', return_value=True).start()
@@ -100,7 +143,6 @@ class TestVoiceInterfaceElevenLabs(unittest.TestCase):
         """
         Test speak functionality of ElevenLabs with valid and invalid inputs
         """
-        patch('api.tts_api.TTSAPI.get_elevenlabs_preference', return_value=True).start()
 
         # Mock response from ElevenLabs API
         mock_response = MagicMock()
@@ -137,70 +179,67 @@ class TestVoiceInterfaceElevenLabs(unittest.TestCase):
         self.assertTrue(self.voice_interface.toggle_elevenlabs)
 
 class TestGetElevenlabsPreference(unittest.TestCase):
-    
+
     def setUp(self):
         """Set up the mocks and the instance of TTSAPI."""
-        # Mock the get_elevenlabs_preference method globally during the instantiation of TTSAPI
         self.api_key = "mock_api_key"  # You can use a mock or actual key as per your test environment
-        self.voice_interface = MagicMock(spec=TTSAPI)  # Create a MagicMock for the TTSAPI instance
-        self.voice_interface.engine = MagicMock()
 
-    @patch('api.tts_api.TTSAPI.get_elevenlabs_preference', return_value=True)  # Mock here
-    def test_get_elevenlabs_preference_valid(self, mock_get_elevenlabs_preference):
+    @patch('builtins.open', new_callable=mock_open)
+    def test_get_elevenlabs_preference_valid(self, mock_file):
         """Test when preferences.json exists and contains valid data."""
-        # Mock response from preferences.json to return True (enabled)
-        mock_get_elevenlabs_preference.return_value = True
+        # Simulate valid JSON content with 'enable_elevenlabs' set to 1 (True)
+        mock_file.return_value.read.return_value = json.dumps({'enable_elevenlabs': 1})
 
         # Instantiate the TTSAPI class
         vi = TTSAPI(self.api_key)
 
-        # Verify that the mocked method was called during initialization
-        mock_get_elevenlabs_preference.assert_called_once()
+        # Verify that the file was opened and read
+        mock_file.assert_called_once_with('./config/preferences.json', 'r')
 
-        # Ensure that toggle_elevenlabs was set to True
+        # Ensure that toggle_elevenlabs was set to True based on the valid JSON content
         self.assertTrue(vi.toggle_elevenlabs)
 
     @patch('builtins.open', new_callable=mock_open)
-    @patch('api.tts_api.TTSAPI.get_elevenlabs_preference', return_value=False)
-    def test_get_elevenlabs_preference_missing_enable_elevenlabs(self, mock_get_elevenlabs_preference, mock_file):
+    def test_get_elevenlabs_preference_missing_enable_elevenlabs(self, mock_file):
         """Test when preferences.json exists but is missing the 'enable_elevenlabs' field."""
+        # Simulate JSON without 'enable_elevenlabs' key (defaults to 0)
         mock_file.return_value.read.return_value = json.dumps({'other_field': 1})
 
         # Instantiate the TTSAPI class
         vi = TTSAPI(self.api_key)
 
-        # Verify that the mocked method was called during initialization
-        mock_get_elevenlabs_preference.assert_called_once()
+        # Verify that the file was opened and read
+        mock_file.assert_called_once_with('./config/preferences.json', 'r')
 
-        # Ensure that toggle_elevenlabs was set to False
+        # Ensure that toggle_elevenlabs was set to False due to the absence of 'enable_elevenlabs'
         self.assertFalse(vi.toggle_elevenlabs)
 
     @patch('builtins.open', new_callable=mock_open)
-    @patch('api.tts_api.TTSAPI.get_elevenlabs_preference', return_value=False)
-    def test_get_elevenlabs_preference_file_not_found(self, mock_get_elevenlabs_preference, mock_file):
+    def test_get_elevenlabs_preference_file_not_found(self, mock_file):
         """Test when preferences.json file is not found (FileNotFoundError)."""
+        # Simulate a FileNotFoundError by setting the side effect
         mock_file.side_effect = FileNotFoundError
 
         # Instantiate the TTSAPI class
         vi = TTSAPI(self.api_key)
 
-        # Verify that the mocked method was called during initialization
-        mock_get_elevenlabs_preference.assert_called_once()
+        # Verify that the file was attempted to be opened
+        mock_file.assert_called_once_with('./config/preferences.json', 'r')
 
         # Ensure that toggle_elevenlabs was set to False due to FileNotFoundError
         self.assertFalse(vi.toggle_elevenlabs)
 
     @patch('builtins.open', new_callable=mock_open)
-    @patch('api.tts_api.TTSAPI.get_elevenlabs_preference', return_value=False)
-    def test_get_elevenlabs_preference_json_decode_error(self, mock_get_elevenlabs_preference, mock_file):
+    def test_get_elevenlabs_preference_json_decode_error(self, mock_file):
         """Test when preferences.json contains invalid JSON (JSONDecodeError)."""
+        # Simulate invalid JSON content (missing closing brace)
         mock_file.return_value.read.return_value = '{invalid_json'  # Invalid JSON
 
         # Instantiate the TTSAPI class
         vi = TTSAPI(self.api_key)
 
-        # Verify that the mocked method was called during initialization
-        mock_get_elevenlabs_preference.assert_called_once()
+        # Verify that the file was opened and read
+        mock_file.assert_called_once_with('./config/preferences.json', 'r')
 
         # Ensure that toggle_elevenlabs was set to False due to JSONDecodeError
         self.assertFalse(vi.toggle_elevenlabs)
