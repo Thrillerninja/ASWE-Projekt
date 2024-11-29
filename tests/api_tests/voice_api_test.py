@@ -159,7 +159,7 @@ class TestVoiceInterface(unittest.TestCase):
         mock_microphone.assert_any_call(device_index=1)
         mock_microphone.assert_any_call(device_index=2)
         
-        @patch('your_class_file.sr.Recognizer')
+    @patch('your_class_file.sr.Recognizer')
     @patch('your_class_file.sr.Microphone')
     def test_listen(self, mock_microphone, mock_recognizer):
         # Mock the recognizer and its methods
