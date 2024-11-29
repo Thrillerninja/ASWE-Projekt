@@ -72,8 +72,8 @@ class TestActivityState(unittest.TestCase):
         self.mock_state_machine.activity_idle.assert_called_once()
 
     @patch('usecases.activity_state.ActivityState.calculate_daily_stress_level')
-    @patch('usecases.activity_state.ActivityState.trigger_activity_state')
-    def test_on_enter_with_sleep_data(self, mock_trigger_activity_state, mock_calculate_stress_level):
+    @patch('usecases.activity_state.ActivityState.average_sleep_time')
+    def test_on_enter_with_sleep_data(self, mock_average_sleep_time, mock_calculate_stress_level):
         """Test the on_enter method when sleep data is available."""
 
         # Mock the calculate_daily_stress_level return value
@@ -85,7 +85,7 @@ class TestActivityState(unittest.TestCase):
         }
 
         # Mock the trigger_activity_state return value
-        mock_trigger_activity_state.return_value = 7.5  # Average sleep time in hours
+        mock_average_sleep_time.return_value = 7.5  # Average sleep time in hours
 
         # Mock the TTS API speak method to prevent actual speech
         self.mock_tts_api.speak = MagicMock()
@@ -94,7 +94,7 @@ class TestActivityState(unittest.TestCase):
         self.activity_state.on_enter()
 
         # Assert the expected behavior for sleep data
-        mock_trigger_activity_state.assert_called_once_with(2)  # 2 days of sleep data
+        mock_average_sleep_time.assert_called_once_with(2)  # 2 days of sleep data
         self.mock_tts_api.speak.assert_any_call("Deine durchschnittliche Schlafzeit der letzten 2 Tage beträgt 7.5.")
         self.mock_state_machine.activity_idle.assert_called_once()
 
@@ -111,7 +111,7 @@ class TestActivityState(unittest.TestCase):
         }
 
         # Mock the trigger_activity_state return value to None (no sleep data)
-        self.mock_state_machine.trigger_activity_state.return_value = None
+        self.mock_state_machine.average_sleep_time.return_value = None
 
         # Mock the TTS API speak method to prevent actual speech
         self.mock_tts_api.speak = MagicMock()
@@ -212,7 +212,7 @@ class TestActivityState(unittest.TestCase):
         ]
 
         # Call the method
-        avg_sleep_time = self.activity_state.trigger_activity_state(days=2)
+        avg_sleep_time = self.activity_state.average_sleep_time(days=2)
 
         # Assert the result
         self.assertEqual(avg_sleep_time, "22:45")
