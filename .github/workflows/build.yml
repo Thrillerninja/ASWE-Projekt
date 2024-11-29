@@ -66,6 +66,8 @@ jobs:
           echo "NEWS_API_KEY=${{ secrets.NEWS_API_KEY }}" >> $GITHUB_ENV
           echo "SPOTIFY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }}" >> $GITHUB_ENV
           echo "SPOTIFY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "FITBIT_CLIENT_ID=${{ secrets.FITBIT_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "FITBIT_CLIENT_SECRET=${{ secrets.FITBIT_CLIENT_SECRET }}" >> $GITHUB_ENV
           echo "ELEVENLABS_API_KEY=${{ secrets.ELEVENLABS_API_KEY }}" >> $GITHUB_ENV
 
       # Start virtual display (Xvfb) for GUI-based tests
@@ -88,6 +90,8 @@ jobs:
           NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          FITBIT_CLIENT_ID: ${{ secrets.FITBIT_CLIENT_ID }}
+          FITBIT_CLIENT_SECRET: ${{ secrets.FITBIT_CLIENT_SECRET }}
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           QT_QPA_PLATFORM: offscreen # Force Qt to use offscreen rendering
         run: |
@@ -100,8 +104,8 @@ jobs:
           WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
           FINANCE_API_KEY: ${{ secrets.FINANCE_API_KEY }}
           NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
-          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
-          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          FITBIT_CLIENT_ID: ${{ secrets.FITBIT_CLIENT_ID }}
+          FITBIT_CLIENT_SECRET: ${{ secrets.FITBIT_CLIENT_SECRET }}
           PYTHONPATH: ${{ github.workspace }}
           QT_QPA_PLATFORM: offscreen # Force Qt to use offscreen rendering
         run: |

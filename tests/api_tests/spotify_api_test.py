@@ -3,6 +3,7 @@ from unittest.mock import patch, MagicMock, ANY, mock_open
 import json
 import time
 import requests
+from io import StringIO
 from api.api_client import APIClient
 from api.spotify_api.main import SpotifyAPI
 from api.spotify_api.spotify_auth import generate_auth_url, get_initial_token, refresh_token, save_token, get_access_token, TOKEN_FILE
@@ -138,6 +139,57 @@ class TestSpotifyAPI(unittest.TestCase):
         mock_logger_error.assert_any_call("Error parsing response: No JSON content")
         mock_logger_error.assert_any_call("Failed to start playback: No response content")
 
+    @patch.object(APIClient, 'put')
+    def test_pause_playback_successful(self, mock_put):
+        # Simulate a 204 No Content response, which means the pause was successful
+        mock_put.return_value.status_code = 204
+
+        with patch('builtins.print') as mock_print:
+            self.spotify_api.pause_playback("test_device_id")
+        
+            mock_put.assert_called_once_with("me/player/pause", data={"device_id": "test_device_id"})
+            mock_print.assert_called_once_with("Playback paused successfully!")
+
+    @patch.object(APIClient, 'put')
+    def test_pause_playback_error(self, mock_put):
+        # Simulate an HTTPError (e.g., device not active)
+        mock_put.side_effect = requests.exceptions.HTTPError
+
+        with patch('builtins.print') as mock_print:
+            self.spotify_api.pause_playback("test_device_id")
+        
+            mock_put.assert_called_once_with("me/player/pause", data={"device_id": "test_device_id"})
+            mock_print.assert_called_once_with("ERROR stopping music: Device 'test_device_id' is not active.")
+
+    @patch.object(APIClient, 'put')
+    def test_pause_playback_failed_response(self, mock_put):
+        # Simulate a 400 response with error JSON
+        mock_response = MagicMock()
+        mock_response.status_code = 400
+        mock_response.json.return_value = {"error": "Something went wrong"}
+        mock_put.return_value = mock_response
+
+        with self.assertRaises(Exception) as context:
+            self.spotify_api.pause_playback("test_device_id")
+        
+        self.assertEqual(str(context.exception), "Failed to pause playback: {'error': 'Something went wrong'}")
+
+    @patch.object(APIClient, 'put')
+    def test_pause_playback_failed_response_no_json(self, mock_put):
+        # Simulate a 400 response without valid JSON (e.g., empty or malformed response)
+        mock_response = MagicMock()
+        mock_response.status_code = 400
+        mock_response.json.side_effect = ValueError("No JSON content")
+        mock_put.return_value = mock_response
+
+        with self.assertRaises(Exception) as context:
+            self.spotify_api.pause_playback("test_device_id")
+        
+        self.assertEqual(str(context.exception), "Failed to pause playback: No response content")
+
+
+
+    
 class TestSpotifyAuth(unittest.TestCase):
 
     def setUp(self):

@@ -4,6 +4,7 @@ from config import CONFIG
 from frontend.config_manager import load_preferences_file
 from PyQt5.QtCore import QObject, pyqtSignal
 from api.api_factory import APIFactory
+from usecases.activity_state import ActivityState
 from .idle_state import IdleState
 from .welcome_state import WelcomeState
 from .speach_state import SpeachState
@@ -48,7 +49,7 @@ class StateMachine(QObject):
         self.speach = SpeachState(self)
         self.news =  NewsState(self)
         self.finance = None
-        self.activity = None
+        self.activity = ActivityState(self)
         
         # Setup transitions
         self.machine.add_transition('start', 'idle', 'welcome')
@@ -59,11 +60,12 @@ class StateMachine(QObject):
         self.machine.add_transition(trigger='interact', source='idle', dest='speach')
         self.machine.add_transition(trigger='morning_news', source='welcome', dest='news')
         self.machine.add_transition(trigger='interaction', source="welcome", dest='speach')
-        
+        self.machine.add_transition(trigger='activity_idle', source="activity", dest='idle')
+
         self.machine.add_transition(trigger='goto_idle', source='speach', dest='idle')
         self.machine.add_transition(trigger='goto_welcome', source='speach', dest='welcome')
         self.machine.add_transition(trigger='goto_finance', source='speach', dest='finance')
-        self.machine.add_transition(trigger='goto_activity', source='speach', dest='activity')
+        self.machine.add_transition(trigger='goto_activity', source='idle', dest='activity')
         self.machine.add_transition(trigger='goto_news', source='speach', dest='news')
 
     def stop(self):

@@ -76,28 +76,35 @@ class TestFitbitAuth(unittest.TestCase):
         mock_response.json.return_value = {"error": "invalid_grant"}  # Fehlerantwort von der API
         mock_post.return_value = mock_response
 
-        # Angenommene refresh_token
         self.fitbit_auth.refresh_token = "mock_refresh_token"
-
-        # Methode aufrufen
         self.fitbit_auth.refresh_access_token()
-
-        # Überprüfe, ob die Fehlermeldung korrekt ausgegeben wurde
         mock_print.assert_any_call("Error refreshing token:", {"error": "invalid_grant"})
 
-    @patch("api.fitbit_api.fitbit_auth.OAuth2Session")
-    @patch("builtins.input", return_value="https://redirect-url.com/?code=test_code")  # Mock des Benutzerinputs
-    def test_authorize(self, mock_input, mock_oauth2session):
+    @patch("api.fitbit_api.fitbit_auth.FitbitAuth.save_tokens")  # 3. Mock für save_tokens
+    @patch("api.fitbit_api.fitbit_auth.OAuth2Session")           # 2. Mock für OAuth2Session
+    @patch("builtins.input", return_value="https://redirect-url.com/?code=test_code")  # 1. Mock für Benutzerinput
+    def test_authorize(self, mock_input, mock_oauth2session, mock_save_tokens):
+        # Setup
         fitbit_auth = FitbitAuth(client_id="your_client_id", client_secret="your_client_secret")
+        
+        # Mock die OAuth2Session-Instanz
         mock_fitbit = MagicMock()
         mock_fitbit.authorization_url.return_value = ("https://auth-url.com", None)
+        mock_fitbit.fetch_token.return_value = {"access_token": "test_access_token", "refresh_token": "test_refresh_token"}
         mock_oauth2session.return_value = mock_fitbit
+        
         fitbit_auth.authorize()
+        
         mock_fitbit.authorization_url.assert_called_once_with(
             fitbit_auth.AUTHORIZATION_BASE_URL, prompt="consent"
+        )        
+        mock_fitbit.fetch_token.assert_called_once_with(
+            fitbit_auth.TOKEN_URL,
+            client_secret="your_client_secret",
+            authorization_response="https://redirect-url.com/?code=test_code"
         )
-
-        mock_input.assert_called_once()
+        
+        mock_save_tokens.assert_called_once_with({"access_token": "test_access_token", "refresh_token": "test_refresh_token"})
 
     @patch("time.time", return_value=time.time() - 1)  # Simulate token expired
     @patch.object(FitbitAuth, "refresh_access_token")
