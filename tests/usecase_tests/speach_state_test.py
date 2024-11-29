@@ -5,8 +5,8 @@ from usecases.state_machine import StateMachine
 
 class TestSpeachState(unittest.TestCase):
 
-    @patch('usecases.speach_state.SpeachState.check_triggers')
-    def test_on_enter(self, mock_check_triggers):
+    @patch('usecases.speach_state.SpeachState.process_input')
+    def test_on_enter(self, mock_process_input):
         state_machine = StateMachine()
         speach_state = SpeachState(state_machine)
 

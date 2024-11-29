@@ -14,6 +14,8 @@ def load_preferences_file() -> dict:
     If the file is not found, or if the JSON is invalid, it returns an empty dictionary.
 
     The dictionary returned contains the following possible keys and their corresponding types:
+        - "enable_elevenlabs" (bool): (0 / 1) Enable or disable the Elevenlabs API for text-to-speech.
+        - "mic_id" (int): ID of the microphone to use for speech recognition.
         - "fuel_type" (str): Type of fuel (e.g., "diesel").
         - "fuel_threshold" (float): Fuel threshold in € (e.g., 1.5).
         - "fuel_step_size" (float): Step size for fuel threshold in € (e.g., 0.05).
@@ -138,6 +140,7 @@ class ConfigManager:
         fuel_threshold = self.preferences['fuel_threshold']
         self.view.set_sl_fuel_threshold(int(fuel_threshold * 100))
         self.view.set_le_fuel_threshold(f"{fuel_threshold:.2f}")
+        self.view.set_mic_id(self.preferences.get("mic_id", 1))
 
         self.view.set_le_fuel_demo_price(f"{self.preferences['fuel_demo_price']:.2f}")
 
@@ -233,3 +236,7 @@ class ConfigManager:
             self.view.set_le_fuel_demo_price(f"{value:.2f}")
         else:
             self.view.show_error_le_fuel_demo_price("Fuel demo price must be a number")
+            
+    def on_mic_id_changed(self, mic_id: int) -> None:
+        self.update_preference('mic_id', mic_id)
+        self.view.set_mic_id(mic_id)

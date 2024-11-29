@@ -1,9 +1,9 @@
 {
-    "access_token": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM1BRTlQiLCJzdWIiOiI3M0c4SE0iLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyYWN0IHJsb2MgcndlaSByaHIgcnBybyByc2xlIiwiZXhwIjoxNzMxMDkzMDE1LCJpYXQiOjE3MzEwNjQyMTV9.EIePz42KxmcLVVEn2Lce_A2M-8aX-pDl1orVm3lkfGE",
+    "access_token": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM1BRVDciLCJzdWIiOiJDQkNTVkIiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyYWN0IHJsb2MgcndlaSByaHIgcnBybyByc2xlIiwiZXhwIjoxNzMyOTIxMTg3LCJpYXQiOjE3MzI4OTIzODd9.2m_pgSAzpfrLnkMFEWA3s193iC-GqbnARrOv8rUe8W4",
     "expires_in": 28800,
-    "refresh_token": "9c46df10422ae47ccbd13bac2efc04654e2f22e8fe2ca9087cbf989c8f7e5b28",
-    "scope": "weight sleep heartrate location profile activity",
+    "refresh_token": "e001e2a89e5cd5800d53e1fe0bce45deab682fac3ecf5aea486f5f40e88c7174",
+    "scope": "weight location profile heartrate sleep activity",
     "token_type": "Bearer",
-    "user_id": "73G8HM",
-    "expires_at": 1731093015.0163538
+    "user_id": "CBCSVB",
+    "expires_at": 1732921189.0375443
 }

@@ -147,4 +147,12 @@ class FitbitAuth:
         code = parse_qs(parsed_url.query).get("code", [None])[0]
 
         if code:
-            token_response = fitbit
+            token_response = fitbit.fetch_token(
+                self.TOKEN_URL,
+                client_secret=self.client_secret,
+                authorization_response=redirect_response
+            )
+
+            # Save the tokens to file
+            self.save_tokens(token_response)
+            print("Tokens saved successfully.")
