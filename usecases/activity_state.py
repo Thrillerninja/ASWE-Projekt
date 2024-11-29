@@ -18,6 +18,7 @@ class ActivityState:
         self.fitbit_api = self.state_machine.api_factory.create_api(api_type="fitbit")
         self.tts_api = self.state_machine.api_factory.create_api(api_type="tts")
         self.spotify_api = self.state_machine.api_factory.create_api(api_type="spotify")
+        self.last_activated_at = datetime.datetime.min.strftime('%Y-%m-%d %H:%M')
         logger.info("ActivityState initialized")
 
     def on_enter(self):
@@ -25,6 +26,7 @@ class ActivityState:
         logger.info("ActivityState entered")
         
         date = str(datetime.date.today())
+        self.last_activated_at = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
         
         # Calculate the user's stress level based on Fitbit data
         stress_level = self.calculate_daily_stress_level(date)
@@ -137,12 +139,12 @@ class ActivityState:
         
         # Ask the user if they want to play the recommended playlist
         user_response = self.tts_api.ask_yes_no("Möchtest du die Musik abspielen?")
+        # user_response = True
         if user_response:
             try:
                 # Use Spotify API to start music playback on a specific device
-                device_id = "1234567"  
-                logger.info(f"Would start playback of playlist {playlist_id} on device {device_id}.")
-                #self.spotify_api.start_playback(playlist_id=playlist_id, device_id=device_id) # TODO Start spotify
+                logger.info(f"Would start playback of playlist {playlist_id}.")
+                self.spotify_api.start_playback(playlist_id=playlist_id)
                 logger.info(f"Playback of playlist {playlist_id} successfully started.")
             except Exception as e:
                 # Handle playback errors
@@ -228,9 +230,11 @@ class ActivityState:
 
     def check_trigger_activity(self):
         #trigger Activity Use Case
-        calculated_sleep_time = self.average_sleep_time(days=2) 
-        default_sleep_time = self.state_machine.preferences.get("sleep_time")  
-        current_time = datetime.now().strftime('%H:%M')
+        # calculated_sleep_time = self.average_sleep_time(days=2) 
+        default_sleep_time = self.state_machine.preferences.get("sleep_time")
 
-        if current_time == default_sleep_time:
+        current_day_and_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+        current_time = current_day_and_time.split(" ")[1]
+
+        if current_time == default_sleep_time and current_day_and_time != self.last_activated_at:
             self.state_machine.goto_activity()

@@ -307,8 +307,6 @@ class TestActivityState(unittest.TestCase):
             self.mock_fitbit_api.get_heart_data.assert_called_once()  # Ensure Fitbit API was called
             self.mock_fitbit_api.get_steps_data.assert_called_once()  # Ensure steps data was fetched
 
-            # Ensure to_csv was not called (indicating that no CSV file was created)
-            #mock_to_csv.assert_not_called() 
 
     def test_suggest_music_relaxed(self):
         """Test the music suggestion for a relaxed user."""
@@ -348,20 +346,30 @@ class TestActivityState(unittest.TestCase):
         # Überprüfe, dass die TTS-API die entsprechende Fehlermeldung ausgesprochen hat
         self.mock_tts_api.speak.assert_called_once_with("Entschuldigung, ich konnte keine passende Playlist finden.")
         
-        # Sicherstellen, dass keine Musik-Wiedergabe gestartet wurde
-        # (Du solltest sicherstellen, dass der Spotify API-Aufruf nicht gemacht wurde)
         self.mock_tts_api.ask_yes_no.assert_not_called()
 
     @patch('usecases.activity_state.datetime')
     def test_check_trigger_activity_time_matches(self, mock_datetime):
-        """Test that goto_activity is called when current time matches the sleep time."""
-        mock_datetime.now.return_value.strftime.return_value = "22:00"
+        """Test that goto_activity is called when current time matches the sleep time and last_activated_at is different."""
+        mock_now = MagicMock()
+        mock_now.strftime.return_value = "2024-11-29 22:00"
+        mock_datetime.datetime.now.return_value = mock_now
+
+        self.activity_state.last_activated_at = "2024-11-29 21:00"
+
         self.activity_state.check_trigger_activity()
         self.mock_state_machine.goto_activity.assert_called_once()
 
+
     @patch('usecases.activity_state.datetime')
     def test_check_trigger_activity_does_not_enter_if(self, mock_datetime):
-        """Test that the method does not enter the if statement when current time does not match the sleep time."""
-        mock_datetime.now.return_value.strftime.return_value = "20:00"
+        """Test that goto_activity is NOT called when current time does not match or last_activated_at is the same."""
+        mock_now = MagicMock()
+        mock_now.strftime.return_value = "2024-11-29 20:00"
+        mock_datetime.datetime.now.return_value = mock_now
+
+        self.activity_state.last_activated_at = "2024-11-29 20:00"
+
         self.activity_state.check_trigger_activity()
         self.mock_state_machine.goto_activity.assert_not_called()
+
