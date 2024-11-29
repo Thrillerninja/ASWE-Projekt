@@ -6,7 +6,7 @@
   "fuel_radius": 5.0,
   "fuel_demo_price": 1.0,
   "default_alarm_time": "08:00",
-  "sleep_time": "17:18",
+  "sleep_time": "18:03",
   "home_location": {
     "name": "asperg",
     "vvs_code": "de:08118:7400",

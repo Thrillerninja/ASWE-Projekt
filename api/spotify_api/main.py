@@ -93,3 +93,27 @@ class SpotifyAPI(APIClient):
                 response_json = None
 
             raise Exception(f"Failed to start playback: {response_json or 'No response content'}")
+        
+    def pause_playback(self, device_id: Optional[str] = None) -> None:
+        """
+        Pauses the current playback on the user's active device.
+        """
+        endpoint = "me/player/pause"
+        
+        try:
+            response = super().put(endpoint, data={"device_id": device_id})
+        except requests.exceptions.HTTPError:
+            print(f"ERROR stopping music: Device '{device_id}' is not active.")
+            return
+        
+        
+        if response.status_code == 200 or response.status_code == 204:
+            print("Playback paused successfully!")
+        else:
+            try:
+                response_json = response.json()
+            except ValueError as e:
+                print(f"Error parsing response: {e}")
+                response_json = None
+
+            raise Exception(f"Failed to pause playback: {response_json or 'No response content'}")

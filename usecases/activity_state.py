@@ -254,13 +254,6 @@ class ActivityState:
 
         one_hour_after_sleep_time = self.get_one_hour_after_sleep_time(default_sleep_time)
 
-        print(f"current_day_and_time: {current_day_and_time}")
-        print(f"current_time: {current_time}")
-        print(f"default_sleep_time: {default_sleep_time}")
-        print(f"one_hour_after_sleep_time: {one_hour_after_sleep_time}")
-        print(f"last_activated_at: {self.last_activated_at}")
-        print(f"last_playback_stop_activated_at: {self.last_playback_stop_activated_at}")
-
         if current_time == default_sleep_time and current_day_and_time != self.last_activated_at:
             self.state_machine.goto_activity()
         elif current_time == one_hour_after_sleep_time and current_day_and_time != self.last_playback_stop_activated_at:
