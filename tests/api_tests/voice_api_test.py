@@ -139,10 +139,14 @@ class TestVoiceInterfaceElevenLabs(unittest.TestCase):
     @patch("pygame.mixer.music.load")
     @patch("pygame.mixer.music.play")
     @patch("pygame.mixer.music.get_busy", return_value=False)
-    def test_speak_elevenlabs(self, mock_get_busy, mock_play, mock_load, mock_requests_post, mock_pyttsx3_init, mock_open):
+    @patch("pygame.mixer.init")  # Ensure we are mocking the correct location of pygame.mixer.init
+    def test_speak_elevenlabs(self, mock_mixer_init, mock_get_busy, mock_play, mock_load, mock_requests_post, mock_pyttsx3_init, mock_open):
         """
         Test speak functionality of ElevenLabs with valid and invalid inputs
         """
+
+        # Ensure toggle_elevenlabs is True
+        self.voice_interface.toggle_elevenlabs = True
 
         # Mock response from ElevenLabs API
         mock_response = MagicMock()

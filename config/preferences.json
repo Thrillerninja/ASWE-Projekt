@@ -1,5 +1,5 @@
 {
-  "enable_elevenlabs": 1,
+  "enable_elevenlabs": 0,
   "fuel_type": "super-e5",
   "fuel_threshold": 1.85,
   "fuel_step_size": 0.05,
