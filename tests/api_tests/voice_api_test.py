@@ -125,8 +125,8 @@ class TestVoiceInterface(unittest.TestCase):
             mock_speak.assert_any_call(question)
             mock_speak.assert_any_call("Entschuldigung, ich habe Ihre Antwort nicht verstanden. Bitte antworten Sie mit ja oder nein.")
 
-    @patch('your_class_file.sr.Microphone')
-    @patch('your_class_file.sr.Microphone.list_microphone_names', return_value=["Mic1", "Mic2", "Mic3"])
+    @patch('speech_recognition.Microphone')
+    @patch('sr.Microphone.list_microphone_names', return_value=["Mic1", "Mic2", "Mic3"])
     def test_list_mics(self, mock_list_microphone_names, mock_microphone):
         # Mock the recognizer and its methods
         mock_recognizer = MagicMock()
@@ -159,8 +159,8 @@ class TestVoiceInterface(unittest.TestCase):
         mock_microphone.assert_any_call(device_index=1)
         mock_microphone.assert_any_call(device_index=2)
         
-    @patch('your_class_file.sr.Recognizer')
-    @patch('your_class_file.sr.Microphone')
+    @patch('sr.Recognizer')
+    @patch('sr.Microphone')
     def test_listen(self, mock_microphone, mock_recognizer):
         # Mock the recognizer and its methods
         mock_recognizer_instance = mock_recognizer.return_value
@@ -182,8 +182,8 @@ class TestVoiceInterface(unittest.TestCase):
         mock_recognizer_instance.listen.assert_called_once()
         mock_recognizer_instance.recognize_google.assert_called_once()
 
-    @patch('your_class_file.sr.Recognizer')
-    @patch('your_class_file.sr.Microphone')
+    @patch('sr.Recognizer')
+    @patch('sr.Microphone')
     def test_listen_continuous(self, mock_microphone, mock_recognizer):
         # Mock the recognizer and its methods
         mock_recognizer_instance = mock_recognizer.return_value
