@@ -125,3 +125,88 @@ class TestVoiceInterface(unittest.TestCase):
             mock_speak.assert_any_call(question)
             mock_speak.assert_any_call("Entschuldigung, ich habe Ihre Antwort nicht verstanden. Bitte antworten Sie mit ja oder nein.")
 
+    @patch('your_class_file.sr.Microphone')
+    @patch('your_class_file.sr.Microphone.list_microphone_names', return_value=["Mic1", "Mic2", "Mic3"])
+    def test_list_mics(self, mock_list_microphone_names, mock_microphone):
+        # Mock the recognizer and its methods
+        mock_recognizer = MagicMock()
+        mock_microphone.return_value.__enter__.return_value = MagicMock()
+        
+        # Create an instance of YourClass
+        your_class_instance = YourClass(mic_id=1)
+        your_class_instance.recognize = mock_recognizer
+        
+        # Simulate different microphone states
+        def side_effect(*args, **kwargs):
+            if args[0] == 0:
+                return MagicMock()  # Active mic
+            elif args[0] == 1:
+                raise sr.WaitTimeoutError()  # Inactive mic
+            else:
+                raise Exception("Test error")  # Error state
+
+        mock_microphone.side_effect = side_effect
+        
+        # Call the list_mics method
+        active_mics = your_class_instance.list_mics()
+        
+        # Verify the output
+        self.assertEqual(active_mics, [0])
+        
+        # Verify the logger calls
+        your_class_instance.recognize.adjust_for_ambient_noise.assert_called_once()
+        mock_microphone.assert_any_call(device_index=0)
+        mock_microphone.assert_any_call(device_index=1)
+        mock_microphone.assert_any_call(device_index=2)
+        
+        @patch('your_class_file.sr.Recognizer')
+    @patch('your_class_file.sr.Microphone')
+    def test_listen(self, mock_microphone, mock_recognizer):
+        # Mock the recognizer and its methods
+        mock_recognizer_instance = mock_recognizer.return_value
+        mock_recognizer_instance.listen.return_value = MagicMock()
+        mock_recognizer_instance.recognize_google.return_value = "test text"
+        
+        # Create an instance of YourClass
+        your_class_instance = YourClass(mic_id=1)
+        your_class_instance.recognize = mock_recognizer_instance
+        
+        # Call the listen method
+        result = your_class_instance.listen(timeout=1)
+        
+        # Verify the result
+        self.assertEqual(result, "test text")
+        
+        # Verify that the recognizer methods were called
+        mock_recognizer_instance.adjust_for_ambient_noise.assert_called_once()
+        mock_recognizer_instance.listen.assert_called_once()
+        mock_recognizer_instance.recognize_google.assert_called_once()
+
+    @patch('your_class_file.sr.Recognizer')
+    @patch('your_class_file.sr.Microphone')
+    def test_listen_continuous(self, mock_microphone, mock_recognizer):
+        # Mock the recognizer and its methods
+        mock_recognizer_instance = mock_recognizer.return_value
+        mock_recognizer_instance.listen.return_value = MagicMock()
+        mock_recognizer_instance.recognize_google.return_value = "test text"
+        
+        # Mock the callback function
+        mock_callback = MagicMock()
+        
+        # Create an instance of YourClass
+        your_class_instance = YourClass(mic_id=1)
+        your_class_instance.recognize = mock_recognizer_instance
+        
+        # Call the listen_continuous method
+        your_class_instance.listen_continuous(mock_callback, timeout=1)
+        
+        # Allow some time for the thread to start and execute
+        threading.Event().wait(2)
+        
+        # Verify that the callback was called with the recognized text
+        mock_callback.assert_called_with("test text")
+        
+        # Verify that the recognizer methods were called
+        mock_recognizer_instance.adjust_for_ambient_noise.assert_called()
+        mock_recognizer_instance.listen.assert_called()
+        mock_recognizer_instance.recognize_google.assert_called()
