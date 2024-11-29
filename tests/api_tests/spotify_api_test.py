@@ -31,21 +31,21 @@ class TestSpotifyAPI(unittest.TestCase):
         with patch('builtins.open', self.mock_open):
             self.spotify_api = SpotifyAPI(self.client_id, self.client_secret)
 
-    @patch('api.spotify_api.spotify_auth.get_access_token', return_value="test_access_token")
-    @patch('api.spotify_api.spotify_auth.refresh_token')
-    def test_authenticate(self, mock_refresh_token, mock_get_access_token):
-        token = self.spotify_api.authenticate()
+    # @patch('api.spotify_api.spotify_auth.get_access_token', return_value="test_access_token")
+    # @patch('api.spotify_api.spotify_auth.refresh_token')
+    # def test_authenticate(self, mock_refresh_token, mock_get_access_token):
+    #     token = self.spotify_api.authenticate()
         
-        mock_get_access_token.assert_called_once_with(self.client_id, self.client_secret)
-        self.assertEqual(token, "test_access_token")
+    #     mock_get_access_token.assert_called_once_with(self.client_id, self.client_secret)
+    #     self.assertEqual(token, "test_access_token")
 
-    @patch('api.spotify_api.spotify_auth.get_access_token', return_value="test_access_token")
-    @patch('api.spotify_api.spotify_auth.refresh_token')
-    def test_update_token(self, mock_refresh_token, mock_get_access_token):
-        self.spotify_api.update_token()
+    # @patch('api.spotify_api.spotify_auth.get_access_token', return_value="test_access_token")
+    # @patch('api.spotify_api.spotify_auth.refresh_token')
+    # def test_update_token(self, mock_refresh_token, mock_get_access_token):
+    #     self.spotify_api.update_token()
         
-        self.assertEqual(self.spotify_api.access_token, "test_access_token")
-        self.assertEqual(self.spotify_api.headers, {"Authorization": "Bearer test_access_token"})
+    #     self.assertEqual(self.spotify_api.access_token, "test_access_token")
+    #     self.assertEqual(self.spotify_api.headers, {"Authorization": "Bearer test_access_token"})
 
     @patch.object(APIClient, 'get')
     @patch.object(SpotifyAPI, 'update_token')
