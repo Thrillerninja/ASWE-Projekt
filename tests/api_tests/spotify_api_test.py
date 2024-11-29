@@ -49,7 +49,9 @@ class TestSpotifyAPI(unittest.TestCase):
 
     @patch.object(APIClient, 'get')
     @patch.object(SpotifyAPI, 'update_token')
-    def test_get_user_playlists(self, mock_update_token, mock_get):
+    @patch('api.spotify_api.spotify_auth.get_access_token', return_value="test_access_token")
+    @patch('api.spotify_api.spotify_auth.refresh_token')
+    def test_get_user_playlists(self, mock_refresh_token, mock_get_access_token, mock_update_token, mock_get):
         mock_get.return_value = {"items": [{"id": "playlist1"}, {"id": "playlist2"}]}
         
         playlists = self.spotify_api.get_user_playlists()
@@ -59,7 +61,9 @@ class TestSpotifyAPI(unittest.TestCase):
         self.assertEqual(playlists, [{"id": "playlist1"}, {"id": "playlist2"}])
 
     @patch.object(APIClient, 'get')
-    def test_get_available_devices(self, mock_get):
+    @patch('api.spotify_api.spotify_auth.get_access_token', return_value="test_access_token")
+    @patch('api.spotify_api.spotify_auth.refresh_token')
+    def test_get_available_devices(self, mock_refresh_token, mock_get_access_token, mock_get):
         mock_get.return_value = {"devices": [{"id": "device1"}, {"id": "device2"}]}
         
         devices = self.spotify_api.get_available_devices()
@@ -70,7 +74,9 @@ class TestSpotifyAPI(unittest.TestCase):
     @patch.object(APIClient, 'put')
     @patch.object(SpotifyAPI, 'update_token')
     @patch('loguru.logger.info')
-    def test_start_playback_successful(self, mock_logger_info, mock_update_token, mock_put):
+    @patch('api.spotify_api.spotify_auth.get_access_token', return_value="test_access_token")
+    @patch('api.spotify_api.spotify_auth.refresh_token')
+    def test_start_playback_successful(self, mock_refresh_token, mock_get_access_token, mock_logger_info, mock_update_token, mock_put):
         mock_put.return_value.status_code = 204
         
         self.spotify_api.start_playback("test_playlist_id", "test_device_id")
@@ -85,7 +91,9 @@ class TestSpotifyAPI(unittest.TestCase):
     @patch.object(APIClient, 'put')
     @patch.object(SpotifyAPI, 'update_token')
     @patch('loguru.logger.error')
-    def test_start_playback_error(self, mock_logger_error, mock_update_token, mock_put):
+    @patch('api.spotify_api.spotify_auth.get_access_token', return_value="test_access_token")
+    @patch('api.spotify_api.spotify_auth.refresh_token')
+    def test_start_playback_error(self, mock_refresh_token, mock_get_access_token, mock_logger_error, mock_update_token, mock_put):
         mock_put.side_effect = requests.exceptions.HTTPError
         
         self.spotify_api.start_playback("test_playlist_id", "test_device_id")
@@ -97,7 +105,9 @@ class TestSpotifyAPI(unittest.TestCase):
     @patch.object(APIClient, 'put')
     @patch.object(SpotifyAPI, 'update_token')
     @patch('loguru.logger.error')
-    def test_start_playback_failed_response(self, mock_logger_error, mock_update_token, mock_put):
+    @patch('api.spotify_api.spotify_auth.get_access_token', return_value="test_access_token")
+    @patch('api.spotify_api.spotify_auth.refresh_token')
+    def test_start_playback_failed_response(self, mock_refresh_token, mock_get_access_token, mock_logger_error, mock_update_token, mock_put):
         mock_response = MagicMock()
         mock_response.status_code = 400
         mock_response.json.return_value = {"error": "Something went wrong"}
@@ -112,7 +122,9 @@ class TestSpotifyAPI(unittest.TestCase):
     @patch.object(APIClient, 'put')
     @patch.object(SpotifyAPI, 'update_token')
     @patch('loguru.logger.error')
-    def test_start_playback_failed_response_no_json(self, mock_logger_error, mock_update_token, mock_put):
+    @patch('api.spotify_api.spotify_auth.get_access_token', return_value="test_access_token")
+    @patch('api.spotify_api.spotify_auth.refresh_token')
+    def test_start_playback_failed_response_no_json(self, mock_refresh_token, mock_get_access_token, mock_logger_error, mock_update_token, mock_put):
         # Mock a failed response without JSON content
         mock_response = MagicMock()
         mock_response.status_code = 400
@@ -372,4 +384,4 @@ class TestSpotifyAuth(unittest.TestCase):
 
         with patch('api.spotify_api.spotify_auth.refresh_token', side_effect=Exception('Failed to refresh token')):
             with self.assertRaises(Exception):
-                get_access_token('client_id', 'client_secret')
+                get_access_token('client_id', 'client_secret') 
