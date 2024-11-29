@@ -182,7 +182,8 @@ class TestGetElevenlabsPreference(unittest.TestCase):
 
     def setUp(self):
         """Set up the mocks and the instance of TTSAPI."""
-        self.api_key = "mock_api_key"  # You can use a mock or actual key as per your test environment
+        self.api_key = "mock_api_key"
+        self.preferences_file = './config/preferences.json'
 
     @patch('builtins.open', new_callable=mock_open)
     def test_get_elevenlabs_preference_valid(self, mock_file):
@@ -194,7 +195,7 @@ class TestGetElevenlabsPreference(unittest.TestCase):
         vi = TTSAPI(self.api_key)
 
         # Verify that the file was opened and read
-        mock_file.assert_called_once_with('./config/preferences.json', 'r')
+        mock_file.assert_called_once_with(self.preferences_file, 'r')
 
         # Ensure that toggle_elevenlabs was set to True based on the valid JSON content
         self.assertTrue(vi.toggle_elevenlabs)
@@ -209,7 +210,7 @@ class TestGetElevenlabsPreference(unittest.TestCase):
         vi = TTSAPI(self.api_key)
 
         # Verify that the file was opened and read
-        mock_file.assert_called_once_with('./config/preferences.json', 'r')
+        mock_file.assert_called_once_with(self.preferences_file, 'r')
 
         # Ensure that toggle_elevenlabs was set to False due to the absence of 'enable_elevenlabs'
         self.assertFalse(vi.toggle_elevenlabs)
@@ -224,7 +225,7 @@ class TestGetElevenlabsPreference(unittest.TestCase):
         vi = TTSAPI(self.api_key)
 
         # Verify that the file was attempted to be opened
-        mock_file.assert_called_once_with('./config/preferences.json', 'r')
+        mock_file.assert_called_once_with(self.preferences_file, 'r')
 
         # Ensure that toggle_elevenlabs was set to False due to FileNotFoundError
         self.assertFalse(vi.toggle_elevenlabs)
@@ -239,7 +240,7 @@ class TestGetElevenlabsPreference(unittest.TestCase):
         vi = TTSAPI(self.api_key)
 
         # Verify that the file was opened and read
-        mock_file.assert_called_once_with('./config/preferences.json', 'r')
+        mock_file.assert_called_once_with(self.preferences_file, 'r')
 
         # Ensure that toggle_elevenlabs was set to False due to JSONDecodeError
         self.assertFalse(vi.toggle_elevenlabs)
