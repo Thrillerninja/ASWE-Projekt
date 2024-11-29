@@ -3,7 +3,6 @@ import requests
 from requests.models import Response
 import json
 from typing import Union, List
-import logging as __logging
 
 from vvspy.enums import Station
 from vvspy.models import Trip

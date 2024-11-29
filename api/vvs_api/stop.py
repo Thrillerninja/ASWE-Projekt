@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 from typing import List, Optional, Dict
 from enum import Enum
+from loguru import logger
 
 class Stop:
     def __init__(self, **kwargs):
@@ -77,24 +78,24 @@ class Stop:
     
     def info(self):
         # Print all info
-        print(f"ID: {self.id}")
-        print(f"Name: {self.name}")
-        print(f"Disassembled Name: {self.disassembled_name}")
-        print(f"Coordinates: {self.coord}")
-        print(f"Type: {self.type}")
-        print(f"Match Quality: {self.match_quality}")
-        print(f"Is Best: {self.is_best}")
-        print(f"Product Classes: {self.product_classes}")
-        print(f"Parent: {self.parent}")
-        print(f"Assigned Stops: {self.assigned_stops}")
-        print(f"Properties: {self.properties}")
-        print(f"Area: {self.area}")
-        print(f"Platform: {self.platform}")
-        print(f"Platform Name: {self.platform_name}")
-        print(f"Stop Name: {self.stop_name}")
-        print(f"Name WO: {self.name_wo}")
-        print(f"Point Type: {self.point_type}")
-        print(f"Countdown: {self.countdown}")
+        logger.info(f"ID: {self.id}")
+        logger.info(f"Name: {self.name}")
+        logger.info(f"Disassembled Name: {self.disassembled_name}")
+        logger.info(f"Coordinates: {self.coord}")
+        logger.info(f"Type: {self.type}")
+        logger.info(f"Match Quality: {self.match_quality}")
+        logger.info(f"Is Best: {self.is_best}")
+        logger.info(f"Product Classes: {self.product_classes}")
+        logger.info(f"Parent: {self.parent}")
+        logger.info(f"Assigned Stops: {self.assigned_stops}")
+        logger.info(f"Properties: {self.properties}")
+        logger.info(f"Area: {self.area}")
+        logger.info(f"Platform: {self.platform}")
+        logger.info(f"Platform Name: {self.platform_name}")
+        logger.info(f"Stop Name: {self.stop_name}")
+        logger.info(f"Name WO: {self.name_wo}")
+        logger.info(f"Point Type: {self.point_type}")
+        logger.info(f"Countdown: {self.countdown}")
         
 
 def parse_stop_info(json_data: Dict) -> Stop:
@@ -107,6 +108,7 @@ def parse_stop_info(json_data: Dict) -> Stop:
     Returns:
     Stop: The parsed Stop object.
     """
+    logger.info("Parsing stop information from JSON data")
     return Stop(**json_data)
 
 

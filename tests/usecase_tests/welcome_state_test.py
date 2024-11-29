@@ -33,7 +33,7 @@ class TestWelcomeState(unittest.TestCase):
         welcome_state.on_enter()
 
         # Check if TTS API was called with the correct message
-        mock_tts_api.speak.assert_any_call(f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M')}. Die Wettervorhersage für heute: Die Temperatur wird zwischen 10°C und 20°C liegen und es wird sunny. Im Moment sind es 15°C.")
+        mock_tts_api.speak.assert_any_call(f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M')}. Die Wettervorhersage für heute: Die Temperatur wird zwischen 10°C und 20°C liegen und es wird sunny geben. Im Moment sind es 15°C.")
         mock_tts_api.speak.assert_any_call("Sie haben heute keine Termine.")
         
 class TestAlarm(unittest.TestCase):
@@ -41,6 +41,7 @@ class TestAlarm(unittest.TestCase):
         # Mock the state machine and API factory
         self.state_machine = MagicMock()
         self.state_machine.api_factory = MagicMock()
+        self.state_machine.preferences = {"default_alarm_time": "09:00"}
         
         # Mock the create_api method to return a mock RaplaAPI instance
         self.mock_rapla_api = MagicMock()

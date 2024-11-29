@@ -11,6 +11,8 @@ class SpeachState:
         self.voice_interface = state_machine.api_factory.create_api(api_type="tts")
         self.running = True
         self.testing = False
+        self.retry_count = 0  # Add a retry counter
+        self.retry_count = 0  # Add a retry counter
         print("SpeachState initialized")
 
     def on_enter(self):
@@ -20,18 +22,22 @@ class SpeachState:
         print("SpeachState entered")
         self.voice_interface.speak("Bitte sprechen Sie einen Befehl.")
         
-        start_time = datetime.datetime.now().timestamp()
-        while self.running and datetime.datetime.now().timestamp() - start_time < 10:
-            self.check_triggers()
+        self.voice_interface.listen_continuous(self.process_input, timeout=5)
         
         self.voice_interface.play_sound("idle")
         self.voice_interface.speak("Spracherkennung beendet.")
 
     def check_triggers(self):
         """
-        Listens for user input and determines the next action.
+        Check for specific voice commands and trigger corresponding state transitions.
         """
         user_input = self.voice_interface.listen()
+        self.process_input(user_input)
+
+    def process_input(self, user_input):
+        """
+        Process the user input and determine the next action.
+        """
         if not user_input:
             self.voice_interface.speak("Keine Eingabe erkannt. Bitte versuchen Sie es erneut.")
             return
@@ -62,4 +68,9 @@ class SpeachState:
             self.state_machine.goto_activity()
         
         else:
-            self.voice_interface.speak("Befehl nicht erkannt. Bitte versuchen Sie es erneut.")
+            self.retry_count += 1
+            if self.retry_count < 3:
+                self.voice_interface.speak("Befehl nicht erkannt. Bitte versuchen Sie es erneut.")
+            else:
+                self.voice_interface.speak("Die Spracherkennung wird beendet.")
+                self.state_machine.goto_idle()
