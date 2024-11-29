@@ -20,9 +20,12 @@ class TestActivityState(unittest.TestCase):
             "tts": self.mock_tts_api,
             "spotify": self.mock_spotify_api
         }[api_type]
+        self.mock_state_machine.preferences = {"sleep_time": "22:00"}
 
         # Create the ActivityState instance
         self.activity_state = ActivityState(self.mock_state_machine)
+        self.pd_to_csv = "pandas.DataFrame.to_csv"
+        self.activity_logger_info = "usecases.activity_state.logger.info"
 
     @patch('usecases.activity_state.ActivityState.calculate_daily_stress_level')
     def test_on_enter_with_stress_level(self, mock_calculate_stress_level):
@@ -139,7 +142,7 @@ class TestActivityState(unittest.TestCase):
         }
 
         # Mock pandas DataFrame to_csv method to prevent file creation
-        with patch("pandas.DataFrame.to_csv") as mock_to_csv:
+        with patch(self.pd_to_csv):
             # Call the method
             stress_level = self.activity_state.calculate_daily_stress_level(date.today().strftime('%Y-%m-%d'))
 
@@ -166,7 +169,7 @@ class TestActivityState(unittest.TestCase):
             }
         }
 
-        with patch("pandas.DataFrame.to_csv") as mock_to_csv:
+        with patch(self.pd_to_csv):
             # Call the method
             stress_level = self.activity_state.calculate_daily_stress_level(date.today().strftime('%Y-%m-%d'))
 
@@ -192,7 +195,7 @@ class TestActivityState(unittest.TestCase):
             }
         }
 
-        with patch("pandas.DataFrame.to_csv") as mock_to_csv:
+        with patch(self.pd_to_csv):
             # Call the method
             stress_level = self.activity_state.calculate_daily_stress_level(date.today().strftime('%Y-%m-%d'))
 
@@ -224,7 +227,7 @@ class TestActivityState(unittest.TestCase):
         self.mock_tts_api.ask_yes_no.return_value = True
 
         # Call the method
-        with patch("usecases.activity_state.logger.info") as mock_logger:
+        with patch(self.activity_logger_info):
             self.activity_state.suggest_music("gestresst")
 
         # Assert TTS interactions
@@ -295,7 +298,7 @@ class TestActivityState(unittest.TestCase):
         }
 
         # Mock pandas DataFrame to_csv method to prevent file creation
-        with patch("pandas.DataFrame.to_csv") as mock_to_csv:
+        with patch(self.pd_to_csv):
             # Call the method
             stress_level = self.activity_state.calculate_daily_stress_level(date.today().strftime('%Y-%m-%d'))
 
@@ -313,7 +316,7 @@ class TestActivityState(unittest.TestCase):
         self.mock_tts_api.ask_yes_no.return_value = True
 
         # Call the method
-        with patch("usecases.activity_state.logger.info") as mock_logger:
+        with patch(self.activity_logger_info):
             self.activity_state.suggest_music("entspannt")
 
         # Assert TTS interactions
@@ -326,7 +329,7 @@ class TestActivityState(unittest.TestCase):
         self.mock_tts_api.ask_yes_no.return_value = False
 
         # Call the method
-        with patch("usecases.activity_state.logger.info") as mock_logger:
+        with patch(self.activity_logger_info):
             self.activity_state.suggest_music("gestresst")
 
         # Assert TTS interactions
@@ -348,3 +351,17 @@ class TestActivityState(unittest.TestCase):
         # Sicherstellen, dass keine Musik-Wiedergabe gestartet wurde
         # (Du solltest sicherstellen, dass der Spotify API-Aufruf nicht gemacht wurde)
         self.mock_tts_api.ask_yes_no.assert_not_called()
+
+    @patch('usecases.activity_state.datetime')
+    def test_check_trigger_activity_time_matches(self, mock_datetime):
+        """Test that goto_activity is called when current time matches the sleep time."""
+        mock_datetime.now.return_value.strftime.return_value = "22:00"
+        self.activity_state.check_trigger_activity()
+        self.mock_state_machine.goto_activity.assert_called_once()
+
+    @patch('usecases.activity_state.datetime')
+    def test_check_trigger_activity_does_not_enter_if(self, mock_datetime):
+        """Test that the method does not enter the if statement when current time does not match the sleep time."""
+        mock_datetime.now.return_value.strftime.return_value = "20:00"
+        self.activity_state.check_trigger_activity()
+        self.mock_state_machine.goto_activity.assert_not_called()

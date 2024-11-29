@@ -57,7 +57,7 @@ class ActivityState:
         # Transition back to an idle state
         self.state_machine.activity_idle()
 
-    def calculate_daily_stress_level(self, date: str) -> str:
+    def calculate_daily_stress_level(self, date: str) -> str | None:
         """
         Calculate the user's daily stress level based on Fitbit heart and step data.
         """
@@ -192,7 +192,7 @@ class ActivityState:
         return avg_sleep_time
 
 
-    def get_sleep_start_time(self, date: str) -> str:
+    def get_sleep_start_time(self, date: str) -> str | None:
         """
         Retrieves the user's sleep start time (primarily at night).
         :param date: The date for which to retrieve the sleep start time, in 'YYYY-MM-DD' format.
