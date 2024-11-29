@@ -5,6 +5,7 @@ import pyttsx3
 import speech_recognition as sr
 from config import CONFIG
 import json
+import pygame
 
 class TestVoiceInterface(unittest.TestCase):
     def setUp(self):
@@ -13,6 +14,9 @@ class TestVoiceInterface(unittest.TestCase):
         self.api_key = CONFIG['elevenlabs_key']
         self.voice_interface = TTSAPI(self.api_key)
         self.voice_interface.engine = MagicMock()
+
+    def tearDown(self):
+        patch.stopall()
 
     @patch('pyttsx3.init')
     def test_init(self, mock_pyttsx3_init):
@@ -125,63 +129,6 @@ class TestVoiceInterface(unittest.TestCase):
         # Ensure the list_microphone_names function was called once
         mock_list_microphone_names.assert_called_once()
 
-class TestVoiceInterfaceElevenLabs(unittest.TestCase):
-    def setUp(self):
-        patch('api.tts_api.TTSAPI.get_elevenlabs_preference', return_value=True).start()
-
-        self.api_key = CONFIG['elevenlabs_key']
-        self.voice_interface = TTSAPI(self.api_key)
-        self.voice_interface.engine = MagicMock()
-
-    @patch("builtins.open", new_callable=mock_open)
-    @patch('pyttsx3.init')
-    @patch("requests.post")
-    @patch("pygame.mixer.music.load")
-    @patch("pygame.mixer.music.play")
-    @patch("pygame.mixer.music.get_busy", return_value=False)
-    @patch("pygame.mixer.init")  # Ensure we are mocking the correct location of pygame.mixer.init
-    def test_speak_elevenlabs(self, mock_mixer_init, mock_get_busy, mock_play, mock_load, mock_requests_post, mock_pyttsx3_init, mock_open):
-        """
-        Test speak functionality of ElevenLabs with valid and invalid inputs
-        """
-
-        # Ensure toggle_elevenlabs is True
-        self.voice_interface.toggle_elevenlabs = True
-
-        # Mock response from ElevenLabs API
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_response.iter_content.return_value = [b"chunk1", b"chunk2"]
-        mock_requests_post.return_value = mock_response
-        
-        # Test ElevenLabs API call
-        self.voice_interface.speak("Hello, ElevenLabs!")
-
-        # Check if the ElevenLabs API was called
-        mock_requests_post.assert_called_once_with(
-            self.voice_interface.url,
-            json={
-                "text": "Hello, ElevenLabs!",
-                "model_id": "eleven_multilingual_v2",
-                "voice_settings": {"stability": 0.5, "similarity_boost": 0.5},
-            },
-            headers=self.voice_interface.headers,
-        )
-
-        # Check if the file was opened correctly and written to
-        mock_open.assert_called_once_with("output.mp3", "wb")
-        mock_open().write.assert_any_call(b"chunk1")
-        mock_open().write.assert_any_call(b"chunk2")
-
-        # Ensure pygame mixer methods are called
-        mock_load.assert_called_once_with("output.mp3")
-        mock_play.assert_called_once()
-
-        # Check that get_busy() was called and it returned False (avoiding the blocking loop)
-        mock_get_busy.assert_called_once()
-
-        self.assertTrue(self.voice_interface.toggle_elevenlabs)
-
 class TestGetElevenlabsPreference(unittest.TestCase):
 
     def setUp(self):
@@ -248,3 +195,57 @@ class TestGetElevenlabsPreference(unittest.TestCase):
 
         # Ensure that toggle_elevenlabs was set to False due to JSONDecodeError
         self.assertFalse(vi.toggle_elevenlabs)
+        
+class TestElevenlabs(unittest.TestCase):
+
+    def setUp(self):
+        # Patch get_elevenlabs_preference to return True (simulating ElevenLabs toggle being on)
+        patch('api.tts_api.TTSAPI.get_elevenlabs_preference', return_value=True).start()
+        
+        # Initialize the TTSAPI class and set up the mocks
+        self.api_key = "dummy_api_key"  # Replace with actual key if needed
+        self.voice_interface = TTSAPI(self.api_key)
+        self.voice_interface.engine = MagicMock()
+
+        # Set toggle_elevenlabs to True to test that part of the code
+        self.voice_interface.toggle_elevenlabs = True
+        
+        # Mock pygame methods
+        patch('pygame.init').start()
+        patch('pygame.mixer.music.load').start()
+        patch('pygame.mixer.music.play').start()
+        mock_get_busy = patch('pygame.mixer.music.get_busy').start()
+        mock_get_busy.return_value = False
+        patch('pygame.mixer.music.stop').start()
+        patch('pygame.mixer.quit').start()
+
+    def tearDown(self):
+        patch.stopall()
+
+    @patch('requests.post')  # Mocking the requests.post method
+    def test_speak_with_elevenlabs(self, mock_post):
+        # Simulate a successful response from the ElevenLabs API
+        mock_response = MagicMock()
+        mock_response.iter_content.return_value = [b"audio_data"]
+        mock_post.return_value = mock_response
+        
+        # Call the speak function with test input
+        text_to_speak = "Hello, this is a test!"
+        self.voice_interface.speak(text_to_speak)
+        
+        # Assertions to check that the ElevenLabs API was called
+        mock_post.assert_called_once_with(
+            self.voice_interface.url,
+            json={
+                "text": text_to_speak,
+                "model_id": "eleven_multilingual_v2",
+                "voice_settings": {"stability": 0.5, "similarity_boost": 0.5}
+            },
+            headers=self.voice_interface.headers
+        )
+        
+        # Check if pygame methods were called
+        pygame.mixer.music.load.assert_called_once_with("output.mp3")
+        pygame.mixer.music.play.assert_called_once()
+        pygame.mixer.music.stop.assert_called_once()
+        pygame.mixer.quit.assert_called_once()
