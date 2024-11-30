@@ -15,7 +15,7 @@ class TestActivityState(unittest.TestCase):
         self.mock_spotify_api = MagicMock()
 
         # Configure the API factory to return mocked APIs
-        self.mock_state_machine.api_factory.create_api.side_effect = lambda api_type: {
+        self.mock_state_machine.api_factory.create_api.side_effect = lambda api_type, state_machine=self.mock_state_machine: {
             "fitbit": self.mock_fitbit_api,
             "tts": self.mock_tts_api,
             "spotify": self.mock_spotify_api

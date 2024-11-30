@@ -3,11 +3,16 @@ from unittest.mock import MagicMock, patch, mock_open
 import json
 from PyQt5.QtCore import QTime
 from frontend.config_manager import ConfigManager, load_preferences_file, PREFERENCES_FILE
+import speech_recognition as sr
 
 class TestConfigManager(unittest.TestCase):
 
     def setUp(self):
         """Set up the test environment."""
+        patcher_get_active_mics = patch('frontend.config_manager.ConfigManager.get_active_mics', return_value=[[1, 'Mic 1'], [7, 'Mic 7']])
+        patcher_get_active_mics.start()
+        self.addCleanup(patcher_get_active_mics.stop)
+
         self.mock_view = MagicMock()
         self.mock_view.ui = MagicMock()
         self.mock_view.state_machine = MagicMock()
@@ -157,6 +162,10 @@ class TestConvertTextToFloat(unittest.TestCase):
 
     def setUp(self):
         # Create a mock view and initialize ConfigManager with it
+        patcher_get_active_mics = patch('frontend.config_manager.ConfigManager.get_active_mics', return_value=[[1, 'Mic 1'], [7, 'Mic 7']])
+        patcher_get_active_mics.start()
+        self.addCleanup(patcher_get_active_mics.stop)
+
         self.mock_view = MagicMock()
         self.mock_view.ui = MagicMock()
         self.config_manager = ConfigManager(self.mock_view)
@@ -283,5 +292,215 @@ class TestLoadPreferencesFile(unittest.TestCase):
 
         self.assertEqual(preferences, {})
 
-if __name__ == '__main__':
-    unittest.main()
+class TestConfigManagerMicFunctions(unittest.TestCase):
+
+    @patch('speech_recognition.Microphone.list_microphone_names')
+    @patch('speech_recognition.Microphone')
+    def test_get_active_mics(self, MockMicrophone, MockListMicrophoneNames):
+        # Mock the microphones list returned by `list_microphone_names`
+        MockListMicrophoneNames.return_value = ['Mic 1', 'Mic 2', 'Mic 3']
+
+        # Mock the `Microphone` instance behavior
+        mock_microphone_instance = MagicMock()
+        MockMicrophone.return_value = mock_microphone_instance
+        mock_microphone_instance.__enter__.return_value = mock_microphone_instance  # Mock context manager
+
+        # Mock the adjust_for_ambient_noise method
+        mock_recognizer = MagicMock()
+        mock_recognizer.adjust_for_ambient_noise = MagicMock()
+
+        # Initialize the ConfigManager with the mock view and mocked recognizer
+        mock_view = MagicMock()
+        mock_view.ui = MagicMock()
+        mock_view.state_machine = MagicMock()
+        config_manager = ConfigManager(mock_view)
+        config_manager.recognize = mock_recognizer
+
+        # Call the method to test
+        active_mics = config_manager.get_active_mics()
+
+        # Ensure the microphone list is returned and parsed correctly
+        self.assertEqual(active_mics, [[0, 'Mic 1'], [1, 'Mic 2'], [2, 'Mic 3']])
+        MockListMicrophoneNames.assert_called()
+        MockMicrophone.assert_called()
+
+    @patch('speech_recognition.Microphone.list_microphone_names')
+    @patch('speech_recognition.Microphone')
+    def test_get_active_mics_waittimeout(self, MockMicrophone, MockListMicrophoneNames):
+        # Test handling of sr.WaitTimeoutError (inactive mic)
+        MockListMicrophoneNames.return_value = ['Mic 1', 'Mic 2', 'Mic 3']
+
+        # Mock the `Microphone` instance behavior
+        mock_microphone_instance = MagicMock()
+        MockMicrophone.return_value = mock_microphone_instance
+        mock_microphone_instance.__enter__.side_effect = sr.WaitTimeoutError  # Simulate timeout error
+
+        # Mock the adjust_for_ambient_noise method
+        mock_recognizer = MagicMock()
+        mock_recognizer.adjust_for_ambient_noise = MagicMock()
+
+        # Initialize the ConfigManager with the mock view and mocked recognizer
+        mock_view = MagicMock()
+        mock_view.ui = MagicMock()
+        mock_view.state_machine = MagicMock()
+        config_manager = ConfigManager(mock_view)
+        config_manager.recognize = mock_recognizer
+
+        # Call the method to test
+        active_mics = config_manager.get_active_mics()
+
+        # Assert that the mic is reported as inactive
+        self.assertEqual(active_mics, [])
+        MockListMicrophoneNames.assert_called()
+
+    @patch('speech_recognition.Microphone.list_microphone_names')
+    @patch('speech_recognition.Microphone')
+    def test_get_active_mics_exception(self, MockMicrophone, MockListMicrophoneNames):
+        # Test handling of general exception (e.g., device failure)
+        MockListMicrophoneNames.return_value = ['Mic 1', 'Mic 2', 'Mic 3']
+
+        # Mock the `Microphone` instance behavior
+        mock_microphone_instance = MagicMock()
+        MockMicrophone.return_value = mock_microphone_instance
+        mock_microphone_instance.__enter__.side_effect = Exception("Simulated error")  # Simulate general exception
+
+        # Mock the adjust_for_ambient_noise method
+        mock_recognizer = MagicMock()
+        mock_recognizer.adjust_for_ambient_noise = MagicMock()
+
+        # Initialize the ConfigManager with the mock view and mocked recognizer
+        mock_view = MagicMock()
+        mock_view.ui = MagicMock()
+        mock_view.state_machine = MagicMock()
+        config_manager = ConfigManager(mock_view)
+        config_manager.recognize = mock_recognizer
+
+        # Call the method to test
+        active_mics = config_manager.get_active_mics()
+
+        # Assert that the mic is reported with an error message (should be handled without crashing)
+        self.assertEqual(active_mics, [])
+        MockListMicrophoneNames.assert_called()
+
+    @patch('frontend.config_manager.ConfigManager.get_active_mics', return_value=[[1, 'Mic 1'], [7, 'Mic 7']])
+    def test_get_first_active_mic_id(self, _):
+        # Setup mock for get_active_mics to return the mocked list
+        mock_view = MagicMock()
+        mock_view.ui = MagicMock()
+        mock_view.state_machine = MagicMock()
+        config_manager = ConfigManager(mock_view)
+        
+        # Directly use the mocked active mics
+        config_manager.active_mics = [[1, 'Mic 1'], [7, 'Mic 7']]
+
+        # Call the method to test
+        first_mic_id = config_manager.get_first_active_mic_id()
+
+        # Ensure it returns the ID of the first active mic
+        self.assertEqual(first_mic_id, 1)  # ID of the first active mic
+
+        # Test the case where no active mics are present
+        config_manager.active_mics = []
+        first_mic_id_default = config_manager.get_first_active_mic_id()
+        self.assertEqual(first_mic_id_default, 0)  # Default to 0 when no active mics are found
+
+    @patch('frontend.config_manager.ConfigManager.get_active_mics', return_value=[[1, 'Mic 1'], [7, 'Mic 7']])
+    def test_on_cb_select_mic_changed(self, _):
+        # Test valid mic selection
+        mock_view = MagicMock()
+        mock_view.ui = MagicMock()
+        mock_view.state_machine = MagicMock()
+        config_manager = ConfigManager(mock_view)
+
+        # Mock UI cb_select_mic
+        mock_ui = MagicMock()
+        config_manager.ui = mock_ui
+        config_manager.ui.cb_select_mic.currentText.return_value = '1: Mic 1'  # Mock selected text
+
+        # Mock the update_preference method
+        config_manager.update_preference = MagicMock()
+
+        # Call the method to test
+        config_manager.on_cb_select_mic_changed(0)
+
+        # Ensure the update_preference method is called with the correct mic ID
+        config_manager.update_preference.assert_called_once_with('mic_id', 1)
+
+        # Test invalid mic selection (malformed text)
+        mock_ui.cb_select_mic.currentText.return_value = 'Invalid Mic Selection'  # Invalid format
+        config_manager.on_cb_select_mic_changed(0)
+        config_manager.update_preference.assert_called_once()  # Should not be called for invalid selection
+        
+        # Test empty selection (edge case)
+        mock_ui.cb_select_mic.currentText.return_value = ''
+        config_manager.on_cb_select_mic_changed(0)
+        config_manager.update_preference.assert_called_once()  # Should not be called for empty text
+
+    @patch('frontend.config_manager.ConfigManager.get_active_mics', return_value=[[1, 'Mic 1'], [7, 'Mic 7']])
+    def test_on_cb_select_mic_changed_valid(self, _):
+        """Test valid mic selection."""
+        # Mock view and UI
+        mock_view = MagicMock()
+        mock_view.ui = MagicMock()
+        mock_view.state_machine = MagicMock()
+        config_manager = ConfigManager(mock_view)
+
+        # Mock UI cb_select_mic
+        mock_ui = MagicMock()
+        config_manager.ui = mock_ui
+        config_manager.ui.cb_select_mic.currentText.return_value = '1: Mic 1'  # Mock selected text
+
+        # Mock the update_preference method
+        config_manager.update_preference = MagicMock()
+
+        # Call the method to test
+        config_manager.on_cb_select_mic_changed(0)
+
+        # Ensure the update_preference method is called with the correct mic ID
+        config_manager.update_preference.assert_called_once_with('mic_id', 1)
+
+    @patch('frontend.config_manager.ConfigManager.get_active_mics', return_value=[[1, 'Mic 1'], [7, 'Mic 7']])
+    def test_on_cb_select_mic_changed_invalid_format(self, _):
+        """Test invalid mic selection (malformed text)."""
+        # Mock view and UI
+        mock_view = MagicMock()
+        mock_view.ui = MagicMock()
+        mock_view.state_machine = MagicMock()
+        config_manager = ConfigManager(mock_view)
+
+        # Mock UI cb_select_mic
+        mock_ui = MagicMock()
+        config_manager.ui = mock_ui
+        mock_ui.cb_select_mic.currentText.return_value = 'Invalid Mic Selection'  # Invalid format
+
+        # Mock the update_preference method
+        config_manager.update_preference = MagicMock()
+
+        # Call the method to test
+        config_manager.on_cb_select_mic_changed(0)
+
+        # Ensure the update_preference method is NOT called for invalid selection
+        config_manager.update_preference.assert_not_called()
+
+    @patch('frontend.config_manager.ConfigManager.get_active_mics', return_value=[[1, 'Mic 1'], [7, 'Mic 7']])
+    def test_on_cb_select_mic_changed_empty_selection(self, _):
+        """Test empty selection (edge case)."""
+        # Mock view and UI
+        mock_view = MagicMock()
+        mock_view.ui = MagicMock()
+        mock_view.state_machine = MagicMock()
+        config_manager = ConfigManager(mock_view)
+
+        # Mock UI cb_select_mic
+        mock_ui = MagicMock()
+        config_manager.ui = mock_ui
+        mock_ui.cb_select_mic.currentText.return_value = ''  # Empty selection
+
+        # Mock the update_preference method
+        config_manager.update_preference = MagicMock()
+
+        # Call the method to test
+        config_manager.on_cb_select_mic_changed(0)
+
+        # Ensure the update_preference method is NOT called for empty selection
+        config_manager.update_preference.assert_not_called()

@@ -19,7 +19,7 @@ class TestNewsState(unittest.TestCase):
         # Mock API factory behavior
         self.mock_api_factory = MagicMock()
         self.mock_api_factory.create_api.side_effect = (
-            lambda api_type: self.mock_news_api if api_type == "news" else self.mock_tts_api
+            lambda api_type, state_machine=self.mock_state_machine: self.mock_news_api if api_type == "news" else self.mock_tts_api
         )
         self.mock_state_machine.api_factory = self.mock_api_factory
 

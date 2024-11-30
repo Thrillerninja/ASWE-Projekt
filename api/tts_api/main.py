@@ -7,7 +7,6 @@ import pygame
 
 class TTSAPI:
     _instance = None
-    toggle_elevenlabs = False
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
@@ -15,12 +14,13 @@ class TTSAPI:
             cls._instance.__initialized = False
         return cls._instance
 
-    def __init__(self, api_key, toggle_elevenlabs: bool = False):
+    def __init__(self, api_key, state_machine):
         if self.__initialized:
             return
         
+        self.state_machine = state_machine
+        
         self.__initialized = True
-        self.mic_id = None
 
         try:
             self.engine = pyttsx3.init(driverName='sapi5')
@@ -35,11 +35,10 @@ class TTSAPI:
             self.engine.setProperty('voice', german_voice.id)
 
         self.recognize = sr.Recognizer()
-        self.mic_id = self.mic_id if self.mic_id is not None else self.get_first_active_mic_id()
         
         self.engine_lock = threading.Lock()  # Add a lock for the engine
         
-        self.toggle_elevenlabs = toggle_elevenlabs
+        self.toggle_elevenlabs = bool(self.state_machine.preferences["enable_elevenlabs"])
         
         self.api_key = api_key
         pygame.init()
@@ -90,38 +89,13 @@ class TTSAPI:
             with self.engine_lock:  # Use the lock to ensure only one thread accesses the engine at a time
                 self.engine.say(text)
             self.engine.runAndWait()
-        
-    def list_mics(self):
-        mics = sr.Microphone.list_microphone_names()
-        active_mics = []
-        for i, mic in enumerate(mics):
-            try:
-                with sr.Microphone(device_index=i) as source:
-                    self.recognize.adjust_for_ambient_noise(source)
-                    logger.info(f"{i}: {mic} (active)")
-                    active_mics.append(i)
-            except sr.WaitTimeoutError:
-                logger.info(f"{i}: {mic} (inactive)")
-            except Exception as e:
-                logger.warning(f"{i}: {mic} (error: {e})")
-        logger.info(f"Active microphones: {active_mics}")
-        return active_mics
-
-    def get_first_active_mic_id(self):
-        active_mics = self.list_mics()
-        if active_mics:
-            return active_mics[0]  # Return the index of the first active mic
-        return 0  # Default to the first mic if no active mic is found
-
-    def set_mic_id(self, mic_id: int):
-        self.mic_id = mic_id
 
     def listen(self, timeout=None):
         try:
-            with sr.Microphone(device_index=self.mic_id) as source:
+            with sr.Microphone(device_index=self.state_machine.preferences["mic_id"]) as source:
                 self.recognize.adjust_for_ambient_noise(source)
                 audio = self.recognize.listen(source, timeout=timeout)
-                logger.info("Listening for microphone input")
+                logger.info(f"Listening for microphone input on mic_id {self.state_machine.preferences['mic_id']}")
                 text = self.recognize.recognize_google(audio, language="de-DE")
                 logger.info(f"Recognized text: {text}")
                 return text
@@ -140,9 +114,9 @@ class TTSAPI:
         def listen_loop():
             while True:
                 try:
-                    with sr.Microphone(device_index=self.mic_id) as source:
+                    with sr.Microphone(device_index=self.state_machine.preferences["mic_id"]) as source:
                         self.recognize.adjust_for_ambient_noise(source)
-                        logger.info("Listening for microphone input")
+                        logger.info(f"Listening for microphone input on mic_id {self.state_machine.preferences['mic_id']}")
                         audio = self.recognize.listen(source, timeout=timeout)
                         text = self.recognize.recognize_google(audio, language="de-DE")
                         logger.info(f"Recognized text: {text}")

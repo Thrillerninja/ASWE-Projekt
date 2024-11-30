@@ -22,9 +22,8 @@ class APIFactory:
 
     def __init__(self, config: Dict):
         self.config = config
-        self.toggle_elevenlabs = False
 
-    def create_api(self, api_type: str) -> APIClient:
+    def create_api(self, api_type: str, state_machine=None) -> APIClient:
         """
         Creates and returns an instance of the specified API client.
 
@@ -50,7 +49,7 @@ class APIFactory:
             elif api_type == 'rapla':
                 self._instances[api_type] = RaplaAPI(self.config['rapla_url'])
             elif api_type == 'tts':
-                self._instances[api_type] = TTSAPI(self.config['elevenlabs_key'], self.toggle_elevenlabs)#TODO: toggle_elevenlabs aus preferences auslesen
+                self._instances[api_type] = TTSAPI(self.config['elevenlabs_key'], state_machine)
             elif api_type == 'vvs':
                 self._instances[api_type] = VVSAPI()
             elif api_type == 'news':

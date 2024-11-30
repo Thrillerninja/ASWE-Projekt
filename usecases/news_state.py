@@ -20,7 +20,7 @@ class NewsState:
         self.running = True
         self.state_machine = state_machine
         self.llm_api = LLMApi()
-        self.tts_api = self.state_machine.api_factory.create_api(api_type="tts")
+        self.tts_api = self.state_machine.api_factory.create_api(api_type="tts", state_machine=self.state_machine)
         self.news_api = self.state_machine.api_factory.create_api(api_type="news")
         logger.info("NewsState initialized")
 

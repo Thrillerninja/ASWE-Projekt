@@ -5,11 +5,17 @@ import pyttsx3
 import speech_recognition as sr
 from config import CONFIG
 import threading
+from usecases.state_machine import StateMachine
 
 class TestVoiceInterface(unittest.TestCase):
     def setUp(self):
         self.api_key = CONFIG['elevenlabs_key']
-        self.voice_interface = TTSAPI(self.api_key)
+        self.mocked_state_machine = MagicMock(spec=StateMachine)
+        self.mocked_state_machine.preferences = {
+            "enable_elevenlabs": False,
+            "mic_id": 0
+            }
+        self.voice_interface = TTSAPI(self.api_key, self.mocked_state_machine)
         self.voice_interface.engine = MagicMock()
 
     @patch('api.tts_api.main.pyttsx3.init')
@@ -19,7 +25,7 @@ class TestVoiceInterface(unittest.TestCase):
         """
         mock_pyttsx3_init.return_value = self.voice_interface.engine
 
-        vi = TTSAPI(self.api_key)
+        vi = TTSAPI(self.api_key, self.mocked_state_machine)
         self.assertIsNotNone(vi.recognize)
 
     @patch('api.tts_api.main.pyttsx3.init')
@@ -30,7 +36,7 @@ class TestVoiceInterface(unittest.TestCase):
         mock_engine = MagicMock()
         mock_pyttsx3_init.return_value = mock_engine
 
-        vi = TTSAPI(self.api_key)
+        vi = TTSAPI(self.api_key, self.mocked_state_machine)
         vi.speak("Hello")
         vi.engine.say.assert_called_with("Hello")
         vi.engine.runAndWait.assert_called_once()
@@ -59,7 +65,7 @@ class TestVoiceInterface(unittest.TestCase):
         mock_response.iter_content.return_value = [b"chunk1", b"chunk2"]
         mock_requests_post.return_value = mock_response
 
-        vi = TTSAPI(self.api_key, toggle_elevenlabs=True)
+        vi = TTSAPI(self.api_key, self.mocked_state_machine)
         vi.toggle_elevenlabs = True
         
         # Test ElevenLabs API call
@@ -135,7 +141,7 @@ class TestVoiceInterface(unittest.TestCase):
         mock_recognizer_instance.recognize_google.return_value = "test text"
         
         # Create an instance of TTSAPI
-        tts_instance = TTSAPI(self.api_key)
+        tts_instance = TTSAPI(self.api_key, self.mocked_state_machine)
         tts_instance.recognize = mock_recognizer_instance
         
         # Call the listen method
@@ -161,7 +167,7 @@ class TestVoiceInterface(unittest.TestCase):
         mock_callback = MagicMock()
         
         # Create an instance of TTSAPI
-        tts_instance = TTSAPI(self.api_key)
+        tts_instance = TTSAPI(self.api_key, self.mocked_state_machine)
         tts_instance.recognize = mock_recognizer_instance
         
         # Call the listen_continuous method

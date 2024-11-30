@@ -8,7 +8,7 @@ class SpeachState:
 
     def __init__(self, state_machine):
         self.state_machine = state_machine
-        self.voice_interface = state_machine.api_factory.create_api(api_type="tts")
+        self.voice_interface = state_machine.api_factory.create_api(api_type="tts", state_machine=self.state_machine)
         self.running = True
         self.testing = False
         self.retry_count = 0  # Add a retry counter
