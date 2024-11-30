@@ -74,16 +74,55 @@ class TestConfigManager(unittest.TestCase):
 
     def test_set_initial_values(self):
         """Test setting initial values based on preferences."""
-        # Mock the view methods to test if they are called with correct values
+        self.config_manager.preferences['mic_id'] = 1
+        # Mock the active microphones list as defined in the setup
+        self.config_manager.active_mics = [[0, 'Mic 0'], [1, 'Mic 1'], [7, 'Mic 7']]
+
+        # Mock the set methods on the view
+        self.mock_view.set_cb_fuel_type = MagicMock()
+        self.mock_view.set_te_default_alarm_time = MagicMock()
+        self.mock_view.set_te_sleep_time = MagicMock()
+        self.mock_view.set_sl_fuel_threshold = MagicMock()
+        self.mock_view.set_le_fuel_threshold = MagicMock()
+        self.mock_view.set_mic_list = MagicMock()
+        self.mock_view.set_mic_id = MagicMock()
+
+        # Call the method to test
         self.config_manager.set_initial_values()
 
-        self.mock_view.set_cb_fuel_type.assert_called_with(0)
-
+        # Ensure the view methods are called with correct values from preferences
+        self.mock_view.set_cb_fuel_type.assert_called_with(0)  # Assuming 'super-e10' is the first fuel type
         self.mock_view.set_te_default_alarm_time.assert_called_with(QTime.fromString('08:00', "hh:mm"))
         self.mock_view.set_te_sleep_time.assert_called_with(QTime.fromString('22:00', "hh:mm"))
-
-        self.mock_view.set_sl_fuel_threshold.assert_called_with(150)
+        self.mock_view.set_sl_fuel_threshold.assert_called_with(150)  # 1.5 * 100
         self.mock_view.set_le_fuel_threshold.assert_called_with('1.50')
+        self.mock_view.set_mic_list.assert_called_with(self.config_manager.active_mics)
+        self.mock_view.set_mic_id.assert_called_with(1)
+
+    def test_set_initial_values_fallback_mic_id(self):
+        """Test when the selected microphone ID is not in the active microphones list."""
+        # Mock the preferences with a mic_id that doesn't exist in active_mics
+        self.config_manager.preferences['mic_id'] = 99  # Invalid mic_id
+
+        # Mock the active microphones list (no mic with ID 99)
+        self.config_manager.active_mics = [[0, 'Mic 0'], [1, 'Mic 1'], [7, 'Mic 7']]
+
+        # Mock the set methods on the view
+        self.mock_view.set_cb_fuel_type = MagicMock()
+        self.mock_view.set_te_default_alarm_time = MagicMock()
+        self.mock_view.set_te_sleep_time = MagicMock()
+        self.mock_view.set_sl_fuel_threshold = MagicMock()
+        self.mock_view.set_le_fuel_threshold = MagicMock()
+        self.mock_view.set_mic_list = MagicMock()
+        self.mock_view.set_mic_id = MagicMock()
+
+        # Call the method to test
+        self.config_manager.set_initial_values()
+
+        # Ensure the mic_id preference is updated to the first available mic (ID 0)
+        self.mock_view.set_mic_id.assert_called_with(0)
+        self.mock_view.set_mic_list.assert_called_with(self.config_manager.active_mics)
+        self.mock_view.state_machine.preferences['mic_id'] = 0
 
     def test_on_cb_fuel_type_changed(self):
         """Test fuel type change handling."""

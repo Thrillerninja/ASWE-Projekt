@@ -148,7 +148,15 @@ class ConfigManager:
         self.view.set_le_fuel_demo_price(f"{self.preferences['fuel_demo_price']:.2f}")
 
         self.view.set_mic_list(self.active_mics)
-        self.view.set_mic_id(self.get_first_active_mic_id())
+        first_active_mic = self.get_first_active_mic_id()
+        selected_mic = self.preferences['mic_id']
+
+        if selected_mic not in [mic[0] for mic in self.active_mics]:
+            selected_mic = first_active_mic
+            self.update_preference('mic_id', first_active_mic)
+            self.view.state_machine.preferences['mic_id'] = first_active_mic
+        
+        self.view.set_mic_id(selected_mic)
 
     def on_cb_fuel_type_changed(self, index: int) -> None:
         """Handles the change in the fuel type selection from the combo box.
