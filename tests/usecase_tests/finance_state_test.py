@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch, MagicMock, mock_open
+from unittest.mock import patch, MagicMock, mock_open, Mock
 from usecases.financetracker_state import FinanceState
 from usecases.state_machine import StateMachine
 import json
@@ -146,17 +146,19 @@ class TestFinanceState(unittest.TestCase):
     @patch("os.path.join", return_value="temp.json")
     @patch("json.dump")
     @patch.object(FinanceState, "get_information")  # Mock der get_information Methode
-    @patch.object(FinanceState, "stock_api")  # Mock für die stock_api
-    def test_on_enter_valid_data(self, mock_stock_api, mock_get_information, mock_json_dump, mock_path_join, mock_open_file):
+    #@patch.object(FinanceState, "stock_api")  # Mock für die stock_api
+    def test_on_enter_valid_data(self, mock_get_information, mock_json_dump, mock_path_join, mock_open_file):
         # Simuliert die Antwort der API
-        mock_stock_api.get_top_gainers_losers.return_value = {
+        self.finance_state.stock_api = Mock()
+
+        self.finance_state.stock_api.get_top_gainers_losers.return_value = {
             "most_actively_traded": [
                 {"ticker": "AAPL"}, {"ticker": "MSFT"}, {"ticker": "GOOG"}
             ]
         }
 
         # Simuliert die Rückgabe von get_information für die Ticker
-        def mock_get_information(symbol):
+        def mock_get_info_side_effect(symbol):
             if symbol == "AAPL":
                 return "Apple Inc."
             elif symbol == "MSFT":
@@ -166,18 +168,18 @@ class TestFinanceState(unittest.TestCase):
             return symbol  # Fallback, falls kein Ticker erkannt wird
 
         # Setzen des Mocks für get_information
-        mock_get_information.side_effect = mock_get_information
+        mock_get_information.side_effect = mock_get_info_side_effect
 
+        print(type(mock_get_information))
         # Mock für round_numbers_for_speech, um die erwarteten gerundeten Daten zurückzugeben
         mock_round_numbers = MagicMock(return_value=[
-            {"name": "Apple Inc.", "price": 150, "change_amount": 2, "change_percentage": "1.5%", "volume": 10000000},
-            {"name": "Microsoft Corp.", "price": 250, "change_amount": -1, "change_percentage": "-0.4%", "volume": 12000000},
-            {"name": "Google LLC", "price": 2800, "change_amount": 15, "change_percentage": "0.5%", "volume": 8000000}
+            {"name": "Apple Inc.", "price": 150, "change_amount": 2, "change_percentage": "1.5", "volume": "10 Mio."},
+            {"name": "Microsoft Corp.", "price": 250, "change_amount": -1, "change_percentage": "-0.4", "volume": "12 Mio."},
+            {"name": "Google LLC", "price": 2800, "change_amount": 15, "change_percentage": "0.5", "volume": "8 Mio."}
         ])
 
         # Setzen des Mocks für round_numbers_for_speech
         self.finance_state.round_numbers_for_speech = mock_round_numbers
-
         # Führe die Methode on_enter aus
         self.finance_state.on_enter()
 
@@ -199,7 +201,47 @@ class TestFinanceState(unittest.TestCase):
         mock_json_dump.assert_called_once()
 
         # Überprüfen, ob exit_finance aufgerufen wurde
-        self.finance_state.mock_state_machine.exit_finance.assert_called_once()
+        self.finance_state.state_machine.exit_finance.assert_called_once()
+
+
+    @patch("builtins.open", new_callable=mock_open, read_data=json.dumps([
+            {"name": "Apple Inc.", "price": 150, "change_amount": 2, "change_percentage": "1.5%", "volume": 10000000},
+            {"name": "Microsoft Corp.", "price": 250, "change_amount": -1, "change_percentage": "-0.4%", "volume": 12000000},
+            {"name": "Google LLC", "price": 2800, "change_amount": 15, "change_percentage": "0.5%", "volume": 8000000}
+        ]))
+    @patch("os.path.join", return_value="temp.json")
+    def test_on_enter_no_data(self, mock_path_join, mock_open_file):
+        # Simuliert keine Daten von der API
+        self.finance_state.stock_api.get_top_gainers_losers.return_value = {}
+
+        self.finance_state.on_enter()
+
+        # Prüfen, ob Fallback-Daten geladen wurden
+        mock_open_file.assert_any_call("temp.json", "r")
+        self.finance_state.tts_api.speak.assert_any_call("Die drei Meistgehandelten Aktien heute sind Apple Inc., Microsoft Corp. und Google LLC.")
+
+
+    
+    
+    @patch("builtins.open", new_callable=mock_open, read_data=json.dumps([
+            {"name": "Apple Inc.", "price": 150, "change_amount": 2, "change_percentage": "1.5%", "volume": 10000000},
+            {"name": "Microsoft Corp.", "price": 250, "change_amount": -1, "change_percentage": "-0.4%", "volume": 12000000},
+            {"name": "Google LLC", "price": 2800, "change_amount": 15, "change_percentage": "0.5%", "volume": 8000000}
+        ]))
+    @patch("os.path.join", return_value="temp.json")
+    @patch("json.dump")
+    def test_on_enter_rate_limit(self, mock_json_dump, mock_path_join, mock_open_file):
+        # Simuliert Rate-Limit-Meldung von der API
+        self.finance_state.stock_api.get_top_gainers_losers.return_value = {
+            "Information": "Thank you for using Alpha Vantage! Our standard API rate limit is 25 requests per day. Please subscribe to any of the premium plans at https://www.alphavantage.co/premium/ to instantly remove all daily rate limits."
+        }
+
+        self.finance_state.on_enter()
+
+        # Überprüfen, ob Fallback-Daten geladen wurden
+        mock_open_file.assert_any_call("temp.json", "r")
+        self.finance_state.tts_api.speak.assert_any_call("Die drei Meistgehandelten Aktien heute sind Apple Inc., Microsoft Corp. und Google LLC.")
+        mock_json_dump.assert_called_once()
 
 
 if __name__ == '__main__':
