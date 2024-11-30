@@ -335,13 +335,13 @@ class TestConfigManagerMicFunctions(unittest.TestCase):
 
     @patch('speech_recognition.Microphone.list_microphone_names')
     @patch('speech_recognition.Microphone')
-    def test_get_active_mics(self, MockMicrophone, MockListMicrophoneNames):
+    def test_get_active_mics(self, mock_microphone, mock_list_microphone_names):
         # Mock the microphones list returned by `list_microphone_names`
-        MockListMicrophoneNames.return_value = ['Mic 1', 'Mic 2', 'Mic 3']
+        mock_list_microphone_names.return_value = ['Mic 1', 'Mic 2', 'Mic 3']
 
         # Mock the `Microphone` instance behavior
         mock_microphone_instance = MagicMock()
-        MockMicrophone.return_value = mock_microphone_instance
+        mock_microphone.return_value = mock_microphone_instance
         mock_microphone_instance.__enter__.return_value = mock_microphone_instance  # Mock context manager
 
         # Mock the adjust_for_ambient_noise method
@@ -360,18 +360,18 @@ class TestConfigManagerMicFunctions(unittest.TestCase):
 
         # Ensure the microphone list is returned and parsed correctly
         self.assertEqual(active_mics, [[0, 'Mic 1'], [1, 'Mic 2'], [2, 'Mic 3']])
-        MockListMicrophoneNames.assert_called()
-        MockMicrophone.assert_called()
+        mock_list_microphone_names.assert_called()
+        mock_microphone.assert_called()
 
     @patch('speech_recognition.Microphone.list_microphone_names')
     @patch('speech_recognition.Microphone')
-    def test_get_active_mics_waittimeout(self, MockMicrophone, MockListMicrophoneNames):
+    def test_get_active_mics_waittimeout(self, mock_microphone, mock_list_microphone_names):
         # Test handling of sr.WaitTimeoutError (inactive mic)
-        MockListMicrophoneNames.return_value = ['Mic 1', 'Mic 2', 'Mic 3']
+        mock_list_microphone_names.return_value = ['Mic 1', 'Mic 2', 'Mic 3']
 
         # Mock the `Microphone` instance behavior
         mock_microphone_instance = MagicMock()
-        MockMicrophone.return_value = mock_microphone_instance
+        mock_microphone.return_value = mock_microphone_instance
         mock_microphone_instance.__enter__.side_effect = sr.WaitTimeoutError  # Simulate timeout error
 
         # Mock the adjust_for_ambient_noise method
@@ -390,17 +390,17 @@ class TestConfigManagerMicFunctions(unittest.TestCase):
 
         # Assert that the mic is reported as inactive
         self.assertEqual(active_mics, [])
-        MockListMicrophoneNames.assert_called()
+        mock_list_microphone_names.assert_called()
 
     @patch('speech_recognition.Microphone.list_microphone_names')
     @patch('speech_recognition.Microphone')
-    def test_get_active_mics_exception(self, MockMicrophone, MockListMicrophoneNames):
+    def test_get_active_mics_exception(self, mock_microphone, mock_list_microphone_names):
         # Test handling of general exception (e.g., device failure)
-        MockListMicrophoneNames.return_value = ['Mic 1', 'Mic 2', 'Mic 3']
+        mock_list_microphone_names.return_value = ['Mic 1', 'Mic 2', 'Mic 3']
 
         # Mock the `Microphone` instance behavior
         mock_microphone_instance = MagicMock()
-        MockMicrophone.return_value = mock_microphone_instance
+        mock_microphone.return_value = mock_microphone_instance
         mock_microphone_instance.__enter__.side_effect = Exception("Simulated error")  # Simulate general exception
 
         # Mock the adjust_for_ambient_noise method
@@ -419,7 +419,7 @@ class TestConfigManagerMicFunctions(unittest.TestCase):
 
         # Assert that the mic is reported with an error message (should be handled without crashing)
         self.assertEqual(active_mics, [])
-        MockListMicrophoneNames.assert_called()
+        mock_list_microphone_names.assert_called()
 
     @patch('frontend.config_manager.ConfigManager.get_active_mics', return_value=[[1, 'Mic 1'], [7, 'Mic 7']])
     def test_get_first_active_mic_id(self, _):
@@ -542,4 +542,27 @@ class TestConfigManagerMicFunctions(unittest.TestCase):
         config_manager.on_cb_select_mic_changed(0)
 
         # Ensure the update_preference method is NOT called for empty selection
+        config_manager.update_preference.assert_not_called()
+
+    @patch('frontend.config_manager.ConfigManager.get_active_mics', return_value=[[1, 'Mic 1'], [7, 'Mic 7']])
+    def test_on_cb_select_mic_changed_value_error(self, _):
+        """Test ValueError exception in case of malformed microphone ID (non-integer value before colon)."""
+        # Mock view and UI
+        mock_view = MagicMock()
+        mock_view.ui = MagicMock()
+        mock_view.state_machine = MagicMock()
+        config_manager = ConfigManager(mock_view)
+
+        # Mock UI cb_select_mic
+        mock_ui = MagicMock()
+        config_manager.ui = mock_ui
+        mock_ui.cb_select_mic.currentText.return_value = 'abc: Mic 1'  # Non-integer value before colon
+
+        # Mock the update_preference method
+        config_manager.update_preference = MagicMock()
+
+        # Call the method to test
+        config_manager.on_cb_select_mic_changed(0)
+
+        # Ensure the update_preference method is NOT called due to ValueError
         config_manager.update_preference.assert_not_called()
