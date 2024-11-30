@@ -12,7 +12,7 @@ class TestWelcomeState(unittest.TestCase):
         mock_weather_api = MagicMock()
         mock_rapla_api = MagicMock()
         
-        mock_create_api.side_effect = lambda api_type: {
+        mock_create_api.side_effect = lambda api_type, state_machine=None: {
             "tts": mock_tts_api,
             "weather": mock_weather_api,
             "rapla": mock_rapla_api

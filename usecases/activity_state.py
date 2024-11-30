@@ -16,7 +16,7 @@ class ActivityState:
         self.running = True
         self.state_machine = state_machine
         self.fitbit_api = self.state_machine.api_factory.create_api(api_type="fitbit")
-        self.tts_api = self.state_machine.api_factory.create_api(api_type="tts")
+        self.tts_api = self.state_machine.api_factory.create_api(api_type="tts", state_machine=self.state_machine)
         self.spotify_api = self.state_machine.api_factory.create_api(api_type="spotify")
         self.last_activated_at = datetime.datetime.min.strftime('%Y-%m-%d %H:%M')
         self.last_playback_stop_activated_at = datetime.datetime.min.strftime('%Y-%m-%d %H:%M')

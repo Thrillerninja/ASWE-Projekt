@@ -15,9 +15,12 @@ class TestMainWindow(unittest.TestCase):
     def setUp(self):
         patcher_ui = patch('frontend.ui_templates.main_window.Ui_MainWindow', autospec=True)
         patcher_config = patch('frontend.config_manager.ConfigManager', autospec=True)
+        patcher_get_active_mics = patch('frontend.config_manager.ConfigManager.get_active_mics', return_value=[[1, 'Mic 1'], [7, 'Mic 7']])
         
+        patcher_get_active_mics.start()
         self.MockUi_MainWindow = patcher_ui.start()
         self.MockConfigManager = patcher_config.start()
+        patch('frontend.main_window.logger.warning').start()
 
         self.addCleanup(patcher_ui.stop)
         self.addCleanup(patcher_config.stop)
@@ -45,6 +48,8 @@ class TestMainWindow(unittest.TestCase):
         self.mock_ui.lb_sound_wave_gif = MagicMock()
         self.mock_ui.lb_fuel_demo_price = MagicMock()
         self.mock_ui.le_fuel_demo_price = MagicMock()
+        self.mock_ui.lb_select_mic = MagicMock()
+        self.mock_ui.cb_select_mic = MagicMock()
 
         for el in self.mock_ui.__dict__.values():
             if isinstance(el, MagicMock):
@@ -70,7 +75,9 @@ class TestMainWindow(unittest.TestCase):
             self.mock_ui.te_sleep_time,
             self.mock_ui.bt_save_settings,
             self.mock_ui.lb_fuel_demo_price,
-            self.mock_ui.le_fuel_demo_price
+            self.mock_ui.le_fuel_demo_price,
+            self.mock_ui.lb_select_mic,
+            self.mock_ui.cb_select_mic
         ]
 
         self.not_settings_elements = [
@@ -309,5 +316,42 @@ class TestMainWindow(unittest.TestCase):
         expected_size = QSize(35, 35)
         self.mock_ui.bt_speech_to_text.setIconSize.assert_called_once_with(expected_size)
 
-if __name__ == '__main__':
-    unittest.main()
+    @patch('frontend.main_window.logger.warning')
+    def test_set_mic_id_correct_id(self, mock_warning):
+        # Test that set_mic_id correctly sets the microphone
+        self.main_window.set_mic_id(1)  # Select "Mic 1"
+        
+        # Ensure the combobox index is set to the correct item
+        self.mock_ui.cb_select_mic.setCurrentIndex.assert_called_once_with(0) # Mic 1 is the first item
+        
+        # Check that no warning was logged
+        mock_warning.assert_not_called()
+
+    @patch('frontend.main_window.logger.warning')
+    def test_set_mic_id_id_not_found(self, mock_warning):
+        # Test that if the mic_id is not found, a warning is logged
+        self.main_window.set_mic_id(99)  # Non-existent mic_id
+        
+        # Ensure the combobox index is not changed
+        self.mock_ui.cb_select_mic.setCurrentIndex.assert_not_called()
+        
+        # Check that a warning was logged
+        mock_warning.assert_called_once_with("Microphone with ID 99 not found in combobox.")
+
+    def test_set_mic_list(self):
+        # Test that set_mic_list correctly sets the items in the combo box
+        mic_list = [[1, "Mic 1"], [2, "Mic 2"], [7, "Mic 7"]]
+        self.main_window.set_mic_list(mic_list)
+        
+        # Ensure the combo box is cleared and items are added in the correct format
+        self.mock_ui.cb_select_mic.clear.assert_called_once()
+        self.mock_ui.cb_select_mic.addItems.assert_called_once_with(["1: Mic 1", "2: Mic 2", "7: Mic 7"])
+
+    def test_set_mic_list_empty(self):
+        # Test that set_mic_list handles an empty list gracefully
+        self.main_window.set_mic_list([])
+        
+        # Ensure the combo box is cleared
+        self.mock_ui.cb_select_mic.clear.assert_called_once()
+        # Ensure no items are added
+        self.mock_ui.cb_select_mic.addItems.assert_not_called()
