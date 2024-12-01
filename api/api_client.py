@@ -64,10 +64,9 @@ class APIClient(ABC):
         response = requests.put(url, headers=self.headers, data=data)
         response.raise_for_status()
 
-        # if succesfull, Spotify API only responds with status code, in those cases response.json() yields error
-        if response.content:
+        try:
             return response.json()
-        else:
+        except ValueError:
             return response
 
     def delete(self, endpoint: str) -> Dict:

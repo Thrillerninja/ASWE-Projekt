@@ -3,6 +3,7 @@ from PyQt5.QtCore import QTime, QTimer, QSize
 from PyQt5.QtGui import QMovie, QIcon
 from PyQt5 import QtWidgets
 import sys
+from loguru import logger
 
 from frontend.ui_templates.main_window import Ui_MainWindow
 from frontend.config_manager import ConfigManager
@@ -61,6 +62,8 @@ class MainWindow(QtWidgets.QMainWindow):
             lambda: self.config_manager.on_le_fuel_demo_price_changed(self.ui.le_fuel_demo_price.text())
         )
 
+        self.ui.cb_select_mic.currentIndexChanged.connect(self.config_manager.on_cb_select_mic_changed)
+
         self.error_fuel_threshold = False
         self.error_fuel_demo_price = False
 
@@ -78,8 +81,11 @@ class MainWindow(QtWidgets.QMainWindow):
     def on_bt_speech_to_text_clicked(self) -> None:
         """Handler for button click event to start showing the GIF."""
         self.ui.lb_sound_wave_gif.setVisible(True)
-        self.movie.start() 
-        QTimer.singleShot(3000, self.stop_recording)  #TODO Implement speech to text
+        self.movie.start()
+        QTimer.singleShot(3000, self.stop_recording)  # Schedule stop recording after 3 seconds
+        print("Speach to text button clicked")
+        # Queue the transition to the speach state
+        self.state_machine.queue_transition('to_speach')
 
     def stop_recording(self) -> None:
         """Stop the recording and hide the GIF."""
@@ -109,7 +115,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.te_sleep_time,
             self.ui.bt_save_settings,
             self.ui.lb_fuel_demo_price,
-            self.ui.le_fuel_demo_price
+            self.ui.le_fuel_demo_price,
+            self.ui.cb_select_mic,
+            self.ui.lb_select_mic
         ]
         
         not_settings_elements = [
@@ -245,15 +253,46 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         self.ui.lb_alarm_text.setText(time)
 
-    def on_hover_enter_settings(self):
+    def on_hover_enter_settings(self, event):
         new_size = self.ui.bt_settings.size() * 0.9
         self.ui.bt_settings.setIconSize(new_size)
 
-    def on_hover_leave_settings(self):
+    def on_hover_leave_settings(self, event):
         self.ui.bt_settings.setIconSize(self.ui.bt_settings.size() * 0.8)
 
-    def on_hover_enter_speech_to_text(self):
+    def on_hover_enter_speech_to_text(self, event):
         self.ui.bt_speech_to_text.setIconSize(QSize(38, 38))
 
-    def on_hover_leave_speech_to_text(self):
+    def on_hover_leave_speech_to_text(self, event):
         self.ui.bt_speech_to_text.setIconSize(QSize(35, 35))
+
+    def set_mic_id(self, mic_id: int):
+        """
+        Sets the microphone ID for the TTSAPI instance by matching the mic_id in the combobox text.
+        
+        Args:
+            mic_id (int): The ID of the microphone to set.
+        """
+        # Iterate through combobox items to find the one matching mic_id
+        for index in range(self.ui.cb_select_mic.count()):
+            item_text = self.ui.cb_select_mic.itemText(index)
+            # Extract the ID from the item text (assumes format "id: mic_name")
+            item_id = int(item_text.split(":")[0].strip())
+            if item_id == mic_id:
+                self.ui.cb_select_mic.setCurrentIndex(index)
+                return
+
+        # If the mic_id is not found, you can log a warning or handle it gracefully
+        logger.warning(f"Microphone with ID {mic_id} not found in combobox.")
+
+    def set_mic_list(self, mic_list: list):
+        """
+        Sets the list of microphones in the microphone combo box.
+        
+        Args:
+            mic_list (list): A list of microphone names to populate the combo box.
+        """
+        self.ui.cb_select_mic.clear()
+        formatted_mics = [f"{mic[0]}: {mic[1]}" for mic in mic_list]
+        if mic_list:
+            self.ui.cb_select_mic.addItems(formatted_mics)

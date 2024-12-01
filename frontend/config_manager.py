@@ -2,6 +2,8 @@ import json
 import os
 from PyQt5.QtCore import QTime
 from typing import Union
+import speech_recognition as sr
+from loguru import logger
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 parent_dir = os.path.dirname(script_dir)
@@ -14,6 +16,8 @@ def load_preferences_file() -> dict:
     If the file is not found, or if the JSON is invalid, it returns an empty dictionary.
 
     The dictionary returned contains the following possible keys and their corresponding types:
+        - "enable_elevenlabs" (bool): (0 / 1) Enable or disable the Elevenlabs API for text-to-speech.
+        - "mic_id" (int): ID of the microphone to use for speech recognition.
         - "fuel_type" (str): Type of fuel (e.g., "diesel").
         - "fuel_threshold" (float): Fuel threshold in € (e.g., 1.5).
         - "fuel_step_size" (float): Step size for fuel threshold in € (e.g., 0.05).
@@ -57,6 +61,7 @@ class ConfigManager:
 
         self.view = view
         self.ui = self.view.ui
+        self.recognize = sr.Recognizer()
 
         self.preferences_file = PREFERENCES_FILE
 
@@ -64,6 +69,7 @@ class ConfigManager:
         self.fuel_types = ['super-e10', 'super-e5', 'super-plus', 'diesel', 'lkw-diesel', 'lpg',]
 
         self.view.state_machine.config = self.preferences
+        self.active_mics = self.get_active_mics()
         self.set_initial_values()
 
     def save_preferences(self) -> None:
@@ -71,7 +77,7 @@ class ConfigManager:
 
         This will overwrite the file specified in `self.preferences_file`.
         """
-        self.view.state_machine.config = self.preferences
+        self.view.state_machine.preferences = self.preferences
         with open(self.preferences_file, 'w') as file:
             json.dump(self.preferences, file, indent=4)
 
@@ -140,6 +146,17 @@ class ConfigManager:
         self.view.set_le_fuel_threshold(f"{fuel_threshold:.2f}")
 
         self.view.set_le_fuel_demo_price(f"{self.preferences['fuel_demo_price']:.2f}")
+
+        self.view.set_mic_list(self.active_mics)
+        first_active_mic = self.get_first_active_mic_id()
+        selected_mic = self.preferences['mic_id']
+
+        if selected_mic not in [mic[0] for mic in self.active_mics]:
+            selected_mic = first_active_mic
+            self.update_preference('mic_id', first_active_mic)
+            self.view.state_machine.preferences['mic_id'] = first_active_mic
+        
+        self.view.set_mic_id(selected_mic)
 
     def on_cb_fuel_type_changed(self, index: int) -> None:
         """Handles the change in the fuel type selection from the combo box.
@@ -233,3 +250,48 @@ class ConfigManager:
             self.view.set_le_fuel_demo_price(f"{value:.2f}")
         else:
             self.view.show_error_le_fuel_demo_price("Fuel demo price must be a number")
+
+    def get_active_mics(self):
+        mics = sr.Microphone.list_microphone_names()
+        active_mics = []
+        for i, mic in enumerate(mics):
+            try:
+                mic_name = mic.encode('latin1').decode('utf-8') # Handle special characters (ä, ö, ü)
+                with sr.Microphone(device_index=i) as source:
+                    self.recognize.adjust_for_ambient_noise(source)
+                    logger.info(f"{i}: {mic_name} (active)")
+                    active_mics.append([i, mic_name])
+            except sr.WaitTimeoutError:
+                logger.info(f"{i}: {mic_name} (inactive)")
+            except Exception as e:
+                logger.warning(f"{i}: {mic_name} (error: {e})")
+        logger.info(f"Active microphones: {active_mics}")
+        return active_mics
+
+    def get_first_active_mic_id(self):
+        if self.active_mics:
+            return self.active_mics[0][0]  # Return the index of the first active mic
+        return 0  # Default to the first mic if no active mic is found
+
+    def on_cb_select_mic_changed(self, index: int) -> None:
+        """
+        Handles changes in the combobox selection by passing the selected text.
+        
+        Args:
+            index (int): The current index of the combobox. (This is required by the signal.)
+        """
+        selected_text = self.ui.cb_select_mic.currentText()
+    
+        # Ensure the selected text is not empty and contains a colon
+        if selected_text and ":" in selected_text:
+            try:
+                # Split the text at the colon and strip any surrounding whitespace
+                mic_id = int(selected_text.split(":")[0].strip())
+                self.update_preference('mic_id', mic_id)
+            except ValueError:
+                # Handle the case where the mic ID cannot be converted to an integer
+                logger.warning(f"Invalid microphone ID format: {selected_text}")
+        else:
+            # Handle the case where the selected text is empty or malformed
+            logger.warning(f"Selected item is empty or has invalid format: {selected_text}")
+    
