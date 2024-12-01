@@ -30,6 +30,7 @@ class IdleState:
         """
         Wait for a trigger to start the next usecase.
         """
+
         logger.info("IdleState entered")
         
         # Start Welcome Usecase on system startup

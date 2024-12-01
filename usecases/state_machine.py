@@ -8,7 +8,11 @@ from usecases.activity_state import ActivityState
 from .idle_state import IdleState
 from .welcome_state import WelcomeState
 from .speach_state import SpeachState
+from frontend.config_manager import load_preferences_file
 from .news_state import NewsState
+from.financetracker_state import FinanceState
+from .news_state import NewsState
+from.financetracker_state import FinanceState
 
 class StateMachine(QObject):
     """
@@ -40,6 +44,10 @@ class StateMachine(QObject):
 
         # User preferences, hover over function to see details. This dictionary is kept up to date with the frontend.
         self.preferences = load_preferences_file()
+        self.testing = False
+
+        # User preferences, hover over function to see details. This dictionary is kept up to date with the frontend.
+        self.preferences = load_preferences_file()
         
         self.api_factory = APIFactory(CONFIG)
         
@@ -48,7 +56,7 @@ class StateMachine(QObject):
         self.welcome = WelcomeState(self)
         self.speach = SpeachState(self)
         self.news =  NewsState(self)
-        self.finance = None
+        self.finance = FinanceState(self)
         self.activity = ActivityState(self)
         
         # Setup transitions
@@ -57,16 +65,22 @@ class StateMachine(QObject):
         
         self.machine.add_transition(trigger='news_interact', source="news", dest='speach')
         self.machine.add_transition(trigger='news_idle', source="news", dest='idle')
+        self.machine.add_transition(trigger='news_interact', source="news", dest='speach')
+        self.machine.add_transition(trigger='news_idle', source="news", dest='idle')
         self.machine.add_transition(trigger='interact', source='idle', dest='speach')
         self.machine.add_transition(trigger='morning_news', source='welcome', dest='news')
         self.machine.add_transition(trigger='interaction', source="welcome", dest='speach')
         self.machine.add_transition(trigger='activity_idle', source="activity", dest='idle')
 
         self.machine.add_transition(trigger='goto_idle', source='speach', dest='idle')
+        self.machine.add_transition(trigger='goto_idle', source='speach', dest='idle')
         self.machine.add_transition(trigger='goto_welcome', source='speach', dest='welcome')
         self.machine.add_transition(trigger='goto_finance', source='speach', dest='finance')
         self.machine.add_transition(trigger='goto_activity', source='idle', dest='activity')
         self.machine.add_transition(trigger='goto_news', source='speach', dest='news')
+        
+        self.machine.add_transition(trigger='goto_finance', source='speach', dest='finance')
+        self.machine.add_transition(trigger='exit_finance', source='finance', dest='idle')
 
     def stop(self):
         """

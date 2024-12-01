@@ -1,0 +1,23 @@
+[
+  {
+    "name": "AAPL",
+    "price": "150",
+    "change_amount": "2",
+    "change_percentage": "1.35%",
+    "volume": "3000000"
+  },
+  {
+    "name": "GOOGL",
+    "price": "2800",
+    "change_amount": "10",
+    "change_percentage": "0.36%",
+    "volume": "2500000"
+  },
+  {
+    "name": "TSLA",
+    "price": "700",
+    "change_amount": "5",
+    "change_percentage": "0.72%",
+    "volume": "2200000"
+  }
+]

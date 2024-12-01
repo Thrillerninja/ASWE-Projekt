@@ -120,3 +120,29 @@ class FinanceAPI(APIClient):
             'apikey': self.api_key
         }
         return self.get('query', params=params)
+    
+    def get_top_gainers_losers(self)-> Dict[str, any]:
+        """
+        Retrieves the top gainers and losers.
+
+        :return: top gainers and losers status as a dictionary.
+        """
+        params = {
+            'function': 'TOP_GAINERS_LOSERS',
+            'apikey': self.api_key
+        }
+        return self.get('query', params=params)
+    
+    def company_overview(self, symbol: str) -> Dict[str, any]:
+        """
+        Retrieves the Information about the company behind the symbol.
+
+        :param symbol: Stock symbol (e.g., "AAPL").
+        :return: Stock data as a dictionary.
+        """
+        params = {
+            'function': 'OVERVIEW',
+            'symbol': symbol,
+            'apikey': self.api_key
+        }
+        return self.get('query', params=params)
