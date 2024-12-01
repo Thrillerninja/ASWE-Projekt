@@ -50,8 +50,7 @@ class StateMachine:
         self.activity = None
         
         # Setup transitions
-        self.machine.add_transition('start', 'idle', 'finance')
-        self.machine.add_transition('start', 'idle', 'finance')
+        self.machine.add_transition('start', 'idle', 'welcome')
         self.machine.add_transition('exit', 'welcome', 'idle')
         
         self.machine.add_transition(trigger='news_interact', source="news", dest='speach')
