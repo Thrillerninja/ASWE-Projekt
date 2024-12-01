@@ -142,12 +142,13 @@ class TestFinanceState(unittest.TestCase):
         self.assertEqual(result, "Apple Inc.")
 
 #%%%%%%%%%%%%%%%%%%%%%tests für on_enter%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    @patch("os.makedirs")  # Mock os.makedirs
     @patch("builtins.open", new_callable=mock_open)
     @patch("os.path.join", return_value="temp.json")
     @patch("json.dump")
     @patch.object(FinanceState, "get_information")  # Mock der get_information Methode
     #@patch.object(FinanceState, "stock_api")  # Mock für die stock_api
-    def test_on_enter_valid_data(self, mock_get_information, mock_json_dump, mock_path_join, mock_open_file):
+    def test_on_enter_valid_data(self, mock_get_information, mock_json_dump, mock_path_join, mock_open_file, mock_makedirs):
         # Simuliert die Antwort der API
         self.finance_state.stock_api = Mock()
 
@@ -203,14 +204,14 @@ class TestFinanceState(unittest.TestCase):
         # Überprüfen, ob exit_finance aufgerufen wurde
         self.finance_state.state_machine.exit_finance.assert_called_once()
 
-
+    @patch("os.makedirs")  # Mock os.makedirs
     @patch("builtins.open", new_callable=mock_open, read_data=json.dumps([
             {"name": "Apple Inc.", "price": 150, "change_amount": 2, "change_percentage": "1.5%", "volume": 10000000},
             {"name": "Microsoft Corp.", "price": 250, "change_amount": -1, "change_percentage": "-0.4%", "volume": 12000000},
             {"name": "Google LLC", "price": 2800, "change_amount": 15, "change_percentage": "0.5%", "volume": 8000000}
         ]))
     @patch("os.path.join", return_value="temp.json")
-    def test_on_enter_no_data(self, mock_path_join, mock_open_file):
+    def test_on_enter_no_data(self, mock_path_join, mock_open_file, mock_makedirs):
         # Simuliert keine Daten von der API
         self.finance_state.stock_api.get_top_gainers_losers.return_value = {}
 
@@ -222,7 +223,7 @@ class TestFinanceState(unittest.TestCase):
 
 
     
-    
+    @patch("os.makedirs")  # Mock os.makedirs
     @patch("builtins.open", new_callable=mock_open, read_data=json.dumps([
             {"name": "Apple Inc.", "price": 150, "change_amount": 2, "change_percentage": "1.5%", "volume": 10000000},
             {"name": "Microsoft Corp.", "price": 250, "change_amount": -1, "change_percentage": "-0.4%", "volume": 12000000},
@@ -230,7 +231,7 @@ class TestFinanceState(unittest.TestCase):
         ]))
     @patch("os.path.join", return_value="temp.json")
     @patch("json.dump")
-    def test_on_enter_rate_limit(self, mock_json_dump, mock_path_join, mock_open_file):
+    def test_on_enter_rate_limit(self, mock_json_dump, mock_path_join, mock_open_file, mock_makedirs):
         # Simuliert Rate-Limit-Meldung von der API
         self.finance_state.stock_api.get_top_gainers_losers.return_value = {
             "Information": "Thank you for using Alpha Vantage! Our standard API rate limit is 25 requests per day. Please subscribe to any of the premium plans at https://www.alphavantage.co/premium/ to instantly remove all daily rate limits."

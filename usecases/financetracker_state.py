@@ -71,7 +71,7 @@ class FinanceState:
                     with open(file_path, "r") as file:
                         data = json.load(file)
                         print("laden2")
-        
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, "w") as file:
             json.dump(data, file, indent=4)
             print("data dumped")
