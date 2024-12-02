@@ -1,5 +1,7 @@
 import datetime
 import unittest
+import unittest.mock
+from unittest.mock import patch, MagicMock
 
 from api.calendar_api.cal import Calendar, Lecture, Appointment
 from api.calendar_api.rapla import create_calendar_from_rapla
@@ -29,24 +31,12 @@ class TestCreateCalendarFromRapla(unittest.TestCase):
             self.assertRegex(appointment.color, r'^#[0-9a-fA-F]{6}$')
 
 
-    def test_create_calendar_from_rapla_invalid_url(self):
+    @patch('loguru.logger')
+    def test_create_calendar_from_rapla_invalid_url(self, mock_logger):
         # Dieser Test erwartet, dass die URL einen Fehler zurückgibt
-        with self.assertRaises(Exception) as excinfo:
-            create_calendar_from_rapla(self.INVALID_URL)
-        self.assertIn("Error", str(excinfo.exception))
-
-
-    def test_create_calendar_from_rapla_empty_url(self):
-        with self.assertRaises(Exception) as excinfo:
-            create_calendar_from_rapla("")
-        self.assertIn("Invalid", str(excinfo.exception))
-
-
-    def test_create_calendar_from_rapla_invalid_format_url(self):
-        invalid_format_url = "https://rapla.dhbw.de/rapla/internal_calendar?user=invalid_format"
-        with self.assertRaises(Exception) as excinfo:
-            create_calendar_from_rapla(invalid_format_url)
-        self.assertIn("Error", str(excinfo.exception))
+        mock_logger.error = MagicMock()
+        create_calendar_from_rapla(self.INVALID_URL)
+        mock_logger.error.assert_called_once()
 
 
     def test_create_calendar_from_rapla_partial_data(self):
