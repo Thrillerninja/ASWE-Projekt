@@ -13,6 +13,7 @@ class WelcomeState:
         
         self.tts_api = self.state_machine.api_factory.create_api(api_type="tts", state_machine=self.state_machine)
         self.transit_api = self.state_machine.api_factory.create_api(api_type="vvs")
+        self.transit_api = self.state_machine.api_factory.create_api(api_type="vvs")
         self.weather_api = self.state_machine.api_factory.create_api(api_type="weather")
         self.rapla_api = self.state_machine.api_factory.create_api(api_type="rapla")
         
