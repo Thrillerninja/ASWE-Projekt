@@ -24,7 +24,6 @@ class SpeachState:
         
         self.voice_interface.listen_continuous(self.process_input, timeout=5)
         
-        self.voice_interface.play_sound("idle")
         self.voice_interface.speak("Spracherkennung beendet.")
 
     def check_triggers(self):
