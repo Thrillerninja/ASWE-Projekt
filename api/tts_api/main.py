@@ -41,7 +41,7 @@ class TTSAPI:
         self.toggle_elevenlabs = bool(self.state_machine.preferences["enable_elevenlabs"])
         
         self.api_key = api_key
-        pygame.init()
+        
         self.CHUNK_SIZE = 1024
         self.url = "https://api.elevenlabs.io/v1/text-to-speech/pqHfZKP75CvOlQylNhV4"
         self.headers = {
@@ -63,6 +63,9 @@ class TTSAPI:
         if not isinstance(text, str) or not text.strip():
             raise ValueError("Text input must be a non-empty string.")
         if self.toggle_elevenlabs:
+            # Restart the pygame mixer to avoid issues with the sound output
+            pygame.init()
+            
             data = {
                 "text": text,
                 "model_id": "eleven_multilingual_v2",
@@ -73,17 +76,24 @@ class TTSAPI:
             }
             response = requests.post(self.url, json=data, headers=self.headers)
             response.raise_for_status()
-            with open('output.mp3', 'wb') as f:
-                for chunk in response.iter_content(chunk_size=self.CHUNK_SIZE):
-                    if chunk:
-                        f.write(chunk)
-                        
-            logger.info(f"Speaking text using Elevenlabs: {text}")
-            
-            pygame.mixer.music.load("output.mp3")
-            pygame.mixer.music.play()
-            while pygame.mixer.music.get_busy():
-                pass
+            try:
+                with open('output.mp3', 'wb') as f:
+                    for chunk in response.iter_content(chunk_size=self.CHUNK_SIZE):
+                        if chunk:
+                            f.write(chunk)
+                            
+                logger.info(f"Speaking text using Elevenlabs: {text}")
+                
+                pygame.mixer.music.load("output.mp3")
+                pygame.mixer.music.play()
+                while pygame.mixer.music.get_busy():
+                    pass
+            except Exception as e:
+                logger.error(f"Error during speaking with Elevenlabs: {e}")
+            finally:
+                pygame.mixer.pause()
+                pygame.mixer.stop()
+                pygame.quit()
         else:    
             logger.debug(f"Speaking text: {text}")
             with self.engine_lock:  # Use the lock to ensure only one thread accesses the engine at a time
