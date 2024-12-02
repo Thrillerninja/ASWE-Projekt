@@ -51,15 +51,22 @@ class WelcomeState:
         good_morning_message = f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M')}. "
         
         weather_info = ""
+        grad_format = ""
+        
+        if self.tts_api.toggle_elevenlabs:
+            grad_format = f"Grad Celsius"
+        else:
+            grad_format = f"°C"
+                    
         if min_temp is not None and max_temp is not None:
-            if condition is not None:
-                weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {str(min_temp).replace('.', ',')}°C und {str(max_temp).replace('.', ',')}°C liegen und es wird {condition} geben."
-            else:
-                weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {str(min_temp).replace('.', ',')}°C und {str(max_temp).replace('.', ',')}°C liegen."
+            if condition is not None:                
+                weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {int(min_temp)} und {int(max_temp)} {grad_format} liegen und {condition}"
+            else:        
+                weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {int(min_temp)} und {int(max_temp)} {grad_format} liegen."
         
         current_weather_info = ""
         if current_weather:
-            current_weather_info = f" Im Moment sind es {int(current_weather['main']['temp'])}°C."
+            current_weather_info = f" Im Moment sind es {int(current_weather['main']['temp'])} {grad_format}."
         
         self.tts_api.speak(good_morning_message + weather_info + current_weather_info)
         
