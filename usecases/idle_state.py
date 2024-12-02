@@ -51,4 +51,7 @@ class IdleState:
         queue = self.state_machine.transition_queue
         if len(queue) > 0:
             trigger = queue.pop(0)
-            self.state_machine.transition(trigger)
+            
+            # Call the transition method directly
+            getattr(self.state_machine, trigger)()
+            #self.state_machine.transition(trigger)

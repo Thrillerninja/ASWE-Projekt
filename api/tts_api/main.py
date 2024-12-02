@@ -94,8 +94,8 @@ class TTSAPI:
         try:
             with sr.Microphone(device_index=self.state_machine.preferences["mic_id"]) as source:
                 self.recognize.adjust_for_ambient_noise(source)
-                audio = self.recognize.listen(source, timeout=timeout)
                 logger.info(f"Listening for microphone input on mic_id {self.state_machine.preferences['mic_id']}")
+                audio = self.recognize.listen(source, timeout=timeout)
                 text = self.recognize.recognize_google(audio, language="de-DE")
                 logger.info(f"Recognized text: {text}")
                 return text
@@ -129,6 +129,7 @@ class TTSAPI:
                     logger.error(f"Error during listening: {e}")
                     callback(f"Ein Fehler ist aufgetreten: {e}")
 
+        self.play_sound("mic_activation")
         listener_thread = threading.Thread(target=listen_loop)
         listener_thread.daemon = True
         listener_thread.start()
@@ -140,7 +141,9 @@ class TTSAPI:
         """
         for _ in range(retries):
             self.speak(text)
+            self.play_sound("mic_activation")
             response = self.listen(timeout=timeout)  # Pass the timeout to the listen method
+            
             if response.lower() in ['ja', 'yes']:
                 return True
             elif response.lower() in ['nein', 'no']:
@@ -154,5 +157,18 @@ class TTSAPI:
         Plays a sound
         """
         logger.debug(f"Playing sound: {sound}")
-        logger.error("Sound playing not implemented yet")
-        #TODO: Implement sound playing
+        
+        match sound:
+            case "mic_activation":
+                sound_path = "config/sounds/mic_activation.wav"
+            case _:
+                sound_path = sound
+        
+        
+        try:
+            pygame.mixer.music.load(sound_path)
+            pygame.mixer.music.play()
+            while pygame.mixer.music.get_busy():
+                pass
+        except Exception as e:
+            logger.error(f"Error playing ping sound: {e}")
