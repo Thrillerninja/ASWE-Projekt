@@ -174,11 +174,14 @@ class TTSAPI:
             case _:
                 sound_path = sound
         
-        
         try:
+            pygame.init()  # Initialize pygame
+            pygame.mixer.init()  # Initialize the mixer
             pygame.mixer.music.load(sound_path)
             pygame.mixer.music.play()
             while pygame.mixer.music.get_busy():
                 pass
         except Exception as e:
             logger.error(f"Error playing ping sound: {e}")
+        finally:
+            pygame.mixer.quit()  # Quit the mixer after playing the sound
