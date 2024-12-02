@@ -68,7 +68,7 @@ class NewsAPI():
         Returns:
             list: A list of top headlines (titles) from the fetched articles.
         """
-        headlines = self.client.get_top_headlines()
+        headlines = self.client.get_top_headlines(language='de', country='de')
         
         # Extract and return the titles of the articles from the response
         return [article['title'] for article in headlines['articles']]
