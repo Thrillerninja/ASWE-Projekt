@@ -48,19 +48,19 @@ class WelcomeState:
         
         current_weather = self.weather_api.get_weather("Stuttgart")
         
-        # Build a string with the populated elements and provide the user with the weather and timeinformation
-        if self.tts_api.toggle_elevenlabs:
-            good_morning_message = f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M').replace(':','Uhr ')}. "
-        else:
-            good_morning_message = f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M')}. "
+        # # Build a string with the populated elements and provide the user with the weather and timeinformation
+        # if self.tts_api.toggle_elevenlabs:
+        #     good_morning_message = f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M').replace(':','Uhr ')}. "
+        # else:
+        #     good_morning_message = f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M')}. "
         
-        weather_info = ""
-        grad_format = ""
+        # weather_info = ""
+        # grad_format = ""
         
-        if self.tts_api.toggle_elevenlabs:
-            grad_format = f"Grad Celsius"
-        else:
-            grad_format = f"°C"
+        # if self.tts_api.toggle_elevenlabs:
+        #     grad_format = f"Grad Celsius"
+        # else:
+        #     grad_format = f"°C"
                     
         if min_temp is not None and max_temp is not None:
             
@@ -72,12 +72,12 @@ class WelcomeState:
             else:        
                 weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {int(min_temp)} und {int(max_temp)} {grad_format} liegen."
         
-        current_weather_info = ""
-        if current_weather:
-            current_weather_info = f" Im Moment sind es {int(current_weather['main']['temp'])} {grad_format}."
+        # current_weather_info = ""
+        # if current_weather:
+        #     current_weather_info = f" Im Moment sind es {int(current_weather['main']['temp'])} {grad_format}."
         
-        logger.debug(f"Speaking weather information: {good_morning_message + weather_info + current_weather_info}")
-        self.tts_api.speak(good_morning_message + weather_info + current_weather_info)        
+        # logger.debug(f"Speaking weather information: {good_morning_message + weather_info + current_weather_info}")
+        # self.tts_api.speak(good_morning_message + weather_info + current_weather_info)        
         
         # ---------- Calendar information ----------
         # Provide the user with the information about their first appointment that hasn't already passed
