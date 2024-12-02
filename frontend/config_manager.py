@@ -2,6 +2,53 @@ import json
 import os
 from PyQt5.QtCore import QTime
 from typing import Union
+import speech_recognition as sr
+from loguru import logger
+
+script_dir = os.path.dirname(os.path.realpath(__file__))
+parent_dir = os.path.dirname(script_dir)
+PREFERENCES_FILE = os.path.join(parent_dir, 'config', 'preferences.json')
+
+def load_preferences_file() -> dict:
+    """Loads and returns preferences from a JSON file.
+
+    This function loads the preferences stored in a JSON file and returns them as a dictionary. 
+    If the file is not found, or if the JSON is invalid, it returns an empty dictionary.
+
+    The dictionary returned contains the following possible keys and their corresponding types:
+        - "enable_elevenlabs" (bool): (0 / 1) Enable or disable the Elevenlabs API for text-to-speech.
+        - "mic_id" (int): ID of the microphone to use for speech recognition.
+        - "fuel_type" (str): Type of fuel (e.g., "diesel").
+        - "fuel_threshold" (float): Fuel threshold in € (e.g., 1.5).
+        - "fuel_step_size" (float): Step size for fuel threshold in € (e.g., 0.05).
+        - "fuel_radius" (float): Radius for fuel search in km (e.g., 5.0).
+        - "fuel_demo_price" (float): Price for fuel demo in € (0.0 indicates using the API).
+        - "default_alarm_time" (str): Default alarm time in HH:MM format (e.g., "08:00").
+        - "sleep_time" (str): Sleep time in HH:MM format (e.g., "22:00").
+        - "home_location" (dict): Details of the home location, including:
+            - "name" (str): Name of the location (e.g., "asperg").
+            - "vvs_code" (str): VVS code for the location (e.g., "de:08118:7400").
+            - "address" (dict): Address details, including:
+                - "street" (str): Street name (e.g., "Alleenstraße").
+                - "number" (str): Street number (e.g., "1").
+                - "zipcode" (str): Zipcode (e.g., "71679").
+                - "city" (str): City name (e.g., "Asperg").
+                - "country" (str): Country name (e.g., "Germany").
+            - "coordinates" (dict): Geographical coordinates, including:
+                - "latitude" (float): Latitude of the location (e.g., 48.907256).
+                - "longitude" (float): Longitude of the location (e.g., 9.147977).
+        - "default_destination" (dict): Details of the default destination, structured similarly to "home_location".
+
+    Returns:
+        dict: A dictionary containing the loaded preferences, or an empty dictionary if the file is not found or invalid.
+    """
+    try:
+        with open(PREFERENCES_FILE, 'r') as file:
+            preferences = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        preferences = {}
+        
+    return preferences
 
 class ConfigManager:
     
@@ -14,33 +61,23 @@ class ConfigManager:
 
         self.view = view
         self.ui = self.view.ui
+        self.recognize = sr.Recognizer()
 
-        script_dir = os.path.dirname(os.path.realpath(__file__))
-        parent_dir = os.path.dirname(script_dir)  # Go up one directory
-        self.preferences_file = os.path.join(parent_dir, 'config', 'preferences.json')
+        self.preferences_file = PREFERENCES_FILE
 
-        self.preferences = {}
+        self.preferences = load_preferences_file()
         self.fuel_types = ['super-e10', 'super-e5', 'super-plus', 'diesel', 'lkw-diesel', 'lpg',]
 
-        self.load_preferences_file()
+        self.view.state_machine.config = self.preferences
+        self.active_mics = self.get_active_mics()
         self.set_initial_values()
-
-    def load_preferences_file(self) -> None:
-        """Loads preferences from a JSON file into the `self.preferences` dictionary.
-
-        If the file does not exist or is empty, `self.preferences` will remain an empty dictionary.
-        """
-        try:
-            with open(self.preferences_file, 'r') as file:
-                self.preferences = json.load(file)
-        except (FileNotFoundError, json.JSONDecodeError):
-            self.preferences = {}
 
     def save_preferences(self) -> None:
         """Saves the current preferences from `self.preferences` to a JSON file.
 
         This will overwrite the file specified in `self.preferences_file`.
         """
+        self.view.state_machine.preferences = self.preferences
         with open(self.preferences_file, 'w') as file:
             json.dump(self.preferences, file, indent=4)
 
@@ -60,7 +97,10 @@ class ConfigManager:
         Args:
             preference (str): The name of the preference to retrieve. The available keys are:
                 - "fuel_type": str (e.g., "diesel")
-                - "fuel_threshold": float (e.g., 1.5)
+                - "fuel_threshold": float in € (e.g., 1.5)
+                - "fuel_step_size": float in € (e.g., 0.05)
+                - "fuel_radius": float in km (e.g., 5.0)
+                - "fuel_demo_price": float in €, 0 indicates to use the API
                 - "default_alarm_time": str (e.g., "08:00")
                 - "sleep_time": str (e.g., "22:00")
                 - "home_location": dict (see below for details)
@@ -105,6 +145,19 @@ class ConfigManager:
         self.view.set_sl_fuel_threshold(int(fuel_threshold * 100))
         self.view.set_le_fuel_threshold(f"{fuel_threshold:.2f}")
 
+        self.view.set_le_fuel_demo_price(f"{self.preferences['fuel_demo_price']:.2f}")
+
+        self.view.set_mic_list(self.active_mics)
+        first_active_mic = self.get_first_active_mic_id()
+        selected_mic = self.preferences['mic_id']
+
+        if selected_mic not in [mic[0] for mic in self.active_mics]:
+            selected_mic = first_active_mic
+            self.update_preference('mic_id', first_active_mic)
+            self.view.state_machine.preferences['mic_id'] = first_active_mic
+        
+        self.view.set_mic_id(selected_mic)
+
     def on_cb_fuel_type_changed(self, index: int) -> None:
         """Handles the change in the fuel type selection from the combo box.
 
@@ -144,6 +197,21 @@ class ConfigManager:
         self.update_preference('fuel_threshold', fuel_threshold)
         self.view.set_le_fuel_threshold(fuel_threshold_str)
 
+    def convert_text_to_float(self, text: str):
+        """Attempts to convert the text to a float, handling both comma and dot notation for decimal points.
+        If the conversion fails, -1 is returned.
+
+        Args:
+            text (str): The text to convert to float.
+        """
+        smoothed_text = text.replace("€", "").replace(",", ".").strip()
+        try:
+            value = float(smoothed_text)
+            return value
+        except ValueError:
+            # conversion to float fails
+            return -1
+        
     def on_le_fuel_threshold_changed(self, text: str) -> None:
         """Handles the change in the fuel threshold input field.
 
@@ -154,18 +222,76 @@ class ConfigManager:
         If successful, updates the `fuel_threshold` preference and slider. If not, calls an error function.
         """
         self.view.remove_error_le_fuel_threshold()
-        text = text.strip()  # Remove any leading or trailing whitespace
-        if text.endswith(" €"):
-            text = text[:-2].strip()
-        try:
-            value = float(text.replace(",", "."))
+        value = self.convert_text_to_float(text)
 
-            if 100 <= value * 100 <= 200:
-                self.update_preference('fuel_threshold', value)
-                self.view.set_sl_fuel_threshold(int(value * 100))
-                self.view.set_le_fuel_threshold(f"{value:.2f}")
-            else:
-                self.view.show_error_le_fuel_threshold("Fuel threshold must be a number between 1.00 and 2.00")
-        except ValueError:
-            # conversion to float fails
+        if 100 <= value * 100 <= 200:
+            self.update_preference('fuel_threshold', value)
+            self.view.set_sl_fuel_threshold(int(value * 100))
+            self.view.set_le_fuel_threshold(f"{value:.2f}")
+        else:
             self.view.show_error_le_fuel_threshold("Fuel threshold must be a number between 1.00 and 2.00")
+
+
+    def on_le_fuel_demo_price_changed(self, text: str) -> None:
+        """Handles the change in the fuel demo price input field.
+
+        Args:
+            text (str): The text from the input field representing the fuel demo price.
+
+        Attempts to convert the text to a float, handling both comma and dot notation for decimal points.
+        If conversion to float is successful, updates the `fuel_demo_price` preference and slider. If not, calls an error function.
+        """
+
+        self.view.remove_error_le_fuel_demo_price()
+        value = self.convert_text_to_float(text)
+
+        if value >= 0:
+            self.update_preference('fuel_demo_price', value)
+            self.view.set_le_fuel_demo_price(f"{value:.2f}")
+        else:
+            self.view.show_error_le_fuel_demo_price("Fuel demo price must be a number")
+
+    def get_active_mics(self):
+        mics = sr.Microphone.list_microphone_names()
+        active_mics = []
+        for i, mic in enumerate(mics):
+            try:
+                mic_name = mic.encode('latin1').decode('utf-8') # Handle special characters (ä, ö, ü)
+                with sr.Microphone(device_index=i) as source:
+                    self.recognize.adjust_for_ambient_noise(source)
+                    logger.info(f"{i}: {mic_name} (active)")
+                    active_mics.append([i, mic_name])
+            except sr.WaitTimeoutError:
+                logger.info(f"{i}: {mic_name} (inactive)")
+            except Exception as e:
+                logger.warning(f"{i}: {mic_name} (error: {e})")
+        logger.info(f"Active microphones: {active_mics}")
+        return active_mics
+
+    def get_first_active_mic_id(self):
+        if self.active_mics:
+            return self.active_mics[0][0]  # Return the index of the first active mic
+        return 0  # Default to the first mic if no active mic is found
+
+    def on_cb_select_mic_changed(self, index: int) -> None:
+        """
+        Handles changes in the combobox selection by passing the selected text.
+        
+        Args:
+            index (int): The current index of the combobox. (This is required by the signal.)
+        """
+        selected_text = self.ui.cb_select_mic.currentText()
+    
+        # Ensure the selected text is not empty and contains a colon
+        if selected_text and ":" in selected_text:
+            try:
+                # Split the text at the colon and strip any surrounding whitespace
+                mic_id = int(selected_text.split(":")[0].strip())
+                self.update_preference('mic_id', mic_id)
+            except ValueError:
+                # Handle the case where the mic ID cannot be converted to an integer
+                logger.warning(f"Invalid microphone ID format: {selected_text}")
+        else:
+            # Handle the case where the selected text is empty or malformed
+            logger.warning(f"Selected item is empty or has invalid format: {selected_text}")
+    

@@ -3,8 +3,10 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import datetime
+from loguru import logger
 
 from api.calendar_api.cal import Calendar, Lecture, Appointment
+
 
 
 def create_calendar_from_rapla(url:str, cal:Calendar=Calendar()):
@@ -17,9 +19,12 @@ def create_calendar_from_rapla(url:str, cal:Calendar=Calendar()):
     seps_block_tail = ["week_smallseparatorcell", "week_separatorcell", "week_smallseparatorcell"]
     year = url.split("year=")[1].split("&")[0] if "year=" in url else str(datetime.datetime.now().year)
     
-    # Get HTML
+    cal = Calendar()
+    logger.info(f"Fetching data from URL: {url}")
     res = requests.get(url)
-    if res.status_code != 200: raise Exception(f"Error: {res.status_code}")
+    if res.status_code != 200:
+        logger.error(f"Failed to fetch data from URL: {url} with status code: {res.status_code}")
+        return None
     soup = BeautifulSoup(res.text, 'html.parser')
 
     lectures = []
@@ -63,19 +68,15 @@ def create_calendar_from_rapla(url:str, cal:Calendar=Calendar()):
                             lecturer = td2.find("span", class_="person").text
                         except:
                             lecturer = "-"
-                        lecture = Lecture(title=vl, 
-                                          datetime_start=datetime_start, 
-                                          datetime_end=datetime_end, 
-                                          color=color, lecturer=lecturer, 
-                                          room=room)
-                        lectures.append(lecture)
+                        lecture = Lecture(vl, date, time_start, time_end, color, lecturer, room)
+                        cal.appointments.append(lecture)
+                        logger.info(f"Added lecture: {lecture}")
                         td_index += 3
                     elif classes == seps_block_tail:
                         # Blockende
                         td_index += 2  # dont skip over last td cause its already from the next day
                 except Exception as e:
-                    print(e)
-    cal.add_appointments(lectures)
+                    logger.error(f"Error processing table row: {e}")
     return cal
 
 

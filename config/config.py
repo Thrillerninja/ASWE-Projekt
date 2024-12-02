@@ -19,4 +19,7 @@ CONFIG = {
     'spotify_client_id': get_env_variable('SPOTIFY_CLIENT_ID'),
     'spotify_client_secret': get_env_variable('SPOTIFY_CLIENT_SECRET'),
     'news_api_key': get_env_variable('NEWS_API_KEY'),
+    'fitbit_client_id': get_env_variable('FITBIT_CLIENT_ID'),
+    'fitbit_client_secret': get_env_variable('FITBIT_CLIENT_SECRET'),
+    'elevenlabs_key': get_env_variable('ELEVENLABS_API_KEY'),
 }
