@@ -130,3 +130,13 @@ class VVSAPI(APIClient):
                 connection.destination.arrival_time_planned += datetime.timedelta(hours=2)
             
         return trip_time
+    
+    def get_best_trip(self, start_station: Station, end_station: Station, latest_arrival_time: datetime) -> Trip:
+        """
+        Get the best trip between two stations.
+        """
+        print(f"Getting best trip from {start_station} to {end_station}")
+        trips = self.calc_trip(start_station, end_station, arrival_time=latest_arrival_time)
+        if trips == -1:
+            return None
+        return trips[0]

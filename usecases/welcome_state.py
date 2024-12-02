@@ -47,63 +47,67 @@ class WelcomeState:
         
         current_weather = self.weather_api.get_weather("Stuttgart")
         
-        # Build a string with the populated elements and provide the user with the weather and timeinformation
-        if self.tts_api.toggle_elevenlabs:
-            good_morning_message = f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M').replace(':','Uhr ')}. "
-        else:
-            good_morning_message = f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M')}. "
+        # # Build a string with the populated elements and provide the user with the weather and timeinformation
+        # if self.tts_api.toggle_elevenlabs:
+        #     good_morning_message = f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M').replace(':','Uhr ')}. "
+        # else:
+        #     good_morning_message = f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M')}. "
         
-        weather_info = ""
-        grad_format = ""
+        # weather_info = ""
+        # grad_format = ""
         
-        if self.tts_api.toggle_elevenlabs:
-            grad_format = f"Grad Celsius"
-        else:
-            grad_format = f"°C"
+        # if self.tts_api.toggle_elevenlabs:
+        #     grad_format = f"Grad Celsius"
+        # else:
+        #     grad_format = f"°C"
                     
-        if min_temp is not None and max_temp is not None:
-            if condition is not None:                
-                weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {int(min_temp)} und {int(max_temp)} {grad_format} liegen und {condition}"
-            else:        
-                weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {int(min_temp)} und {int(max_temp)} {grad_format} liegen."
+        # if min_temp is not None and max_temp is not None:
+        #     if condition is not None:                
+        #         weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {int(min_temp)} und {int(max_temp)} {grad_format} liegen und {condition}"
+        #     else:        
+        #         weather_info = f"Die Wettervorhersage für heute: Die Temperatur wird zwischen {int(min_temp)} und {int(max_temp)} {grad_format} liegen."
         
-        current_weather_info = ""
-        if current_weather:
-            current_weather_info = f" Im Moment sind es {int(current_weather['main']['temp'])} {grad_format}."
+        # current_weather_info = ""
+        # if current_weather:
+        #     current_weather_info = f" Im Moment sind es {int(current_weather['main']['temp'])} {grad_format}."
         
-        logger.debug(f"Speaking weather information: {good_morning_message + weather_info + current_weather_info}")
-        self.tts_api.speak(good_morning_message + weather_info + current_weather_info)        
+        # logger.debug(f"Speaking weather information: {good_morning_message + weather_info + current_weather_info}")
+        # self.tts_api.speak(good_morning_message + weather_info + current_weather_info)        
         
         # ---------- Calendar information ----------
-        # Provide the user with the information about their first appointment
+        # Provide the user with the information about their first appointment that hasn't already passed
         logger.debug("Retrieving today's appointments")
         appointments = self.rapla_api.get_todays_appointments()
-        if appointments:
-            first_appointment = appointments[0]
-            logger.debug(f"First appointment: {first_appointment}")
-            self.tts_api.speak(f" Ihr erster Termin ist um {first_appointment.start} im {first_appointment.room}.")
-        else:
-            logger.debug("No appointments found for today")
-            self.tts_api.speak("Sie haben heute keine Termine.")
-            
-        # ---------- Transport information ----------
-        # Get rides to get for the first appointment
-        logger.debug("Calculating trip time from Hauptbahnhof to Universität")
-        start_location = self.state_machine.preferences.get("start_location", None)
-        end_location = self.state_machine.preferences.get("end_location", None)
-        trips = self.transit_api.calc_trip_time(start_location, end_location)
+        now = datetime.datetime.now()
+        upcoming_appointment = next((appt for appt in appointments if datetime.datetime.strptime(appt.start, "%H:%M") > now), None)
         
-        if trips != -1 and start_location is not None and end_location is not None:
-            trip = trips[0]  # Assuming we take the first trip in the list
-            transport_type = trip.connections[0].origin.transport_type
-            departure_time = trip.connections[0].origin.departure_time_planned.strftime("%H:%M")
-            time_to_start = (trip.connections[0].origin.departure_time_planned - datetime.datetime.now()).seconds // 60
-            logger.debug(f"Trip details: transport_type={transport_type}, departure_time={departure_time}, time_to_start={time_to_start}")
-            self.tts_api.speak(f"Um rechtzeitig zu Ihrem Termin zu kommen, sollten Sie die {transport_type} um {departure_time} Uhr nehmen. \
-                               Damit kommen sie {time_to_start} Minuten vor Ihrem Termin an.")
+        if upcoming_appointment:
+            logger.debug(f"Upcoming appointment: {upcoming_appointment}")
+            self.tts_api.speak(f"Ihr erster Termin ist um {upcoming_appointment.start} im {upcoming_appointment.room}.")
+            
+            # ---------- Transport information ----------
+            # Get rides to get for the first appointment
+            start_location = self.state_machine.preferences.get("home_location", None)
+            end_location = self.state_machine.preferences.get("default_destination", None)
+            logger.debug(f"Calculating trip time from {start_location} to {end_location}")
+            
+            arrival_time = datetime.datetime.combine(datetime.datetime.today(), datetime.datetime.strptime(upcoming_appointment.start, "%H:%M").time())
+            trip = self.transit_api.get_best_trip(start_location['vvs_code'], end_location['vvs_code'], arrival_time)
+        
+            if trip != -1 and start_location is not None and end_location is not None:
+                transport_type = trip.connections[0].transportation.number
+                departure_time = trip.connections[0].origin.departure_time_planned.strftime("%H:%M")
+                time_to_start = (trip.connections[0].origin.departure_time_planned - datetime.datetime.now()).seconds // 60
+                logger.debug(f"Um rechtzeitig zu Ihrem Termin zu kommen, sollten Sie die {transport_type} um {departure_time} Uhr nehmen. \
+                                   Damit kommen sie {time_to_start} Minuten vor Ihrem Termin an.")
+                self.tts_api.speak(f"Um rechtzeitig zu Ihrem Termin zu kommen, sollten Sie die {transport_type} um {departure_time} Uhr nehmen. \
+                                   Damit kommen sie {time_to_start} Minuten vor Ihrem Termin an.")
+            else:
+                logger.debug("No suitable connection found")
+                self.tts_api.speak("Es konnte keine passende Verbindung gefunden werden.")
         else:
-            logger.debug("No suitable connection found")
-            self.tts_api.speak("Es konnte keine passende Verbindung gefunden werden.")
+            logger.debug("No upcoming appointments found for today")
+            self.tts_api.speak("Sie haben heute keine Termine.")
             
         # ---------- Morning news ----------
         # Ask the user if they want to start the next use case (e.g., Nachrichtenassistent)
