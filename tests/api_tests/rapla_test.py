@@ -31,7 +31,7 @@ class TestCreateCalendarFromRapla(unittest.TestCase):
             self.assertRegex(appointment.color, r'^#[0-9a-fA-F]{6}$')
 
 
-    @patch('loguru.logger')
+    @patch('logger')
     def test_create_calendar_from_rapla_invalid_url(self, mock_logger):
         # Dieser Test erwartet, dass die URL einen Fehler zurückgibt
         mock_logger.error = MagicMock()

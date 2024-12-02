@@ -27,7 +27,6 @@ def create_calendar_from_rapla(url:str, cal:Calendar=Calendar()):
         return None
     soup = BeautifulSoup(res.text, 'html.parser')
 
-    lectures = []
     
     # Wochenübersichten
     for week_table in soup.find_all("table", class_="week_table"):
