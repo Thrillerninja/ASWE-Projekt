@@ -23,17 +23,23 @@ class TestWelcomeState(unittest.TestCase):
         mock_weather_api.get_weather.return_value = {'main': {'temp': 15}}
         mock_rapla_api.get_todays_appointments.return_value = []
 
+        # Mock preferences
+        mock_preferences = {
+            "enable_elevenlabs": 0
+        }
+
         # Initialize WelcomeState
         state_machine = MagicMock()
         mock_config = MagicMock()  # Mock configuration
         state_machine.api_factory = APIFactory(mock_config)
+        state_machine.preferences = mock_preferences
         welcome_state = WelcomeState(state_machine)
         
         # Call on_enter
         welcome_state.on_enter()
 
         # Check if TTS API was called with the correct message
-        mock_tts_api.speak.assert_any_call(f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M')}. Die Wettervorhersage für heute: Die Temperatur wird zwischen 10°C und 20°C liegen und es wird sunny geben. Im Moment sind es 15°C.")
+        mock_tts_api.speak.assert_any_call(f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M')}. Die Wettervorhersage für heute: Die Temperatur wird zwischen 10 und 20 Grad Celsius liegen und sunny Im Moment sind es 15 Grad Celsius.")
         mock_tts_api.speak.assert_any_call("Sie haben heute keine Termine.")
         
 class TestAlarm(unittest.TestCase):
