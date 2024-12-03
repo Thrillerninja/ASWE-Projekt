@@ -144,7 +144,20 @@ jobs:
       # Step to install eSpeak
       - name: Install eSpeak
         run: sudo apt-get install espeak -y
+      
+      # Set up virtual microphone device
+      - name: Set up virtual microphone
+        run: |
+          pactl load-module module-null-sink sink_name=VirtualMic
+          pactl load-module module-loopback source=VirtualMic.monitor
+          pactl set-default-source VirtualMic.monitor
 
+      # Verify microphone configuration
+      - name: Verify microphone setup
+        run: |
+          pactl list sources
+          arecord -d 5 -f cd test-mic.wav
+          ls -la test-mic.wav
         
       # Install system dependencies including PortAudio
       - name: Install system dependencies
