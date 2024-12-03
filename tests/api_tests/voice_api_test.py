@@ -50,12 +50,11 @@ class TestVoiceInterface(unittest.TestCase):
             vi.speak(123)
 
     @patch("builtins.open", new_callable=mock_open)
-    @patch('pyttsx3.init')
     @patch('requests.post')
     @patch("pygame.mixer.music.load")
     @patch("pygame.mixer.music.play")
     @patch("pygame.mixer.music.get_busy", return_value=False)  # Mock get_busy() to return False immediately
-    def test_speak_elevenlabs(self, mock_get_busy, mock_play, mock_load, mock_requests_post, mock_pyttsx3_init, mock_open):
+    def test_speak_elevenlabs(self, mock_get_busy, mock_play, mock_load, mock_requests_post, mock_open):
         """
         Test speak functionality of ElevenLabs with valid and invalid inputs
         """

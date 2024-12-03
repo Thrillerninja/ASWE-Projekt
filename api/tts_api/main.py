@@ -64,7 +64,7 @@ class TTSAPI:
             raise ValueError("Text input must be a non-empty string.")
         if self.toggle_elevenlabs:
             # Restart the pygame mixer to avoid issues with the sound output
-            pygame.init()
+            pygame.mixer.init()
             
             data = {
                 "text": text,
@@ -91,8 +91,6 @@ class TTSAPI:
             except Exception as e:
                 logger.error(f"Error during speaking with Elevenlabs: {e}")
             finally:
-                pygame.mixer.pause()
-                pygame.mixer.stop()
                 pygame.quit()
         else:    
             logger.debug(f"Speaking text: {text}")
