@@ -67,8 +67,13 @@ def create_calendar_from_rapla(url:str, cal:Calendar=Calendar()):
                             lecturer = td2.find("span", class_="person").text
                         except:
                             lecturer = "-"
-                        lecture = Lecture(vl, datetime_start, datetime_end, color, lecturer, room)
-                        cal.appointments.append(lecture)
+                        lecture = Lecture(title=vl, 
+                                          datetime_start=datetime_start, 
+                                          datetime_end=datetime_end, 
+                                          color=color, 
+                                          lecturer=lecturer, 
+                                          room=room)
+                        cal.add_appointments([lecture])
                         logger.info(f"Added lecture: {lecture}")
                         td_index += 3
                     elif classes == seps_block_tail:
