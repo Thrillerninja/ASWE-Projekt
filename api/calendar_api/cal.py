@@ -70,17 +70,6 @@ class Appointment:
         }
 
 
-if __name__ == '__main__':
-    cal = Calendar()
-    app1 = Appointment("10-12", datetime.datetime(2021, 10, 1, 10, 0), datetime.datetime(2021, 10, 1, 12, 0))
-    app2 = Appointment("14-16", datetime.datetime(2021, 10, 1, 14, 0), datetime.datetime(2021, 10, 1, 16, 0))
-    cal.add_appointments([app1, app2])
-    print(cal)
-    now = datetime.datetime(2021, 10, 1, 11, 0)
-    next_appointment = cal.get_next_appointment(now)
-    print(next_appointment)
-
-
 
 class Lecture(Appointment):
     def __init__(self, title, datetime_start, datetime_end, color, lecturer, room):
