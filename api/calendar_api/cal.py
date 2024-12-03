@@ -28,6 +28,7 @@ class Calendar:
         return self.__str__()
     
     def toJSON(self):
+        self.sort()
         return [appointment.toJSON() for appointment in self.appointments]
     
     
