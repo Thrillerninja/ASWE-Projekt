@@ -4,7 +4,8 @@ import speech_recognition as sr
 from loguru import logger
 import threading
 import pygame
-import winsound
+import numpy as np
+
 
 class TTSAPI:
     _instance = None
@@ -95,9 +96,19 @@ class TTSAPI:
         try:
             with sr.Microphone(device_index=self.state_machine.preferences["mic_id"]) as source:
                 self.recognize.adjust_for_ambient_noise(source)
-                duration = 500 
-                frequency = 1000
-                winsound.Beep(frequency, duration)
+                #beep tone
+                frequency = 900  # Frequenz in Hertz
+                duration = 0.5    # Dauer in Sekunden
+                sample_rate = 44100  # Abtastrate
+                pygame.mixer.init(frequency=sample_rate, size=-16, channels=1)
+                t = np.linspace(0, duration, int(sample_rate * duration), False)
+                wave = 0.5 * np.sin(2 * np.pi * frequency * t)
+                wave = (wave * 32767).astype(np.int16).tobytes()
+                sound = pygame.mixer.Sound(buffer=wave)
+                sound.play()
+                pygame.time.wait(int(duration * 1000))
+                pygame.mixer.quit()
+
                 audio = self.recognize.listen(source, timeout=timeout)
                 logger.info(f"Listening for microphone input on mic_id {self.state_machine.preferences['mic_id']}")
                 text = self.recognize.recognize_google(audio, language="de-DE")
@@ -121,9 +132,19 @@ class TTSAPI:
             try:
                 with sr.Microphone(device_index=self.state_machine.preferences["mic_id"]) as source:
                     self.recognize.adjust_for_ambient_noise(source)
-                    duration = 500 
-                    frequency = 1000
-                    winsound.Beep(frequency, duration)
+                    #beep tone
+                    frequency = 900  # Frequenz in Hertz
+                    duration = 0.5    # Dauer in Sekunden
+                    sample_rate = 44100  # Abtastrate
+                    pygame.mixer.init(frequency=sample_rate, size=-16, channels=1)
+                    t = np.linspace(0, duration, int(sample_rate * duration), False)
+                    wave = 0.5 * np.sin(2 * np.pi * frequency * t)
+                    wave = (wave * 32767).astype(np.int16).tobytes()
+                    sound = pygame.mixer.Sound(buffer=wave)
+                    sound.play()
+                    pygame.time.wait(int(duration * 1000))
+                    pygame.mixer.quit()
+
                     audio = self.recognize.listen(source, timeout=timeout)
                     text = self.recognize.recognize_google(audio, language="de-DE")
                     # logger.info(f"Recognized text: {text}") # TODO Check if logs are necessary as they produce a lot of output in tests
