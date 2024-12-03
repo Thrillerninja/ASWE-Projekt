@@ -49,28 +49,30 @@ class TestVoiceInterface(unittest.TestCase):
         with self.assertRaises(ValueError):
             vi.speak(123)
 
-    @patch("builtins.open", new_callable=mock_open)
-    @patch('requests.post')
-    @patch("pygame.mixer.music.load")
-    @patch("pygame.mixer.music.play")
-    @patch("pygame.mixer.music.get_busy", return_value=False)  # Mock get_busy() to return False immediately
-    def test_speak_elevenlabs(self, mock_get_busy, mock_play, mock_load, mock_requests_post, mock_open):
+    @patch("builtins.open", new_callable=mock_open)  # Mock file handling
+    @patch('requests.post')  # Mock the requests.post function
+    @patch("pygame.mixer.init")  # Mock pygame mixer init
+    @patch("pygame.mixer.music.load")  # Mock pygame music load
+    @patch("pygame.mixer.music.play")  # Mock pygame music play
+    @patch("pygame.mixer.music.get_busy", return_value=False)  # Mock get_busy()
+    def test_speak_elevenlabs(self, mock_get_busy, mock_play, mock_load, mock_init, mock_requests_post, mock_open):
         """
-        Test speak functionality of ElevenLabs with valid and invalid inputs
+        Test speak functionality of ElevenLabs with valid inputs when toggle_elevenlabs is True
         """
-        # Mock response from ElevenLabs API
+        # Mock the response from ElevenLabs API
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.iter_content.return_value = [b"chunk1", b"chunk2"]
         mock_requests_post.return_value = mock_response
 
-        vi = TTSAPI(self.api_key, self.mocked_state_machine)
-        vi.toggle_elevenlabs = True
-        
-        # Test ElevenLabs API call
+        # Create the instance of the TTSAPI class
+        vi = TTSAPI(api_key="mock_api_key", state_machine=None)
+        vi.toggle_elevenlabs = True  # Ensure ElevenLabs is used for speech
+
+        # Call the speak function
         vi.speak("Hello, ElevenLabs!")
 
-        # Check if the ElevenLabs API was called
+        # Assert that the ElevenLabs API was called correctly
         mock_requests_post.assert_called_once_with(
             vi.url,
             json={
@@ -81,18 +83,17 @@ class TestVoiceInterface(unittest.TestCase):
             headers=vi.headers,
         )
 
-        # Check if the file was opened correctly and written to
+        # Check if the file was opened and written to correctly
         mock_open.assert_called_once_with("output.mp3", "wb")
         mock_open().write.assert_any_call(b"chunk1")
         mock_open().write.assert_any_call(b"chunk2")
 
-        # Ensure pygame mixer methods are called
+        # Ensure pygame mixer methods were called
         mock_load.assert_called_once_with("output.mp3")
         mock_play.assert_called_once()
 
-        # Check that get_busy() was called and it returned False (avoiding the blocking loop)
+        # Check that get_busy() was called and it returned False
         mock_get_busy.assert_called_once()
-
 
     @patch('speech_recognition.Recognizer.recognize_google')
     @patch('speech_recognition.Recognizer.listen')

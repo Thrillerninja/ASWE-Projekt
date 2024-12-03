@@ -64,7 +64,7 @@ class TTSAPI:
             raise ValueError("Text input must be a non-empty string.")
         if self.toggle_elevenlabs:
             # Restart the pygame mixer to avoid issues with the sound output
-            pygame.mixer.init()
+            pygame.init()
             
             data = {
                 "text": text,
@@ -120,14 +120,14 @@ class TTSAPI:
         Continuously listen for user input and call the callback function with the recognized text.
         """
         def listen_loop():
+            logger.info(f"Listening for microphone input on mic_id {self.state_machine.preferences['mic_id']}")
             while True:
                 try:
                     with sr.Microphone(device_index=self.state_machine.preferences["mic_id"]) as source:
                         self.recognize.adjust_for_ambient_noise(source)
-                        logger.info(f"Listening for microphone input on mic_id {self.state_machine.preferences['mic_id']}")
                         audio = self.recognize.listen(source, timeout=timeout)
                         text = self.recognize.recognize_google(audio, language="de-DE")
-                        logger.info(f"Recognized text: {text}")
+                        # logger.info(f"Recognized text: {text}")
                         callback(text)
                 except sr.UnknownValueError:
                     callback("Google konnte das Audio nicht verstehen")
