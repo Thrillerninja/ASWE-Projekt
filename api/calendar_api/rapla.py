@@ -19,7 +19,6 @@ def create_calendar_from_rapla(url:str, cal:Calendar=Calendar()):
     seps_block_tail = ["week_smallseparatorcell", "week_separatorcell", "week_smallseparatorcell"]
     year = url.split("year=")[1].split("&")[0] if "year=" in url else str(datetime.datetime.now().year)
     
-    cal = Calendar()
     logger.info(f"Fetching data from URL: {url}")
     res = requests.get(url)
     if res.status_code != 200:
