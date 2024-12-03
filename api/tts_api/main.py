@@ -55,6 +55,25 @@ class TTSAPI:
         No authentication required
         """
         pass
+      
+      
+   
+    def list_mics(self):
+        """
+        Lists all available microphones
+        """
+        mics = sr.Microphone.list_microphone_names()
+        print("Available microphones:")
+        for i, mic in enumerate(mics):
+            print(f"{i}: {mic}")
+        return mics
+    
+
+    def get_specific_micindex_by_name(self, mic_name_part:str):
+        mics = sr.Microphone.list_microphone_names()
+        for i, mic in enumerate(mics):
+            if mic_name_part.lower() in mic.lower():
+                return i
 
     def speak(self, text: str):
         """
@@ -62,6 +81,7 @@ class TTSAPI:
         """
         if not isinstance(text, str) or not text.strip():
             raise ValueError("Text input must be a non-empty string.")
+
         if self.toggle_elevenlabs:
             data = {
                 "text": text,
@@ -90,9 +110,11 @@ class TTSAPI:
                 self.engine.say(text)
             self.engine.runAndWait()
 
+
     def listen(self, timeout=None):
         try:
-            with sr.Microphone(device_index=self.state_machine.preferences["mic_id"]) as source:
+            mic_index = self.state_machine.preferences["mic_id"] or self.get_specific_micindex_by_name("jabra") or 1
+            with sr.Microphone(device_index=mic_index) as source:
                 self.recognize.adjust_for_ambient_noise(source)
                 audio = self.recognize.listen(source, timeout=timeout)
                 logger.info(f"Listening for microphone input on mic_id {self.state_machine.preferences['mic_id']}")

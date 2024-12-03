@@ -1,11 +1,12 @@
+from typing import Dict
 import datetime
-import json
 from typing import Dict, List
-from api.api_client import APIClient
-from . import rapla
+import json
+
+import api.calendar_api.rapla as rapla
 
 
-class RaplaAPI(APIClient):
+class RaplaAPI():
     """
     API client for accessing rapla from a given url.
     """
