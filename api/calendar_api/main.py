@@ -42,13 +42,13 @@ class RaplaAPI():
         Returns the appointments for today.
         """
         today = datetime.datetime.now().strftime("%d.%m.%Y")
-        return [appt for appt in self.calendar.appointments if appt.date == today]
+        return [appt for appt in self.calendar.appointments if appt.datetime_start == today]
 
     def get_appointments_for_date(self, date: str) -> List[rapla.Appointment]:
         """
         Returns the appointments for a specific date in the format DD.MM.YYYY.
         """
-        return [appt for appt in self.calendar.appointments if appt.date == date]
+        return [appt for appt in self.calendar.appointments if appt.datetime_start == date]
 
     def get_calendar_as_json(self) -> str:
         """

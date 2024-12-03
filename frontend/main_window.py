@@ -1,8 +1,7 @@
-from PyQt5.QtWidgets import QApplication, QPushButton
-from PyQt5.QtCore import QTime, QTimer, QSize, pyqtSignal
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtCore import QTime, QTimer, QSize
 from PyQt5.QtGui import QMovie, QIcon
 from PyQt5 import QtWidgets
-import sys
 from loguru import logger
 
 from frontend.ui_templates.main_window import Ui_MainWindow
@@ -10,7 +9,6 @@ from frontend.config_manager import ConfigManager
 from usecases.state_machine import StateMachine
 
 class MainWindow(QtWidgets.QMainWindow):
-    frontend_initialization_complete = pyqtSignal()
 
     def __init__(self, state_machine: StateMachine):
         self.state_machine = state_machine
@@ -298,9 +296,3 @@ class MainWindow(QtWidgets.QMainWindow):
         formatted_mics = [f"{mic[0]}: {mic[1]}" for mic in mic_list]
         if mic_list:
             self.ui.cb_select_mic.addItems(formatted_mics)
-
-    def initialisation_complete(self):
-        """
-        Signal handler for the frontend_initialization_complete signal.
-        """
-        self.frontend_initialization_complete.emit()
