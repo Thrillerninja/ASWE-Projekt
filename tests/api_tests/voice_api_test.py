@@ -6,6 +6,8 @@ import speech_recognition as sr
 from config import CONFIG
 import threading
 from usecases.state_machine import StateMachine
+import pygame
+import numpy as np
 
 class TestVoiceInterface(unittest.TestCase):
     def setUp(self):
@@ -94,11 +96,13 @@ class TestVoiceInterface(unittest.TestCase):
         # Check that get_busy() was called and it returned False (avoiding the blocking loop)
         mock_get_busy.assert_called_once()
 
-
+    @patch("pygame.mixer.init")
+    @patch("pygame.mixer.Sound")
+    @patch("pygame.time.wait")
     @patch('speech_recognition.Recognizer.recognize_google')
     @patch('speech_recognition.Recognizer.listen')
     @patch('speech_recognition.Microphone')
-    def test_listen_general_error(self, mock_microphone, mock_listen, mock_recognize_google):
+    def test_listen_general_error(self, mock_microphone, mock_listen, mock_recognize_google, mock_wait, mock_sound, mock_init):
         """
         Test listen handling for a general exception
         """
@@ -131,10 +135,13 @@ class TestVoiceInterface(unittest.TestCase):
             self.assertTrue(self.voice_interface.ask_yes_no(question))
             mock_speak.assert_any_call(question)
             mock_speak.assert_any_call("Entschuldigung, ich habe Ihre Antwort nicht verstanden. Bitte antworten Sie mit ja oder nein.")
-        
+    
+    @patch("pygame.mixer.init")
+    @patch("pygame.mixer.Sound")
+    @patch("pygame.time.wait")    
     @patch('speech_recognition.Recognizer')
     @patch('speech_recognition.Microphone')
-    def test_listen(self, mock_microphone, mock_recognizer):
+    def test_listen(self, mock_microphone, mock_recognizer, mock_wait, mock_sound, mock_init):
         # Mock the recognizer and its methods
         mock_recognizer_instance = mock_recognizer.return_value
         mock_recognizer_instance.listen.return_value = MagicMock()
@@ -154,10 +161,13 @@ class TestVoiceInterface(unittest.TestCase):
         mock_recognizer_instance.adjust_for_ambient_noise.assert_called_once()
         mock_recognizer_instance.listen.assert_called_once()
         mock_recognizer_instance.recognize_google.assert_called_once()
-
+    
+    @patch("pygame.mixer.init")
+    @patch("pygame.mixer.Sound")
+    @patch("pygame.time.wait")
     @patch('speech_recognition.Recognizer')
     @patch('speech_recognition.Microphone')
-    def test_listen_continuous(self, mock_microphone, mock_recognizer):
+    def test_listen_continuous(self, mock_microphone, mock_recognizer, mock_wait, mock_sound, mock_init):
         # Mock the recognizer and its methods
         mock_recognizer_instance = mock_recognizer.return_value
         mock_recognizer_instance.listen.return_value = MagicMock()

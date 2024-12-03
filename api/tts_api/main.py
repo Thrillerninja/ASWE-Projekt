@@ -43,7 +43,6 @@ class TTSAPI:
         self.toggle_elevenlabs = bool(self.state_machine.preferences["enable_elevenlabs"])
         
         self.api_key = api_key
-        pygame.init()
         self.CHUNK_SIZE = 1024
         self.url = "https://api.elevenlabs.io/v1/text-to-speech/pqHfZKP75CvOlQylNhV4"
         self.headers = {
@@ -82,10 +81,13 @@ class TTSAPI:
                         
             logger.info(f"Speaking text using Elevenlabs: {text}")
             
+            pygame.init()
             pygame.mixer.music.load("output.mp3")
             pygame.mixer.music.play()
             while pygame.mixer.music.get_busy():
                 pass
+            pygame.mixer.music.unload()
+            pygame.mixer.stop()
         else:    
             logger.debug(f"Speaking text: {text}")
             with self.engine_lock:  # Use the lock to ensure only one thread accesses the engine at a time
