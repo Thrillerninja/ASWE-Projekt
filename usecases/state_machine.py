@@ -82,6 +82,10 @@ class StateMachine(QObject):
         self.machine.add_transition(trigger='goto_finance', source='speach', dest='finance')
         self.machine.add_transition(trigger='exit_finance', source='finance', dest='idle')
 
+    def some_trigger_for_state(self):
+        # Logic to transition to the desired state
+        print("Initialization complete. Transitioning to the next state...")
+
     def stop(self):
         """
         Stop the state machine.

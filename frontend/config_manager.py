@@ -50,7 +50,7 @@ def load_preferences_file() -> dict:
         
     return preferences
 
-class ConfigManager:
+class ConfigManager():
     
     def __init__(self, view):
         """Initialize the ConfigManager.
@@ -71,6 +71,7 @@ class ConfigManager:
         self.view.state_machine.config = self.preferences
         self.active_mics = self.get_active_mics()
         self.set_initial_values()
+        self.view.initialisation_complete()
 
     def save_preferences(self) -> None:
         """Saves the current preferences from `self.preferences` to a JSON file.

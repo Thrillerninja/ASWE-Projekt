@@ -20,7 +20,9 @@ state_machine_thread.start()
 # Start the UI
 app = QtWidgets.QApplication(sys.argv)
 window = MainWindow(sm)
+window.frontend_initialization_complete.connect(sm.some_trigger_for_state)
 window.show()
+
 
 # Bring the window to the foreground
 window.raise_()
