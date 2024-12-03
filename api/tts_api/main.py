@@ -168,11 +168,10 @@ class TTSAPI:
         """
         logger.debug(f"Playing sound: {sound}")
         
-        match sound:
-            case "mic_activation":
-                sound_path = "config/sounds/mic_activation.wav"
-            case _:
-                sound_path = sound
+        if sound == "mic_activation":
+            sound_path = "config/sounds/mic_activation.wav"
+        else:
+            sound_path = sound
         
         try:
             pygame.init()  # Initialize pygame
