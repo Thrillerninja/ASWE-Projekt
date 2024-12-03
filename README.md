@@ -2,7 +2,9 @@
 ## Dependencies
 
 ### PyQt5
+### PyQt5
 
+To use PyQt5 on Windows, you need to install Microsoft Build Tools for C++.
 To use PyQt5 on Windows, you need to install Microsoft Build Tools for C++.
 
 1. Download and install Microsoft Build Tools for C++ from the [official website](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
