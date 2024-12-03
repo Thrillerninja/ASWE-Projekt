@@ -7,7 +7,7 @@ import datetime
 
 class Calendar:
     def __init__(self, appointments:list=[]) -> None:
-        self.appointments = appointments
+        self.appointments:list[Appointment] = appointments
         if len(self.appointments) > 0:
             self.sort()
 
@@ -39,12 +39,14 @@ class Calendar:
     def get_next_appointment(self, now:datetime.datetime):
         '''
         - ``now``: datetime: current time
-        - return: Appointment: next appointment after ``now`` or None if there is no appointment
+        - return: Appointment: next appointment after ``now`` or ``None`` if there is no appointment
         '''
+        self.sort()  # just to be sure
         for appointment in self.appointments:
             if now < appointment.datetime_start:
                 return appointment
         return None
+
 
 
 
@@ -67,6 +69,16 @@ class Appointment:
             'color': self.color,
         }
 
+
+if __name__ == '__main__':
+    cal = Calendar()
+    app1 = Appointment("10-12", datetime.datetime(2021, 10, 1, 10, 0), datetime.datetime(2021, 10, 1, 12, 0))
+    app2 = Appointment("14-16", datetime.datetime(2021, 10, 1, 14, 0), datetime.datetime(2021, 10, 1, 16, 0))
+    cal.add_appointments([app1, app2])
+    print(cal)
+    now = datetime.datetime(2021, 10, 1, 11, 0)
+    next_appointment = cal.get_next_appointment(now)
+    print(next_appointment)
 
 
 
