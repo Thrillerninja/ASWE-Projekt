@@ -1,7 +1,5 @@
 # ASWE-Projekt
 ## Dependencies
-
-### PyQt5
 ### PyQt5
 
 To use PyQt5 on Windows, you need to install Microsoft Build Tools for C++.
