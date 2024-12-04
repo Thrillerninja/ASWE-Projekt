@@ -33,10 +33,9 @@ class WelcomeState:
         # ---------- Alarm clock ----------
         # Calculate wake-up time based on the first calendar appointment
         wakeup_time = self.calc_alarm_time()
-        logger.error(f"Calculated wake-up time: {wakeup_time.strftime("%H:%M")}")
         # Set the alarm clock
         self.state_machine.main_window.update_alarm_label(wakeup_time)
-        logger.info(f"Wake-up time set for: {wakeup_time.strftime("%H:%M")}")
+        logger.info(f"Wake-up time set to: {wakeup_time.strftime("%H:%M")}")
 
         # TODO: Set the alarm using the calculated wakeup_time
 
@@ -85,8 +84,7 @@ class WelcomeState:
         # Provide the user with the information about their first appointment that hasn't already passed
         logger.debug("Retrieving today's appointments")
         appointments = self.rapla_api.get_todays_appointments()
-        logger.error(appointments)
-        logger.error(appointments[0].datetime_start)
+        
         now = datetime.datetime.now(datetime.timezone.utc)
         upcoming_appointment = next((appt for appt in appointments if appt.datetime_start > now), None)
         
@@ -100,14 +98,17 @@ class WelcomeState:
             end_location = self.state_machine.preferences.get("default_destination", None)
             logger.debug(f"Calculating trip time from {start_location} to {end_location}")
             
-            arrival_time = upcoming_appointment.datetime_start
+            arrival_time = upcoming_appointment.datetime_start + datetime.timedelta(hours=1)
+            
             trip = self.transit_api.get_best_trip(start_location['vvs_code'], end_location['vvs_code'], arrival_time)
         
             if trip != -1 and start_location is not None and end_location is not None:
                 transport_type = trip.connections[0].transportation.number
-                departure_time = trip.connections[0].origin.departure_time_planned.strftime("%H:%M")
-                departure_time_aware = trip.connections[0].origin.departure_time_planned.replace(tzinfo=datetime.timezone.utc)
-                time_to_start = (departure_time_aware - now).total_seconds() // 60
+                departure_time = trip.connections[0].origin.departure_time_planned.replace(tzinfo=datetime.timezone.utc).strftime("%H:%M")
+                arrival_time_time_aware = trip.connections[-1].destination.arrival_time_estimated.replace(tzinfo=datetime.timezone.utc)
+                logger.debug(f"Departure time: {departure_time}, Arrival time: {arrival_time_time_aware}")
+                                
+                time_to_start = (upcoming_appointment.datetime_start.replace(tzinfo=datetime.timezone.utc) - arrival_time_time_aware).seconds // 60
                 logger.debug(f"Um rechtzeitig zu Ihrem Termin zu kommen, sollten Sie die {transport_type} um {departure_time} Uhr nehmen. \
                                    Damit kommen sie {time_to_start} Minuten vor Ihrem Termin an.")
                 self.tts_api.speak(f"Um rechtzeitig zu Ihrem Termin zu kommen, sollten Sie die {transport_type} um {departure_time} Uhr nehmen. \
@@ -141,7 +142,6 @@ class WelcomeState:
         
         # Retrieve user's calendar entries for the next day 
         calendar_entries = self.rapla_api.get_tomorrows_appointments()
-        logger.error(calendar_entries)
         
         if not calendar_entries:
             return self.default_wakeup_time
@@ -159,17 +159,15 @@ class WelcomeState:
         trip = self.transit_api.get_best_trip(start_location['vvs_code'], end_location['vvs_code'], arrival_time)
     
         if trip != -1 and start_location is not None and end_location is not None:
-            transport_type = trip.connections[0].transportation.number
-            departure_time = trip.connections[0].origin.departure_time_planned.strftime("%H:%M")
-            departure_time_aware = trip.connections[0].origin.departure_time_planned.replace(tzinfo=datetime.timezone.utc)
+            departure_time_aware = trip.connections[0].origin.departure_time_planned.replace(tzinfo=datetime.timezone.utc) + datetime.timedelta(hours=1)
         else:
             logger.debug("No suitable connection found")
-            self.tts_api.speak("Es konnte keine passende Verbindung gefunden werden.")
             departure_time_aware = first_appointment.datetime_start - datetime.timedelta(minutes=30)
                 
         # ----------- Alarm time calculation -----------
         prep_time = 30
-        alarm_time = first_appointment.datetime_start - datetime.timedelta(minutes=departure_time_aware.minute) - datetime.timedelta(minutes=prep_time)
+        logger.error(f"Departure time: {departure_time_aware}, Prep time: {prep_time}")
+        alarm_time = departure_time_aware - datetime.timedelta(minutes=prep_time)
         
         # Convert default_wakeup_time to a datetime for comparison
         default_wakeup_datetime = datetime.datetime.combine(alarm_time.date(), self.default_wakeup_time).replace(tzinfo=alarm_time.tzinfo)

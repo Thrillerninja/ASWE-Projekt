@@ -299,5 +299,4 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.cb_select_mic.addItems(formatted_mics)
 
     def update_alarm_label(self, alarm_time):
-        logger.error(f"RESET Alarm time: {alarm_time}")
         self.ui.lb_alarm.setText(f"Alarm: {alarm_time.strftime('%H:%M')}")
