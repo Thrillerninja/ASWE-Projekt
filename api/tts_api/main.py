@@ -130,6 +130,7 @@ class TTSAPI:
         """
         #def listen_loop():
         logger.info(f"Listening for microphone input on mic_id {self.state_machine.preferences['mic_id']}")
+        i = 0
         while True:
             try:
                 with sr.Microphone(device_index=self.state_machine.preferences["mic_id"]) as source:
@@ -158,6 +159,10 @@ class TTSAPI:
             except Exception as e:
                 logger.error(f"Error during listening: {e}")
                 callback(f"Ein Fehler ist aufgetreten: {e}")
+            if i > 5:
+                callback("timeout")
+                break
+            i = i + 1
 
         #listener_thread = threading.Thread(target=listen_loop)
         #listener_thread.daemon = True
