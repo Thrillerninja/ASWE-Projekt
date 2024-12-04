@@ -160,7 +160,7 @@ class TTSAPI:
                 logger.error(f"Error during listening: {e}")
                 callback(f"Ein Fehler ist aufgetreten: {e}")
             if i > 5:
-                callback("timeout")
+                callback("test test")
                 break
             i = i + 1
 
