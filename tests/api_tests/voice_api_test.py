@@ -57,7 +57,9 @@ class TestVoiceInterface(unittest.TestCase):
     @patch("pygame.mixer.music.load")
     @patch("pygame.mixer.music.play")
     @patch("pygame.mixer.music.get_busy", return_value=False)  # Mock get_busy() to return False immediately
-    def test_speak_elevenlabs(self, mock_get_busy, mock_play, mock_load, mock_requests_post, mock_pyttsx3_init, mock_open):
+    @patch('pygame.mixer.music.unload')
+    @patch('pygame.mixer.stop')
+    def test_speak_elevenlabs(self,mock_mixer_stop, mock_mixer_music_unload, mock_get_busy, mock_play, mock_load, mock_requests_post, mock_pyttsx3_init, mock_open):
         """
         Test speak functionality of ElevenLabs with valid and invalid inputs
         """
@@ -102,7 +104,9 @@ class TestVoiceInterface(unittest.TestCase):
     @patch('speech_recognition.Recognizer.recognize_google')
     @patch('speech_recognition.Recognizer.listen')
     @patch('speech_recognition.Microphone')
-    def test_listen_general_error(self, mock_microphone, mock_listen, mock_recognize_google, mock_wait, mock_sound, mock_init):
+    @patch('pygame.mixer.music.unload')
+    @patch('pygame.mixer.stop')
+    def test_listen_general_error(self,mock_mixer_stop, mock_mixer_music_unload, mock_microphone, mock_listen, mock_recognize_google, mock_wait, mock_sound, mock_init):
         """
         Test listen handling for a general exception
         """
@@ -113,8 +117,13 @@ class TestVoiceInterface(unittest.TestCase):
             result = self.voice_interface.listen()
         self.assertIn("Ein Fehler ist aufgetreten", result)
         
+    @patch("pygame.mixer.init")
+    @patch("pygame.mixer.Sound")
+    @patch("pygame.time.wait")
+    @patch('pygame.mixer.music.unload')
+    @patch('pygame.mixer.stop')    
     @patch('api.tts_api.main.TTSAPI.listen')
-    def test_yes_no(self, mock_listen):
+    def test_yes_no(self, mock_listen,mock_mixer_stop, mock_mixer_music_unload, mock_wait, mock_sound, mock_init):
         """
         Test ask_yes_no functionality
         """
@@ -136,12 +145,14 @@ class TestVoiceInterface(unittest.TestCase):
             mock_speak.assert_any_call(question)
             mock_speak.assert_any_call("Entschuldigung, ich habe Ihre Antwort nicht verstanden. Bitte antworten Sie mit ja oder nein.")
     
+    @patch('pygame.mixer.music.unload')
+    @patch('pygame.mixer.stop') 
     @patch("pygame.mixer.init")
     @patch("pygame.mixer.Sound")
     @patch("pygame.time.wait")    
     @patch('speech_recognition.Recognizer')
     @patch('speech_recognition.Microphone')
-    def test_listen(self, mock_microphone, mock_recognizer, mock_wait, mock_sound, mock_init):
+    def test_listen(self, mock_microphone, mock_recognizer, mock_wait, mock_sound, mock_init,mock_mixer_stop, mock_mixer_music_unload):
         # Mock the recognizer and its methods
         mock_recognizer_instance = mock_recognizer.return_value
         mock_recognizer_instance.listen.return_value = MagicMock()
@@ -162,12 +173,14 @@ class TestVoiceInterface(unittest.TestCase):
         mock_recognizer_instance.listen.assert_called_once()
         mock_recognizer_instance.recognize_google.assert_called_once()
     
+    @patch('pygame.mixer.music.unload')
+    @patch('pygame.mixer.stop') 
     @patch("pygame.mixer.init")
     @patch("pygame.mixer.Sound")
     @patch("pygame.time.wait")
     @patch('speech_recognition.Recognizer')
     @patch('speech_recognition.Microphone')
-    def test_listen_continuous(self, mock_microphone, mock_recognizer, mock_wait, mock_sound, mock_init):
+    def test_listen_continuous(self, mock_microphone, mock_recognizer, mock_wait, mock_sound, mock_init, mock_mixer_stop, mock_mixer_music_unload):
         # Mock the recognizer and its methods
         mock_recognizer_instance = mock_recognizer.return_value
         mock_recognizer_instance.listen.return_value = MagicMock()
