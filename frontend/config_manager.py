@@ -23,6 +23,7 @@ def load_preferences_file() -> dict:
         - "fuel_step_size" (float): Step size for fuel threshold in € (e.g., 0.05).
         - "fuel_radius" (float): Radius for fuel search in km (e.g., 5.0).
         - "fuel_demo_price" (float): Price for fuel demo in € (0.0 indicates using the API).
+        - "alarm_time" (str): Alarm time in HH:MM format (e.g., "08:00").
         - "default_alarm_time" (str): Default alarm time in HH:MM format (e.g., "08:00").
         - "sleep_time" (str): Sleep time in HH:MM format (e.g., "22:00").
         - "home_location" (dict): Details of the home location, including:

@@ -46,9 +46,6 @@ class StateMachine(QObject):
         # User preferences, hover over function to see details. This dictionary is kept up to date with the frontend.
         self.preferences = load_preferences_file()
         self.testing = False
-
-        # User preferences, hover over function to see details. This dictionary is kept up to date with the frontend.
-        self.preferences = load_preferences_file()
         
         self.api_factory = APIFactory(CONFIG)
         
@@ -73,6 +70,7 @@ class StateMachine(QObject):
         self.machine.add_transition(trigger='morning_news', source='welcome', dest='news')
         self.machine.add_transition(trigger='interaction', source="welcome", dest='speach')
         self.machine.add_transition(trigger='activity_idle', source="activity", dest='idle')
+        self.machine.add_transition(trigger='idle_activity', source="activity", dest='idle')
 
         self.machine.add_transition(trigger='goto_idle', source='speach', dest='idle')
         self.machine.add_transition(trigger='goto_idle', source='speach', dest='idle')

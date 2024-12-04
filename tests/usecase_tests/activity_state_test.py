@@ -391,7 +391,7 @@ class TestActivityState(unittest.TestCase):
 
     @patch('datetime.datetime')
     def test_check_trigger_activity_when_current_time_is_sleep_time(self, mock_datetime):
-        """Test if 'goto_activity' is called when current time matches default sleep time."""
+        """Test if 'idle_activity' is called when current time matches default sleep time."""
         # Mock the current time as exactly 22:00 (sleep time)
         mock_datetime.now.return_value = datetime(2024, 11, 29, 22, 0)  # Current time is 22:00
         self.activity_state.last_activated_at = "2024-11-29 21:59"  # Last activation time is different
@@ -399,8 +399,8 @@ class TestActivityState(unittest.TestCase):
         # Call the method
         self.activity_state.check_trigger_activity()
 
-        # Assert goto_activity is called
-        self.mock_state_machine.goto_activity.assert_called_once()
+        # Assert idle_activity is called
+        self.mock_state_machine.idle_activity.assert_called_once()
 
     @patch('datetime.datetime')
     def test_check_trigger_activity_when_current_time_is_neither_sleep_time_nor_one_hour_after(self, mock_datetime):
@@ -414,5 +414,5 @@ class TestActivityState(unittest.TestCase):
         self.activity_state.check_trigger_activity()
 
         # Assert neither method is called
-        self.mock_state_machine.goto_activity.assert_not_called()
+        self.mock_state_machine.idle_activity.assert_not_called()
         self.mock_spotify_api.pause_spotify_playback.assert_not_called()
