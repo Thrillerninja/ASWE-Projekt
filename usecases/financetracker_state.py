@@ -35,10 +35,11 @@ class FinanceState:
         rounded_data = []
         for item in data:
             rounded_item = {
-                "price": str(round(float(item["price"]), 2)).replace('.', ',', 1),
-                "change_amount": str(round(float(item["change_amount"]), 2)).replace('.', ',', 1),
-                "change_percentage": str(round(float(item["change_percentage"].strip('%')), 1)).replace('.', ',', 1),
-                "volume": format_volume(item["volume"]).replace('.', ',', 1)
+                "name": item["name"],
+                "price": round(float(item["price"]), 2),
+                "change_amount": round(float(item["change_amount"]), 2),
+                "change_percentage": round(float(item["change_percentage"].strip('%')), 1),
+                "volume": format_volume(item["volume"])
             }
             rounded_data.append(rounded_item)
         return rounded_data

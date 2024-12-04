@@ -163,12 +163,11 @@ class TTSAPI:
             try:
                 with sr.Microphone(device_index=self.state_machine.preferences["mic_id"]) as source:
                     self.recognize.adjust_for_ambient_noise(source)
-                    self.beep()
+                    self.beep
 
                     audio = self.recognize.listen(source, timeout=timeout)
                     text = self.recognize.recognize_google(audio, language="de-DE")
                     callback(text)
-                    break
             except sr.UnknownValueError:
                 callback("Google konnte das Audio nicht verstehen")
             except sr.RequestError as e:
@@ -188,6 +187,7 @@ class TTSAPI:
         """
         for _ in range(retries):
             self.speak(text)
+            self.play_sound("mic_activation")
             response = self.listen(timeout=timeout)  # Pass the timeout to the listen method
             
             if response.lower() in ['ja', 'yes']:

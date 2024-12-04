@@ -51,23 +51,23 @@ class TestFinanceState(unittest.TestCase):
         expected_output = [
             {
                 "name": "Stock A",
-                "price": "123,46",
-                "change_amount": "1,23",
-                "change_percentage": "3,6",
-                "volume": "1,5 Tsd."
+                "price": 123.46,
+                "change_amount": 1.23,
+                "change_percentage": 3.6,
+                "volume": "1.5 Tsd."
             },
             {
                 "name": "Stock B",
-                "price": "987,65",
-                "change_amount": "-2,35",
-                "change_percentage": "-1,2",
+                "price": 987.65,
+                "change_amount": -2.35,
+                "change_percentage": -1.2,
                 "volume": "2.0 Mio."
             },
             {
                 "name": "Stock C",
-                "price": "50,5",
-                "change_amount": "0,0",
-                "change_percentage": "0,0",
+                "price": 50.5,
+                "change_amount": 0.0,
+                "change_percentage": 0.0,
                 "volume": "500"
             }
         ]
@@ -91,10 +91,10 @@ class TestFinanceState(unittest.TestCase):
         expected_output = [
             {
                 "name": "Stock D",
-                "price": "1,0",
-                "change_amount": "0,0",
-                "change_percentage": "0,0",
-                "volume": "3,0 Mrd."
+                "price": 1.0,
+                "change_amount": 0.0,
+                "change_percentage": 0.0,
+                "volume": "3.0 Mrd."
             }
         ]
         self.assertEqual(self.finance_state.round_numbers_for_speech(input_data), expected_output)
@@ -112,9 +112,9 @@ class TestFinanceState(unittest.TestCase):
         expected_output = [
             {
                 "name": "Stock E",
-                "price": "0,12",
-                "change_amount": "0,0",
-                "change_percentage": "0,0",
+                "price": 0.12,
+                "change_amount": 0.0,
+                "change_percentage": 0.0,
                 "volume": "999"
             }
         ]
