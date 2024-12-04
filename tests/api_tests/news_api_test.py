@@ -22,5 +22,5 @@ class TestNewsAPI(unittest.TestCase):
         # Überprüfe, ob get_response mit den richtigen Parametern aufgerufen wurde
         mock_get_response.assert_called_with(
             model="llama3.2:1b",
-            message_content="Summarize the following news article as short as possible in german: Some article content",
+            message_content="Schreibe einen kurzen Text (1-4 Sätze) über diese Überschrift auf Deutsch. Verwende keine Sonderzeichen: Some article content",
         )
