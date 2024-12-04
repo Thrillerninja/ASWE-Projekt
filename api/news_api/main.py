@@ -112,5 +112,5 @@ class NewsAPI():
         # Send the content to the LLM model to summarize the article
         return self.llmclient.get_response(
             model="llama3.2:1b",
-            message_content=f"Summarize the following news article as short as possible in german: {content}"
+            message_content=f"Schreibe einen kurzen Text (1-4 Sätze) über diese Überschrift auf Deutsch. Verwende keine Sonderzeichen: {content}"
         )

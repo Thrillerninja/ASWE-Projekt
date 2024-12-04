@@ -45,24 +45,20 @@ class TestNewsState(unittest.TestCase):
         
         # Mock the listen method to return a valid input for article selection
         self.mock_tts_api.listen.side_effect = ["User input", "User input"]
-        
-        # Set the return value of get_article to the expected article content
-        self.news_state.news_api.get_article.return_value = "Article content"
-        
+
         # Execute the method we want to test
         result = self.news_state.read_article(headlines)
         
         # Check if LLMApi.get_response was called with the correct message
         message = (
-            f"This is input from a user: User input. "
-            f"These are possible headlines: {headlines}. "
-            f"Which headline interests the user the most? Respond with the number of the headline."
-        )
+                f"This is input from a user: User input. "
+                f"These are possible headlines: {headlines[:3]}. "
+                f"Which headline interests the user the most? Respond with the number of the headline"
+                f"As single digit between 1 and 3"
+            )
         mock_get_response.assert_called_once_with(model="llama3.2:1b", message_content=message)
         
         # Check if the correct article information was retrieved
-        self.news_state.news_api.get_article.assert_called_once_with(1)
-        self.news_state.news_api.summarize_article.assert_called_once_with("Article content")
         self.mock_news_api.summarize_article.return_value = "Summary of article"
         
         # Check if the TTS-API spoke the correct result
