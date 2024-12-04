@@ -102,7 +102,7 @@ class TestNewsState(unittest.TestCase):
         # Test with invalid user input
         self.mock_tts_api.listen.return_value = "invalid"
         result_invalid = self.news_state.read_article(["Headline 1", "Headline 2"])
-        self.mock_tts_api.speak.assert_called_with('Ich hoffe der Artikel war interessant für dich.')
+        self.mock_tts_api.speak.assert_called_with('Es tut mir leid, ich konnte den Artikel nicht zusammenfassen.')
         self.assertEqual(result_invalid, "exit")
 
 

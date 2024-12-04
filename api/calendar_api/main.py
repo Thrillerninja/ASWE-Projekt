@@ -41,9 +41,9 @@ class RaplaAPI():
         """
         Returns the appointments for today.
         """
-        today = (datetime.datetime.now() + datetime.timedelta(hours=10)).strftime("%Y-%m-%d")             # TODO: REMOVE bevore demo!
+        today = (datetime.datetime.now()).strftime("%Y-%m-%d")
         for appt in self.calendar.appointments:
-            print(str(appt.datetime_start) + " | " + today + " | " + str(appt.datetime_start.strftime("%Y-%m-%d") == today))       # TODO: REMOVE bevore demo!
+            print(str(appt.datetime_start) + " | " + today + " | " + str(appt.datetime_start.strftime("%Y-%m-%d") == today)) 
         return [appt for appt in self.calendar.appointments if appt.datetime_start.strftime("%Y-%m-%d") == today]
     
     def get_tomorrows_appointments(self) -> List[rapla.Appointment]:
