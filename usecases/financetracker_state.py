@@ -3,6 +3,7 @@ from api.api_factory import APIFactory
 from typing import Dict
 import json
 import os
+import re
 class FinanceState:
     """
     State that represents the finance tracker state/usecase of the application.
@@ -80,7 +81,9 @@ class FinanceState:
 
         self.tts_api.speak(f"Die drei Meistgehandelten Aktien heute sind {data[0]['name']}, {data[1]['name']} und {data[2]['name']}.")
         for stock in data:
-            self.tts_api.speak(f"Hier ist dein tägliches Update für die {stock['name']}-Aktie. Der aktuelle Kurs liegt bei {stock['price']} Dollar. Heute hat sich der Kurs um {stock['change_amount']} Dollar geändert, was eine Änderung von {stock['change_percentage']} Prozent bedeutet. Das Handelsvolumen liegt bei {stock['volume']} gehandelten Aktien.")
+            output = f"Hier ist dein tägliches Update für die {stock['name']}-Aktie. Der aktuelle Kurs liegt bei {stock['price']} Dollar. Heute hat sich der Kurs um {stock['change_amount']} Dollar geändert, was eine Änderung von {stock['change_percentage']} Prozent bedeutet. Das Handelsvolumen liegt bei {stock['volume']} gehandelten Aktien."
+            output = re.sub(r'(?<=\d)\.(?=\d)', ',', output)
+            self.tts_api.speak(output)
         
         self.state_machine.exit_finance()
 

@@ -192,11 +192,11 @@ class TestFinanceState(unittest.TestCase):
         # Überprüfen, ob die tts_api die korrekte Nachricht spricht
         self.finance_state.tts_api.speak.assert_any_call("Die drei Meistgehandelten Aktien heute sind Apple Inc., Microsoft Corp. und Google LLC.")
         self.finance_state.tts_api.speak.assert_any_call(
-            "Hier ist dein tägliches Update für die Apple Inc.-Aktie. Der aktuelle Kurs liegt bei 150 Dollar. Heute hat sich der Kurs um 2 Dollar geändert, was eine Änderung von 1.5 Prozent bedeutet. Das Handelsvolumen liegt bei 10 Mio. gehandelten Aktien.")
+            "Hier ist dein tägliches Update für die Apple Inc.-Aktie. Der aktuelle Kurs liegt bei 150 Dollar. Heute hat sich der Kurs um 2 Dollar geändert, was eine Änderung von 1,5 Prozent bedeutet. Das Handelsvolumen liegt bei 10 Mio. gehandelten Aktien.")
         self.finance_state.tts_api.speak.assert_any_call(
-            "Hier ist dein tägliches Update für die Microsoft Corp.-Aktie. Der aktuelle Kurs liegt bei 250 Dollar. Heute hat sich der Kurs um -1 Dollar geändert, was eine Änderung von -0.4 Prozent bedeutet. Das Handelsvolumen liegt bei 12 Mio. gehandelten Aktien.")
+            "Hier ist dein tägliches Update für die Microsoft Corp.-Aktie. Der aktuelle Kurs liegt bei 250 Dollar. Heute hat sich der Kurs um -1 Dollar geändert, was eine Änderung von -0,4 Prozent bedeutet. Das Handelsvolumen liegt bei 12 Mio. gehandelten Aktien.")
         self.finance_state.tts_api.speak.assert_any_call(
-            "Hier ist dein tägliches Update für die Google LLC-Aktie. Der aktuelle Kurs liegt bei 2800 Dollar. Heute hat sich der Kurs um 15 Dollar geändert, was eine Änderung von 0.5 Prozent bedeutet. Das Handelsvolumen liegt bei 8 Mio. gehandelten Aktien.")
+            "Hier ist dein tägliches Update für die Google LLC-Aktie. Der aktuelle Kurs liegt bei 2800 Dollar. Heute hat sich der Kurs um 15 Dollar geändert, was eine Änderung von 0,5 Prozent bedeutet. Das Handelsvolumen liegt bei 8 Mio. gehandelten Aktien.")
 
         # Überprüfen, ob json.dump einmal aufgerufen wurde
         mock_json_dump.assert_called_once()
