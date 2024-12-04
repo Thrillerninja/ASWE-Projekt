@@ -99,15 +99,21 @@ class NewsState:
         try:
             message = (
                 f"This is input from a user: {user_input}. "
-                f"These are possible headlines: {headlines}. "
-                f"Which headline interests the user the most? Respond with the number of the headline."
+                f"These are possible headlines: {headlines[:3]}. "
+                f"Which headline interests the user the most? Respond with the number of the headline"
+                f"As single digit between 1 and 3"
             )
             response = self.llm_api.get_response(model="llama3.2:1b", message_content=message)
             logger.debug(f"LLM response: {response}")
-            article_number = int(re.search(r'\d+', response).group())  # Extract the number
-            logger.debug(f"User is interested in article number {article_number}")
-
-            article = self.news_api.get_article(article_number)
+            try: 
+                article_number = int(re.search(r'\d+', response).group())  # Extract the number
+                logger.debug(f"User is interested in article number {article_number}")
+            except Exception as e:
+                logger.error(f"No Number found in LLM Response. Using default 1")
+                article_number = 1
+                self.tts_api.speak("Ich habe dich nicht ganz verstanden. Ich fasse den ersten Artikel zusammen!")
+            # article = self.news_api.get_article(article_number)
+            article = headlines[article_number-1]
             summary = self.news_api.summarize_article(article)
             logger.debug(f"Article summary: {summary}")
             self.tts_api.speak(summary)
