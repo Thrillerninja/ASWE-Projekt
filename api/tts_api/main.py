@@ -41,7 +41,7 @@ class TTSAPI:
         self.toggle_elevenlabs = bool(self.state_machine.preferences["enable_elevenlabs"])
         
         self.api_key = api_key
-        pygame.init()
+        
         self.CHUNK_SIZE = 1024
         self.url = "https://api.elevenlabs.io/v1/text-to-speech/pqHfZKP75CvOlQylNhV4"
         self.headers = {
@@ -83,6 +83,9 @@ class TTSAPI:
             raise ValueError("Text input must be a non-empty string.")
 
         if self.toggle_elevenlabs:
+            # Restart the pygame mixer to avoid issues with the sound output
+            pygame.init()
+            
             data = {
                 "text": text,
                 "model_id": "eleven_multilingual_v2",
@@ -93,17 +96,22 @@ class TTSAPI:
             }
             response = requests.post(self.url, json=data, headers=self.headers)
             response.raise_for_status()
-            with open('output.mp3', 'wb') as f:
-                for chunk in response.iter_content(chunk_size=self.CHUNK_SIZE):
-                    if chunk:
-                        f.write(chunk)
-                        
-            logger.info(f"Speaking text using Elevenlabs: {text}")
-            
-            pygame.mixer.music.load("output.mp3")
-            pygame.mixer.music.play()
-            while pygame.mixer.music.get_busy():
-                pass
+            try:
+                with open('output.mp3', 'wb') as f:
+                    for chunk in response.iter_content(chunk_size=self.CHUNK_SIZE):
+                        if chunk:
+                            f.write(chunk)
+                            
+                logger.info(f"Speaking text using Elevenlabs: {text}")
+                
+                pygame.mixer.music.load("output.mp3")
+                pygame.mixer.music.play()
+                while pygame.mixer.music.get_busy():
+                    pass
+            except Exception as e:
+                logger.error(f"Error during speaking with Elevenlabs: {e}")
+            finally:
+                pygame.quit()
         else:    
             logger.debug(f"Speaking text: {text}")
             with self.engine_lock:  # Use the lock to ensure only one thread accesses the engine at a time
@@ -116,8 +124,8 @@ class TTSAPI:
             mic_index = self.state_machine.preferences["mic_id"] or self.get_specific_micindex_by_name("jabra") or 1
             with sr.Microphone(device_index=mic_index) as source:
                 self.recognize.adjust_for_ambient_noise(source)
-                audio = self.recognize.listen(source, timeout=timeout)
                 logger.info(f"Listening for microphone input on mic_id {self.state_machine.preferences['mic_id']}")
+                audio = self.recognize.listen(source, timeout=timeout)
                 text = self.recognize.recognize_google(audio, language="de-DE")
                 logger.info(f"Recognized text: {text}")
                 return text
@@ -141,7 +149,8 @@ class TTSAPI:
                         self.recognize.adjust_for_ambient_noise(source)
                         audio = self.recognize.listen(source, timeout=timeout)
                         text = self.recognize.recognize_google(audio, language="de-DE")
-                        # logger.info(f"Recognized text: {text}") # TODO Check if logs are necessary as they produce a lot of output in tests
+                        # logger.info(f"Recognized text: {text}")
+
                         callback(text)
                 except sr.UnknownValueError:
                     callback("Google konnte das Audio nicht verstehen")
@@ -151,6 +160,7 @@ class TTSAPI:
                     logger.error(f"Error during listening: {e}")
                     callback(f"Ein Fehler ist aufgetreten: {e}")
 
+        self.play_sound("mic_activation")
         listener_thread = threading.Thread(target=listen_loop)
         listener_thread.daemon = True
         listener_thread.start()
@@ -162,7 +172,9 @@ class TTSAPI:
         """
         for _ in range(retries):
             self.speak(text)
+            self.play_sound("mic_activation")
             response = self.listen(timeout=timeout)  # Pass the timeout to the listen method
+            
             if response.lower() in ['ja', 'yes']:
                 return True
             elif response.lower() in ['nein', 'no']:
@@ -176,5 +188,20 @@ class TTSAPI:
         Plays a sound
         """
         logger.debug(f"Playing sound: {sound}")
-        logger.error("Sound playing not implemented yet")
-        #TODO: Implement sound playing
+        
+        if sound == "mic_activation":
+            sound_path = "config/sounds/mic_activation.wav"
+        else:
+            sound_path = sound
+        
+        try:
+            pygame.init()  # Initialize pygame
+            pygame.mixer.init()  # Initialize the mixer
+            pygame.mixer.music.load(sound_path)
+            pygame.mixer.music.play()
+            while pygame.mixer.music.get_busy():
+                pass
+        except Exception as e:
+            logger.error(f"Error playing ping sound: {e}")
+        finally:
+            pygame.mixer.quit()  # Quit the mixer after playing the sound
