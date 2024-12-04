@@ -15,7 +15,7 @@ def get_env_variable(var_name):
 CONFIG = {
     'weather_api_key': get_env_variable('WEATHER_API_KEY'),
     'finance_api_key': get_env_variable('FINANCE_API_KEY'),
-    'rapla_url': "https://rapla.dhbw.de/rapla/internal_calendar?user=doelker%40verwaltung.ba-stuttgart.de&file=22A&day=30&month=9&year=2024&pages=20",
+    'rapla_url': "https://rapla.dhbw.de/rapla/internal_calendar?user=doelker%40verwaltung.ba-stuttgart.de&file=22A&day=4&month=12&year=2024&pages=20",
     'spotify_client_id': get_env_variable('SPOTIFY_CLIENT_ID'),
     'spotify_client_secret': get_env_variable('SPOTIFY_CLIENT_SECRET'),
     'news_api_key': get_env_variable('NEWS_API_KEY'),

@@ -12,6 +12,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self, state_machine: StateMachine):
         self.state_machine = state_machine
+        self.state_machine.main_window = self
         
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
@@ -296,3 +297,6 @@ class MainWindow(QtWidgets.QMainWindow):
         formatted_mics = [f"{mic[0]}: {mic[1]}" for mic in mic_list]
         if mic_list:
             self.ui.cb_select_mic.addItems(formatted_mics)
+
+    def update_alarm_label(self, alarm_time):
+        self.ui.lb_alarm.setText(f"Alarm: {alarm_time.strftime('%H:%M')}")

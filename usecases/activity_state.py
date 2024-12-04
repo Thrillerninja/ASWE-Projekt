@@ -255,6 +255,6 @@ class ActivityState:
         one_hour_after_sleep_time = self.get_one_hour_after_sleep_time(default_sleep_time)
 
         if current_time == default_sleep_time and current_day_and_time != self.last_activated_at:
-            self.state_machine.goto_activity()
+            self.state_machine.idle_activity()
         elif current_time == one_hour_after_sleep_time and current_day_and_time != self.last_playback_stop_activated_at:
             self.pause_spotify_playback()

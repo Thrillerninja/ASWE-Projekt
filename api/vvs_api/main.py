@@ -124,10 +124,10 @@ class VVSAPI(APIClient):
         for trip in trip_time:
             # Increment each time by 2h
             for connection in trip.connections:
-                connection.origin.departure_time_estimated += datetime.timedelta(hours=2)
-                connection.origin.departure_time_planned += datetime.timedelta(hours=2)
-                connection.destination.arrival_time_estimated += datetime.timedelta(hours=2)
-                connection.destination.arrival_time_planned += datetime.timedelta(hours=2)
+                connection.origin.departure_time_estimated.astimezone(datetime.timezone.utc)
+                connection.origin.departure_time_planned.astimezone(datetime.timezone.utc)
+                connection.destination.arrival_time_estimated.astimezone(datetime.timezone.utc)
+                connection.destination.arrival_time_planned.astimezone(datetime.timezone.utc)
             
         return trip_time
     
@@ -139,4 +139,10 @@ class VVSAPI(APIClient):
         trips = self.calc_trip(start_station, end_station, arrival_time=latest_arrival_time)
         if trips == -1:
             return None
-        return trips[0]
+        
+        # print start and end times for each trip
+        for trip in trips:
+            for connection in trip.connections:
+                print(f"Start: {connection.origin.departure_time_estimated}, End: {connection.destination.arrival_time_estimated}")
+            print("Next trip")
+        return trips[-1]
