@@ -55,6 +55,25 @@ class TTSAPI:
         No authentication required
         """
         pass
+      
+      
+   
+    def list_mics(self):
+        """
+        Lists all available microphones
+        """
+        mics = sr.Microphone.list_microphone_names()
+        print("Available microphones:")
+        for i, mic in enumerate(mics):
+            print(f"{i}: {mic}")
+        return mics
+    
+
+    def get_specific_micindex_by_name(self, mic_name_part:str):
+        mics = sr.Microphone.list_microphone_names()
+        for i, mic in enumerate(mics):
+            if mic_name_part.lower() in mic.lower():
+                return i
 
     def speak(self, text: str):
         """
@@ -62,6 +81,7 @@ class TTSAPI:
         """
         if not isinstance(text, str) or not text.strip():
             raise ValueError("Text input must be a non-empty string.")
+
         if self.toggle_elevenlabs:
             # Restart the pygame mixer to avoid issues with the sound output
             pygame.init()
@@ -98,9 +118,11 @@ class TTSAPI:
                 self.engine.say(text)
             self.engine.runAndWait()
 
+
     def listen(self, timeout=None):
         try:
-            with sr.Microphone(device_index=self.state_machine.preferences["mic_id"]) as source:
+            mic_index = self.state_machine.preferences["mic_id"] or self.get_specific_micindex_by_name("jabra") or 1
+            with sr.Microphone(device_index=mic_index) as source:
                 self.recognize.adjust_for_ambient_noise(source)
                 logger.info(f"Listening for microphone input on mic_id {self.state_machine.preferences['mic_id']}")
                 audio = self.recognize.listen(source, timeout=timeout)
@@ -128,6 +150,7 @@ class TTSAPI:
                         audio = self.recognize.listen(source, timeout=timeout)
                         text = self.recognize.recognize_google(audio, language="de-DE")
                         # logger.info(f"Recognized text: {text}")
+
                         callback(text)
                 except sr.UnknownValueError:
                     callback("Google konnte das Audio nicht verstehen")

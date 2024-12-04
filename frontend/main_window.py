@@ -1,8 +1,7 @@
-from PyQt5.QtWidgets import QApplication, QPushButton
+from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QTime, QTimer, QSize
 from PyQt5.QtGui import QMovie, QIcon
 from PyQt5 import QtWidgets
-import sys
 from loguru import logger
 
 from frontend.ui_templates.main_window import Ui_MainWindow
@@ -10,6 +9,7 @@ from frontend.config_manager import ConfigManager
 from usecases.state_machine import StateMachine
 
 class MainWindow(QtWidgets.QMainWindow):
+
     def __init__(self, state_machine: StateMachine):
         self.state_machine = state_machine
         

@@ -1,3 +1,4 @@
+
 import os
 from dotenv import load_dotenv
 from loguru import logger
@@ -68,7 +69,7 @@ class NewsAPI():
         Returns:
             list: A list of top headlines (titles) from the fetched articles.
         """
-        headlines = self.client.get_top_headlines()
+        headlines = self.client.get_top_headlines(language='en', country='us')
         
         # Extract and return the titles of the articles from the response
         return [article['title'] for article in headlines['articles']]
@@ -111,5 +112,5 @@ class NewsAPI():
         # Send the content to the LLM model to summarize the article
         return self.llmclient.get_response(
             model="llama3.2:1b",
-            message_content=f"Summarize the following news article as short as possible: {content}"
+            message_content=f"Summarize the following news article as short as possible in german: {content}"
         )
