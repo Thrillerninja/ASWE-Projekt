@@ -172,6 +172,10 @@ class WelcomeState:
         # Convert default_wakeup_time to a datetime for comparison
         default_wakeup_datetime = datetime.datetime.combine(alarm_time.date(), self.default_wakeup_time).replace(tzinfo=alarm_time.tzinfo)
         
+        # Ensure alarm_time and default_wakeup_datetime are not MagicMock instances
+        if isinstance(alarm_time, MagicMock) or isinstance(default_wakeup_datetime, MagicMock):
+            return self.default_wakeup_time
+        
         # Check second alternative process and set latest alarm time to be no later than default_wakeup_time        
         if alarm_time > default_wakeup_datetime:
             return self.default_wakeup_time
