@@ -35,7 +35,7 @@ class WelcomeState:
         wakeup_time = self.calc_alarm_time()
         # Set the alarm clock
         self.state_machine.main_window.update_alarm_label(wakeup_time)
-        logger.info(f"Wake-up time set to: {wakeup_time.strftime("%H:%M")}")
+        logger.info(f"Wake-up time set to: {wakeup_time}")
 
         # TODO: Set the alarm using the calculated wakeup_time
 
