@@ -51,6 +51,19 @@ class TTSAPI:
               "xi-api-key": self.api_key
             }
 
+    def beep(self):
+        frequency = 900  # Frequenz in Hertz
+        duration = 0.5    # Dauer in Sekunden
+        sample_rate = 44100  # Abtastrate
+        pygame.mixer.init(frequency=sample_rate, size=-16, channels=1)
+        t = np.linspace(0, duration, int(sample_rate * duration), False)
+        wave = 0.5 * np.sin(2 * np.pi * frequency * t)
+        wave = (wave * 32767).astype(np.int16).tobytes()
+        sound = pygame.mixer.Sound(buffer=wave)
+        sound.play()
+        pygame.time.wait(int(duration * 1000))
+        pygame.mixer.quit()
+
     def authenticate(self):
         """
         No authentication required
@@ -98,18 +111,7 @@ class TTSAPI:
         try:
             with sr.Microphone(device_index=self.state_machine.preferences["mic_id"]) as source:
                 self.recognize.adjust_for_ambient_noise(source)
-                #beep tone
-                frequency = 900  # Frequenz in Hertz
-                duration = 0.5    # Dauer in Sekunden
-                sample_rate = 44100  # Abtastrate
-                pygame.mixer.init(frequency=sample_rate, size=-16, channels=1)
-                t = np.linspace(0, duration, int(sample_rate * duration), False)
-                wave = 0.5 * np.sin(2 * np.pi * frequency * t)
-                wave = (wave * 32767).astype(np.int16).tobytes()
-                sound = pygame.mixer.Sound(buffer=wave)
-                sound.play()
-                pygame.time.wait(int(duration * 1000))
-                pygame.mixer.quit()
+                self.beep()
 
                 audio = self.recognize.listen(source, timeout=timeout)
                 logger.info(f"Listening for microphone input on mic_id {self.state_machine.preferences['mic_id']}")
@@ -135,18 +137,7 @@ class TTSAPI:
             try:
                 with sr.Microphone(device_index=self.state_machine.preferences["mic_id"]) as source:
                     self.recognize.adjust_for_ambient_noise(source)
-                    #beep tone
-                    frequency = 900  # Frequenz in Hertz
-                    duration = 0.5    # Dauer in Sekunden
-                    sample_rate = 44100  # Abtastrate
-                    pygame.mixer.init(frequency=sample_rate, size=-16, channels=1)
-                    t = np.linspace(0, duration, int(sample_rate * duration), False)
-                    wave = 0.5 * np.sin(2 * np.pi * frequency * t)
-                    wave = (wave * 32767).astype(np.int16).tobytes()
-                    sound = pygame.mixer.Sound(buffer=wave)
-                    sound.play()
-                    pygame.time.wait(int(duration * 1000))
-                    pygame.mixer.quit()
+                    self.beep
 
                     audio = self.recognize.listen(source, timeout=timeout)
                     text = self.recognize.recognize_google(audio, language="de-DE")
