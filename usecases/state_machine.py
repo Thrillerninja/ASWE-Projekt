@@ -13,6 +13,7 @@ from .news_state import NewsState
 from.financetracker_state import FinanceState
 from .news_state import NewsState
 from.financetracker_state import FinanceState
+from .petrol_checker import PetrolChecker
 
 class StateMachine(QObject):
     """
@@ -53,11 +54,12 @@ class StateMachine(QObject):
         
         # Initialize states
         self.idle = IdleState(self)
-        self.welcome = WelcomeState(self)
+        self.news = NewsState(self)
         self.speach = SpeachState(self)
-        self.news =  NewsState(self)
+        self.welcome = WelcomeState(self)
         self.finance = FinanceState(self)
         self.activity = ActivityState(self)
+        self.petrol_checker = PetrolChecker(self)
         
         # Setup transitions
         self.machine.add_transition('start', 'idle', 'welcome')
@@ -76,7 +78,7 @@ class StateMachine(QObject):
         self.machine.add_transition(trigger='goto_idle', source='speach', dest='idle')
         self.machine.add_transition(trigger='goto_welcome', source='speach', dest='welcome')
         self.machine.add_transition(trigger='goto_finance', source='speach', dest='finance')
-        self.machine.add_transition(trigger='goto_activity', source='idle', dest='activity')
+        self.machine.add_transition(trigger='goto_activity', source='speach', dest='activity')
         self.machine.add_transition(trigger='goto_news', source='speach', dest='news')
         
         self.machine.add_transition(trigger='goto_finance', source='speach', dest='finance')

@@ -122,7 +122,7 @@ class TestVoiceInterface(unittest.TestCase):
     @patch('pygame.mixer.music.unload')
     @patch('pygame.mixer.stop')    
     @patch('api.tts_api.main.TTSAPI.listen')
-    def test_yes_no(self, mock_listen,mock_mixer_stop, mock_mixer_music_unload, mock_wait, mock_sound, mock_init):
+    def test_yes_no(self, mock_listen, mock_mixer_stop, mock_mixer_music_unload, mock_wait, mock_sound, mock_init):
         """
         Test ask_yes_no functionality
         """

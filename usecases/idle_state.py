@@ -1,8 +1,4 @@
 import time
-
-from loguru import logger
-import time
-
 from loguru import logger
 from typing import Dict
 
@@ -55,3 +51,5 @@ class IdleState:
             # Call the transition method directly
             getattr(self.state_machine, trigger)()
             #self.state_machine.transition(trigger)
+        self.state_machine.activity.check_trigger_activity()
+        self.state_machine.petrol_checker.check_progress()

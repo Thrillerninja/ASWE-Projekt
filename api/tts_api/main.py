@@ -187,15 +187,16 @@ class TTSAPI:
         """
         for _ in range(retries):
             self.speak(text)
-            #self.play_sound("mic_activation")
             response = self.listen(timeout=timeout)  # Pass the timeout to the listen method
             
-            if any(word in response.lower() for word in ['ja', 'yes']):
-                return True
-            elif any(word in response.lower() for word in ['nein', 'no']):
-                return False
-            else:
-                text = "Entschuldigung, ich habe Ihre Antwort nicht verstanden. Bitte antworten Sie mit ja oder nein."
+            if response:
+                words = response.lower().split()  # Split the response into individual words
+                if any(word in ['ja', 'yes'] for word in words):  # Check for a singular match
+                    return True
+                if any(word in ['nein', 'no'] for word in words):  # Check for a singular match
+                    return False
+            # If no valid word is found, ask again
+            text = "Entschuldigung, ich habe Ihre Antwort nicht verstanden. Bitte antworten Sie mit ja oder nein."
         return False
         
     def play_sound(self, sound:str):
