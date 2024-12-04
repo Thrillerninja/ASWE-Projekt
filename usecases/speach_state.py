@@ -54,7 +54,7 @@ class SpeachState:
             self.voice_interface.speak("Wechsel zu Willkommensnachricht.")
             self.state_machine.goto_welcome()
         
-        elif "finanzen" in user_input.lower() or "finance" in user_input.lower():
+        elif "finanzen" in user_input.lower() or "finance" in user_input.lower() or "aktien" in user_input.lower() or "stocks" in user_input.lower():
             self.voice_interface.speak("Wechsel zu Finanzinformationen.")
             self.state_machine.goto_finance()
         
@@ -62,7 +62,7 @@ class SpeachState:
             self.voice_interface.speak("Wechsel zu Nachrichten.")
             self.state_machine.goto_news()
         
-        elif "aktivitäten" in user_input.lower() or "activities" in user_input.lower():
+        elif "aktivitäten" in user_input.lower() or "activities" in user_input.lower() or "health" in user_input.lower() or "gesundheit" in user_input.lower():
             self.voice_interface.speak("Wechsel zu Aktivitäten.")
             self.state_machine.goto_activity()
         
