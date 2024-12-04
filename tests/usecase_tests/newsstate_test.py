@@ -54,10 +54,11 @@ class TestNewsState(unittest.TestCase):
         
         # Check if LLMApi.get_response was called with the correct message
         message = (
-            f"This is input from a user: User input. "
-            f"These are possible headlines: {headlines}. "
-            f"Which headline interests the user the most? Respond with the number of the headline."
-        )
+                f"This is input from a user: User input. "
+                f"These are possible headlines: {headlines[:3]}. "
+                f"Which headline interests the user the most? Respond with the number of the headline"
+                f"As single digit between 1 and 3"
+            )
         mock_get_response.assert_called_once_with(model="llama3.2:1b", message_content=message)
         
         # Check if the correct article information was retrieved
