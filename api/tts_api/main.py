@@ -140,8 +140,6 @@ class TTSAPI:
             with sr.Microphone(device_index=mic_index) as source:
                 self.recognize.adjust_for_ambient_noise(source)
                 self.beep()
-
-                audio = self.recognize.listen(source, timeout=timeout)
                 logger.info(f"Listening for microphone input on mic_id {self.state_machine.preferences['mic_id']}")
                 audio = self.recognize.listen(source, timeout=timeout)
                 text = self.recognize.recognize_google(audio, language="de-DE")
