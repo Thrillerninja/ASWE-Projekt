@@ -4,6 +4,8 @@ import speech_recognition as sr
 from loguru import logger
 import threading
 import pygame
+import numpy as np
+
 
 class TTSAPI:
     _instance = None
@@ -41,7 +43,7 @@ class TTSAPI:
         self.toggle_elevenlabs = bool(self.state_machine.preferences["enable_elevenlabs"])
         
         self.api_key = api_key
-        
+
         self.CHUNK_SIZE = 1024
         self.url = "https://api.elevenlabs.io/v1/text-to-speech/pqHfZKP75CvOlQylNhV4"
         self.headers = {
@@ -49,6 +51,19 @@ class TTSAPI:
               "Content-Type": "application/json",
               "xi-api-key": self.api_key
             }
+
+    def beep(self):
+        frequency = 900  # Frequenz in Hertz
+        duration = 0.5    # Dauer in Sekunden
+        sample_rate = 44100  # Abtastrate
+        pygame.mixer.init(frequency=sample_rate, size=-16, channels=1)
+        t = np.linspace(0, duration, int(sample_rate * duration), False)
+        wave = 0.5 * np.sin(2 * np.pi * frequency * t)
+        wave = (wave * 32767).astype(np.int16).tobytes()
+        sound = pygame.mixer.Sound(buffer=wave)
+        sound.play()
+        pygame.time.wait(int(duration * 1000))
+        pygame.mixer.quit()
 
     def authenticate(self):
         """
@@ -124,6 +139,7 @@ class TTSAPI:
             mic_index = self.state_machine.preferences["mic_id"] or self.get_specific_micindex_by_name("jabra") or 1
             with sr.Microphone(device_index=mic_index) as source:
                 self.recognize.adjust_for_ambient_noise(source)
+                self.beep()
                 logger.info(f"Listening for microphone input on mic_id {self.state_machine.preferences['mic_id']}")
                 audio = self.recognize.listen(source, timeout=timeout)
                 text = self.recognize.recognize_google(audio, language="de-DE")
@@ -141,29 +157,28 @@ class TTSAPI:
         """
         Continuously listen for user input and call the callback function with the recognized text.
         """
-        def listen_loop():
-            logger.info(f"Listening for microphone input on mic_id {self.state_machine.preferences['mic_id']}")
-            while True:
-                try:
-                    with sr.Microphone(device_index=self.state_machine.preferences["mic_id"]) as source:
-                        self.recognize.adjust_for_ambient_noise(source)
-                        audio = self.recognize.listen(source, timeout=timeout)
-                        text = self.recognize.recognize_google(audio, language="de-DE")
-                        # logger.info(f"Recognized text: {text}")
+        logger.info(f"Listening for microphone input on mic_id {self.state_machine.preferences['mic_id']}")
+        i = 0
+        while True:
+            try:
+                with sr.Microphone(device_index=self.state_machine.preferences["mic_id"]) as source:
+                    self.recognize.adjust_for_ambient_noise(source)
+                    self.beep
 
-                        callback(text)
-                except sr.UnknownValueError:
-                    callback("Google konnte das Audio nicht verstehen")
-                except sr.RequestError as e:
-                    callback(f"Fehler bei der Anfrage an Google Speech Recognition; {e}")
-                except Exception as e:
-                    logger.error(f"Error during listening: {e}")
-                    callback(f"Ein Fehler ist aufgetreten: {e}")
-
-        self.play_sound("mic_activation")
-        listener_thread = threading.Thread(target=listen_loop)
-        listener_thread.daemon = True
-        listener_thread.start()
+                    audio = self.recognize.listen(source, timeout=timeout)
+                    text = self.recognize.recognize_google(audio, language="de-DE")
+                    callback(text)
+            except sr.UnknownValueError:
+                callback("Google konnte das Audio nicht verstehen")
+            except sr.RequestError as e:
+                callback(f"Fehler bei der Anfrage an Google Speech Recognition; {e}")
+            except Exception as e:
+                logger.error(f"Error during listening: {e}")
+                callback(f"Ein Fehler ist aufgetreten: {e}")
+            if i > 5:
+                callback("test text")
+                break
+            i = i + 1
         
     def ask_yes_no(self, text, retries=3, timeout=5):
         """
