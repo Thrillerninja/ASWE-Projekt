@@ -101,6 +101,7 @@ class NewsAPI():
                 return html.unescape(line)  # &#34; -> "
         return
 
+
     def summarize_article(self, content: str):
         """
         Uses the LLM client to summarize a given article content.
