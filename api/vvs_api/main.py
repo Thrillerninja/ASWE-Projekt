@@ -14,6 +14,8 @@ from .vvs_api_lib_fix import get_trips
 # Replace the get_trips function in the vvspy module with the one with added arrival flags
 vvspy.get_trips = get_trips
 
+# Set logging level for comtypes to WARNING to reduce log spam
+logging.getLogger('comtypes').setLevel(logging.WARNING)
 
 class VVSAPI(APIClient):
     """
@@ -94,11 +96,11 @@ class VVSAPI(APIClient):
         return parsed_response
     
 
-    def calc_trip_time(self, start_station: Station, end_station: Station) -> Trip:
-        trip_time = get_trips(start_station, end_station)
-        if trip_time is None:
-            trip_time = get_trips(end_station, start_station)
-        return trip_time if trip_time is not None else -1  # Return -1 if no trip time is found
+    def calc_trip_time(self, start_station: Station, end_station: Station) -> List[Trip]:
+        trips = get_trips(start_station, end_station)
+        if trips is None:
+            trips = get_trips(end_station, start_station)
+        return trips if trips is not None else -1  # Return -1 if no trips are found
     
     def calc_trip(self, start_station: Station, end_station: Station, departure_time: datetime = None, arrival_time: datetime = None) -> Trip:
         """
@@ -128,3 +130,13 @@ class VVSAPI(APIClient):
                 connection.destination.arrival_time_planned += datetime.timedelta(hours=2)
             
         return trip_time
+    
+    def get_best_trip(self, start_station: Station, end_station: Station, latest_arrival_time: datetime) -> Trip:
+        """
+        Get the best trip between two stations.
+        """
+        print(f"Getting best trip from {start_station} to {end_station}")
+        trips = self.calc_trip(start_station, end_station, arrival_time=latest_arrival_time)
+        if trips == -1:
+            return None
+        return trips[0]

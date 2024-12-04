@@ -1,11 +1,12 @@
+from typing import Dict
 import datetime
-import json
 from typing import Dict, List
-from api.api_client import APIClient
-from . import rapla
+import json
+
+import api.calendar_api.rapla as rapla
 
 
-class RaplaAPI(APIClient):
+class RaplaAPI():
     """
     API client for accessing rapla from a given url.
     """
@@ -41,13 +42,13 @@ class RaplaAPI(APIClient):
         Returns the appointments for today.
         """
         today = datetime.datetime.now().strftime("%d.%m.%Y")
-        return [appt for appt in self.calendar.appointments if appt.date == today]
+        return [appt for appt in self.calendar.appointments if appt.datetime_start == today]
 
     def get_appointments_for_date(self, date: str) -> List[rapla.Appointment]:
         """
         Returns the appointments for a specific date in the format DD.MM.YYYY.
         """
-        return [appt for appt in self.calendar.appointments if appt.date == date]
+        return [appt for appt in self.calendar.appointments if appt.datetime_start == date]
 
     def get_calendar_as_json(self) -> str:
         """

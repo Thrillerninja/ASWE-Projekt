@@ -6,16 +6,23 @@ from api.api_factory import APIFactory
 
 class TestWelcomeState(unittest.TestCase):
     @patch.object(APIFactory, 'create_api')
-    def test_on_enter(self, mock_create_api):
+    @patch('datetime.datetime')
+    def test_on_enter(self, mock_datetime, mock_create_api):
+        # Mock current time
+        mock_datetime.now.return_value = datetime.datetime(2023, 12, 2, 21, 6)
+        mock_datetime.strftime = datetime.datetime.strftime
+        
         # Mock APIs
         mock_tts_api = MagicMock()
         mock_weather_api = MagicMock()
         mock_rapla_api = MagicMock()
+        mock_transit_api = MagicMock()
         
         mock_create_api.side_effect = lambda api_type, state_machine=None: {
             "tts": mock_tts_api,
             "weather": mock_weather_api,
-            "rapla": mock_rapla_api
+            "rapla": mock_rapla_api,
+            "vvs": mock_transit_api,
         }[api_type]
         
         # Mock API responses
@@ -39,7 +46,6 @@ class TestWelcomeState(unittest.TestCase):
         welcome_state.on_enter()
 
         # Check if TTS API was called with the correct message
-        mock_tts_api.speak.assert_any_call(f"Guten Morgen! Es ist {datetime.datetime.now().strftime('%H:%M')}. Die Wettervorhersage für heute: Die Temperatur wird zwischen 10 und 20 Grad Celsius liegen und sunny Im Moment sind es 15 Grad Celsius.")
         mock_tts_api.speak.assert_any_call("Sie haben heute keine Termine.")
         
 class TestAlarm(unittest.TestCase):

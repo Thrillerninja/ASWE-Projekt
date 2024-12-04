@@ -22,6 +22,7 @@ app = QtWidgets.QApplication(sys.argv)
 window = MainWindow(sm)
 window.show()
 
+
 # Bring the window to the foreground
 window.raise_()
 window.activateWindow()
