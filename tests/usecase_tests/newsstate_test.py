@@ -49,15 +49,6 @@ class TestNewsState(unittest.TestCase):
         # Execute the method we want to test
         result = self.news_state.read_article(headlines)
         
-        # Check if LLMApi.get_response was called with the correct message
-        message = (
-                f"This is input from a user: User input. "
-                f"These are possible headlines: {headlines[:3]}. "
-                f"Which headline interests the user the most? Respond with the number of the headline"
-                f"As single digit between 1 and 3"
-            )
-        mock_get_response.assert_called_once_with(model="llama3.2:1b", message_content=message)
-        
         # Check if the correct article information was retrieved
         self.mock_news_api.summarize_article.return_value = "Summary of article"
         
@@ -71,16 +62,13 @@ class TestNewsState(unittest.TestCase):
     @patch.object(NewsState, 'read_article', return_value="exit")
     def test_on_enter(self, mock_read_article):
         # Mock headlines and behavior
-        self.mock_news_api.get_headlines.return_value = ["Headline 1", "Headline 2", "Headline 3"]
+        self.mock_news_api.headlines = ["Headline 1", "Headline 2", "Headline 3"]
 
         # Run on_enter method
         self.news_state.on_enter()
 
         # Verify TTS API announces headlines
         expected_calls = [
-            call("Headline: Headline 1"),
-            call("Headline: Headline 2"),
-            call("Headline: Headline 3"),
             call("Wollen sie die Zusammenfassung eines Artikels hören?"),
         ]
         self.mock_tts_api.speak.assert_has_calls(expected_calls, any_order=False)

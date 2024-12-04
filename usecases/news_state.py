@@ -32,14 +32,14 @@ class NewsState:
         logger.info("NewsState entered")
 
         # Retrieve the latest headlines from the NewsAPI client
-        headlines = self.news_api.get_headlines()
+        headlines = self.news_api.fetch_top_headlines()
 
         if headlines:
             logger.info("Enter if state for headlines")
             # Read out the first few headlines
-            for headline in headlines[:3]:  # Limiting to the first 3 headlines
-                self.tts_api.speak(f"Headline: {headline}")
-                logger.debug(f"Read headline: {headline}")
+            for i, headline in enumerate(headlines[:3]):  # Limiting to the first 3 headlines
+                self.tts_api.speak(f"Artikel {i + 1}: {headline['title']}")
+                logger.debug(f"Read headline{i + 1}: {headline}")
 
             self.tts_api.speak("Wollen sie die Zusammenfassung eines Artikels hören?")
             start_time = datetime.datetime.now().timestamp()
@@ -95,26 +95,26 @@ class NewsState:
             self.tts_api.speak("Keine Eingabe erkannt. Bitte versuchen Sie es erneut.")
             logger.debug("No user input detected.")
             return "exit"  # Exit loop
-
+        user_input = user_input.lower()
         try:
-            message = (
-                f"This is input from a user: {user_input}. "
-                f"These are possible headlines: {headlines[:3]}. "
-                f"Which headline interests the user the most? Respond with the number of the headline"
-                f"As single digit between 1 and 3"
-            )
-            response = self.llm_api.get_response(model="llama3.2:1b", message_content=message)
-            logger.debug(f"LLM response: {response}")
-            try: 
-                article_number = int(re.search(r'\d+', response).group())  # Extract the number
-                logger.debug(f"User is interested in article number {article_number}")
-            except Exception as e:
+            if any([substring in user_input for substring in ["erst", "1", "eins"]]): 
+                article_number = 1
+            elif any([substring in user_input for substring in ["zwei", "2"]]):
+                article_number = 2
+            elif any([substring in user_input for substring in ["drei", "3", "dritt"]]):
+                article_number = 3
+            else:
                 logger.error(f"No Number found in LLM Response. Using default 1")
                 article_number = 1
                 self.tts_api.speak("Ich habe dich nicht ganz verstanden. Ich fasse den ersten Artikel zusammen!")
             # article = self.news_api.get_article(article_number)
             article = headlines[article_number-1]
-            summary = self.news_api.summarize_article(article)
+            content = self.news_api.get_article(article["url"])
+            if not content:
+                logger.error("Artikel wurde nicht gefunden")
+                self.tts_api.speak("Ich konnte den Artikel leider nicht finden")
+                return "exit"
+            summary = self.news_api.summarize_article(content)
             logger.debug(f"Article summary: {summary}")
             self.tts_api.speak(summary)
             self.tts_api.speak("Ich hoffe der Artikel war interessant für dich.")
