@@ -180,7 +180,8 @@ class TestVoiceInterface(unittest.TestCase):
     @patch("pygame.time.wait")
     @patch('speech_recognition.Recognizer')
     @patch('speech_recognition.Microphone')
-    def test_listen_continuous(self, mock_microphone, mock_recognizer, mock_wait, mock_sound, mock_init, mock_mixer_stop, mock_mixer_music_unload):
+    @patch('speech_recognition.Recognizer.listen', return_value=MagicMock())
+    def test_listen_continuous(self, mock_listen, mock_microphone, mock_recognizer, mock_wait, mock_sound, mock_init, mock_mixer_stop, mock_mixer_music_unload):
         # Mock the recognizer and its methods
         mock_recognizer_instance = mock_recognizer.return_value
         mock_recognizer_instance.listen.return_value = MagicMock()
