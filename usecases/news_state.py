@@ -38,7 +38,7 @@ class NewsState:
             logger.info("Enter if state for headlines")
             # Read out the first few headlines
             for i, headline in enumerate(headlines[:3]):  # Limiting to the first 3 headlines
-                self.tts_api.speak(f"Artikel {i + 1}: {headline["title"]}")
+                self.tts_api.speak(f"Artikel {i + 1}: {headline['title']}")
                 logger.debug(f"Read headline{i + 1}: {headline}")
 
             self.tts_api.speak("Wollen sie die Zusammenfassung eines Artikels hören?")
