@@ -190,9 +190,9 @@ class TTSAPI:
             #self.play_sound("mic_activation")
             response = self.listen(timeout=timeout)  # Pass the timeout to the listen method
             
-            if response.lower() in ['ja', 'yes']:
+            if any(word in response.lower() for word in ['ja', 'yes']):
                 return True
-            elif response.lower() in ['nein', 'no']:
+            elif any(word in response.lower() for word in ['nein', 'no']):
                 return False
             else:
                 text = "Entschuldigung, ich habe Ihre Antwort nicht verstanden. Bitte antworten Sie mit ja oder nein."
