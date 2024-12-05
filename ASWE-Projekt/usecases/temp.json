@@ -1,0 +1,23 @@
+[
+    {
+        "price": "0.615",
+        "change_amount": "0.25",
+        "change_percentage": "68.4932%",
+        "volume": "507478130",
+        "name": "Greenwave Technology Solutions Inc. Common Stock"
+    },
+    {
+        "price": "1.11",
+        "change_amount": "0.05",
+        "change_percentage": "4.717%",
+        "volume": "294817553",
+        "name": "MSTZ"
+    },
+    {
+        "price": "40.21",
+        "change_amount": "-1.79",
+        "change_percentage": "-4.2619%",
+        "volume": "201599942",
+        "name": "Super Micro Computer Inc"
+    }
+]

@@ -41,7 +41,7 @@ class ActivityState:
                 f"Deine Ruheherzfrequenz betrug {resting_heart_rate} Schläge pro Minute."
             )
             logger.info(f"Stress level: {stress_level}")
-            
+            logger.info(self.spotify_api.get_available_devices())
             # Suggest music based on the stress level
             self.suggest_music(stress_level)
         else:
@@ -52,9 +52,9 @@ class ActivityState:
         days = 2
         avg_sleep_time = self.average_sleep_time(days)
         if avg_sleep_time:
-            self.tts_api.speak(f"Deine durchschnittliche Schlafzeit der letzten {days} Tage beträgt {avg_sleep_time}.")
+           self.tts_api.speak(f"Deine durchschnittliche Schlafzeit der letzten {days} Tage beträgt {avg_sleep_time}.")
         else:
-            self.tts_api.speak(f"Entschuldigung, ich konnte keine Schlafdaten der letzten {days} Tage finden.")
+           self.tts_api.speak(f"Entschuldigung, ich konnte keine Schlafdaten der letzten {days} Tage finden.")
 
         logger.debug("Exiting ActivityState.")
         

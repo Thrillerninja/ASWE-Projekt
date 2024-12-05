@@ -63,7 +63,7 @@ class NewsAPI():
         logger.info("NewsAPI instance initialized.")
         
         self.articles = None
-        self.source = 'die-zeit,focus,bild'
+        self.source = 'die-zeit'
 
     @property
     def amount_articles(self):
