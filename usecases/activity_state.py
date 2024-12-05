@@ -26,7 +26,7 @@ class ActivityState:
         # Entry point for the activity state
         logger.info("ActivityState entered")
         
-        date = "2024-11-29"
+        date = str(datetime.date.today())
         self.last_activated_at = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
         
         # Calculate the user's stress level based on Fitbit data
@@ -38,7 +38,7 @@ class ActivityState:
             resting_heart_rate = self.fitbit_api.get_heart_data(date)['activities-heart'][0]['value']['restingHeartRate']
             self.tts_api.speak(
                 f"Dein Stresslevel wurde heute anhand deiner Herzfrequenz und Aktivitätsdaten analysiert. "
-                #f"Deine Ruheherzfrequenz betrug {resting_heart_rate} Schläge pro Minute."
+                f"Deine Ruheherzfrequenz betrug {resting_heart_rate} Schläge pro Minute."
             )
             logger.info(f"Stress level: {stress_level}")
             logger.info(self.spotify_api.get_available_devices())
@@ -49,12 +49,12 @@ class ActivityState:
             logger.error("Stress level calculation failed.")
 
         # Analyze and provide feedback on sleep data for the last 'days' days
-        #days = 2
-        #avg_sleep_time = self.average_sleep_time(days)
-        #if avg_sleep_time:
-        #    self.tts_api.speak(f"Deine durchschnittliche Schlafzeit der letzten {days} Tage beträgt {avg_sleep_time}.")
-        #else:
-        #    self.tts_api.speak(f"Entschuldigung, ich konnte keine Schlafdaten der letzten {days} Tage finden.")
+        days = 2
+        avg_sleep_time = self.average_sleep_time(days)
+        if avg_sleep_time:
+           self.tts_api.speak(f"Deine durchschnittliche Schlafzeit der letzten {days} Tage beträgt {avg_sleep_time}.")
+        else:
+           self.tts_api.speak(f"Entschuldigung, ich konnte keine Schlafdaten der letzten {days} Tage finden.")
 
         logger.debug("Exiting ActivityState.")
         
