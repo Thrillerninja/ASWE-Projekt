@@ -16,7 +16,7 @@ PyQt5==5.15.11
 PyQt5-Qt5==5.15.2
 PyQt5_sip==12.15.0
 python-dotenv==1.0.1
-requests==2.32.3
+requests==2.32.4
 vvspy==2.2.0
 python-Levenshtein==0.26.0 
 SpeechRecognition==3.11.0
