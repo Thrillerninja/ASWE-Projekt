@@ -50,8 +50,7 @@ class StateMachine:
         self.activity = None
         
         # Setup transitions
-        self.machine.add_transition('start', 'idle', 'finance')
-        self.machine.add_transition('start', 'idle', 'finance')
+        self.machine.add_transition('start', 'idle', 'welcome')
         self.machine.add_transition('exit', 'welcome', 'idle')
         
         self.machine.add_transition(trigger='news_interact', source="news", dest='speach')
@@ -65,7 +64,6 @@ class StateMachine:
         self.machine.add_transition(trigger='goto_idle', source='speach', dest='idle')
         self.machine.add_transition(trigger='goto_idle', source='speach', dest='idle')
         self.machine.add_transition(trigger='goto_welcome', source='speach', dest='welcome')
-        self.machine.add_transition(trigger='goto_finance', source='speach', dest='finance')
         self.machine.add_transition(trigger='goto_activity', source='speach', dest='activity')
         self.machine.add_transition(trigger='goto_news', source='speach', dest='news')
         
